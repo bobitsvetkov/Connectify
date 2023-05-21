@@ -13,25 +13,24 @@ import {
     VStack,
     Grid,
     Stack,
-    Divider
+    Divider,
+    useToast
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { PasswordField } from "../Password Field/PasswordField";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import useSignIn from "../../Authentification/Hooks/Sign In Hook/useSignIn";
 
 export const MotionBox = motion(Box);
 
 export function SignInForm() {
     const navigate = useNavigate();
-    const handleSubmit = (event) => {
+    const { user, handleUserChange, handleSignIn, errorMessage } = useSignIn();
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        const data = {
-            email: event.target.email.value,
-            password: event.target.password.value,
-            persistent: event.target.persistent.checked,
-        };
-        alert(JSON.stringify(data, null, 2));
+        await handleSignIn(event);
     };
 
     return (
@@ -39,11 +38,20 @@ export function SignInForm() {
             <Stack spacing="6">
                 <FormControl isRequired>
                     <FormLabel>Email</FormLabel>
-                    <Input placeholder="Enter your email" type="email" name="email" />
+                    <Input
+                        placeholder="Enter your email"
+                        type="email"
+                        name="email"
+                        value={user.email}
+                        onChange={(e) => handleUserChange('email', e.target.value)}
+                    />
                 </FormControl>
                 <FormControl isRequired>
                     <FormLabel>Password</FormLabel>
-                    <PasswordField />
+                    <PasswordField
+                        value={user.password}
+                        onChange={(e) => handleUserChange('password', e.target.value)}
+                    />
                 </FormControl>
                 <Flex justifyContent="space-between" alignItems="center">
                     <Checkbox name="persistent">Remember me</Checkbox>

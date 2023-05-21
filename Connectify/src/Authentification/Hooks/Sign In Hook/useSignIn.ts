@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { auth, database } from '../../../config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useToast } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 interface User {
     email: string;
@@ -10,6 +12,8 @@ interface User {
 const useSignIn = () => {
     const [user, setUser] = useState<User>({ email: '', password: '' });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const toast = useToast();
+    const navigate = useNavigate();
 
     const handleUserChange = (name: keyof User, value: string) => {
         setUser({
@@ -23,7 +27,16 @@ const useSignIn = () => {
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
-            alert("User is signed in successfully.");
+            navigate('/home');
+
+            toast({
+                title: "Signed in.",
+                description: "You've successfully signed in!",
+                status: "success",
+                duration: 9000,
+                isClosable: true,
+                position: "top", 
+            });
         } catch (error) {
             if (error instanceof Error) {
                 setErrorMessage(error.message);

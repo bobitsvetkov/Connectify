@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { auth, database } from '../../../config/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { ref, set, get, } from 'firebase/database';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@chakra-ui/react';
 
 interface User {
     firstName: string;
@@ -19,6 +21,8 @@ interface SignupData extends User { }
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
+    const toast = useToast();
+    const navigate = useNavigate();
     const [signupData, setSignupData] = useState<SignupData>({
         firstName: '',
         lastName: '',
@@ -40,9 +44,8 @@ const useSignUp = () => {
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Handle sign up start", step); // Add console log
+        console.log("Handle sign up start", step);
 
-        // Declare these variables at the beginning of the function
         const { firstName, lastName, email, password, confirmPassword, username, phoneNumber, photoURL } = signupData;
 
         if (step === 1) {
@@ -64,9 +67,8 @@ const useSignUp = () => {
 
             // If all validations pass, go to next step
             setStep(2);
-            console.log("Handle sign up step updated to", step); // Add console log
+            console.log("Handle sign up step updated to", step); 
         } else {
-            // Now you can use username, phoneNumber, and photoURL in this branch
 
             if (username === "" || phoneNumber === "") {
                 setErrorMessage("Please fill all the fields");
@@ -85,6 +87,16 @@ const useSignUp = () => {
                 await set(usernameRef, { exists: true });
                 await set(ref(database, `users/${userCredential.user.uid}`),
                     { username, email, phoneNumber, photoURL, firstName, lastName });
+                navigate('/home');
+
+                toast({
+                    title: "Account created.",
+                    description: "You've successfully signed up!",
+                    status: "success",
+                    duration: 9000,
+                    isClosable: true,
+                    position: "top", 
+                });
             } catch (error) {
                 if (error instanceof Error) {
                     setErrorMessage(error.message);
