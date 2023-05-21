@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
-import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
+import React, { useState } from 'react';
+import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
+import { AddIcon, SearchIcon, InfoIcon } from '@chakra-ui/icons';
+import UserList from '../UserList';
 
 enum SidebarContent {
   ADD,
@@ -65,7 +66,7 @@ const Sidebar: React.FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {activeContent === SidebarContent.ADD && <Text>Add Content</Text>}
+        {activeContent === SidebarContent.ADD && <UserList/>}
         {activeContent === SidebarContent.SEARCH && <Text>Search Content</Text>}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
       </Box>
