@@ -18,7 +18,6 @@ import {
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { PasswordField } from "../Password Field/PasswordField";
 import { useNavigate } from 'react-router-dom';
-import { OAuthButtonGroup } from "../SignIn Buttons/AuthButtonsGroup";
 import { motion } from 'framer-motion';
 
 export const MotionBox = motion(Box);
@@ -56,7 +55,6 @@ export function SignInForm() {
                     Sign in
                 </Button>
                 <Divider my="6" />
-                <OAuthButtonGroup />
                 <Flex justifyContent="center">
                     <Text>Don't have an account?</Text>
                     <Button variant="link" onClick={() => navigate('/signup')} fontWeight="bold">

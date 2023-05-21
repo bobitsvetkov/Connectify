@@ -18,32 +18,62 @@ import {
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { PasswordField } from "../Password Field/PasswordField";
 import { useNavigate } from 'react-router-dom';
-import { OAuthButtonGroup } from "../SignIn Buttons/AuthButtonsGroup";
 import { motion } from 'framer-motion';
+import useSignUp from "../../Authentification/Hooks/SignUp Hook/useSignUp";
 const MotionBox = motion(Box);
 function SignUpForm() {
     const navigate = useNavigate();
+    const { signupData, errorMessage, handleSignupDataChange, handleSignUp, step, setStep } = useSignUp();
+
     const handleSubmit = (event) => {
-        // handle sign up logic here
+        event.preventDefault();
+        handleSignUp(event);
     };
 
+    const handleChange = (event) => {
+        console.log("Handle change", event.target.name, event.target.value); // Add console log
+        handleSignupDataChange(event.target.name, event.target.value);
+    };
     return (
         <form onSubmit={handleSubmit}>
             <Stack spacing="6">
-                <FormControl isRequired>
-                    <FormLabel>Email</FormLabel>
-                    <Input placeholder="Enter your email" type="email" name="email" />
-                </FormControl>
-                <FormControl isRequired>
-                    <FormLabel>Password</FormLabel>
-                    <PasswordField />
-                </FormControl>
-                <FormControl isRequired>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <PasswordField />
-                </FormControl>
+                {step === 1 ? (
+                    <>
+                        <FormControl isRequired>
+                            <FormLabel>First Name</FormLabel>
+                            <Input placeholder="Enter your first name" type="text" name="firstName" onChange={handleChange} />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel>Last Name</FormLabel>
+                            <Input placeholder="Enter your last name" type="text" name="lastName" onChange={handleChange} />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel>Email</FormLabel>
+                            <Input placeholder="Enter your email" type="email" name="email" onChange={handleChange} />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel>Password</FormLabel>
+                            <PasswordField name="password" onChange={handleChange} />
+                        </FormControl>
+                        <FormControl isRequired>
+                            <FormLabel>Confirm Password</FormLabel>
+                            <PasswordField name="confirmPassword" onChange={handleChange} />
+                        </FormControl>
+                    </>
+                ) : (
+                    <>
+                            <FormControl>
+                                <FormLabel>Nickname</FormLabel>
+                                <Input placeholder="Enter your nickname" type="text" name="username" onChange={handleChange} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Phone Number</FormLabel>
+                                <Input placeholder="Enter your phone number" type="tel" name="phoneNumber" onChange={handleChange} />
+                            </FormControl>
+                    </>
+                )}
                 <Button type="submit" width="full" mt={4}>
-                    Sign Up
+                    {step === 1 ? 'Next' : 'Sign Up'}
                 </Button>
                 <Flex justifyContent="center">
                     <Text>Already have an account?</Text>
