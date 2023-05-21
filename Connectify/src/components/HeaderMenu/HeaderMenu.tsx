@@ -4,21 +4,22 @@ import SearchInput from "../Search/SearchInput";
 
 const Header: React.FC = () => {
   return (
-    <Box bg="green.800" color="white" px={4} width="100%">
+    <Box bg="green.800" color="white" px={4}>
       <Flex
         align="center"
         justify="space-between"
         maxW="1200px"
         mx="auto"
         py={4}
+        position="relative"
       >
         <Text fontSize="xl" fontWeight="bold">
           Connectify
         </Text>
-        <Flex align="center" ml="auto">
+        <Flex align="center">
           <SearchInput size="sm" />
         </Flex>
-        <Flex ml="auto">
+        <Flex>
           <AvatarButton />
         </Flex>
       </Flex>

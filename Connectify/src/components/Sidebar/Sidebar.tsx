@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
-import { AddIcon, SearchIcon, InfoIcon } from '@chakra-ui/icons';
+import React, { useState } from "react";
+import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
+import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
 
 enum SidebarContent {
   ADD,
@@ -9,14 +9,16 @@ enum SidebarContent {
 }
 
 const Sidebar: React.FC = () => {
-  const [activeContent, setActiveContent] = useState<SidebarContent | null>(null);
+  const [activeContent, setActiveContent] = useState<SidebarContent | null>(
+    null
+  );
 
   return (
     <Flex
       as="nav"
       aria-label="Main Navigation"
       position="fixed"
-      top="0"
+      top="74.5"
       left="0"
       height="100vh"
       direction="row"
