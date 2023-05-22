@@ -29,7 +29,7 @@ export function SignInForm() {
     const navigate = useNavigate();
     const { user, handleUserChange, handleSignIn, errorMessage } = useSignIn();
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         await handleSignIn(event);
     };

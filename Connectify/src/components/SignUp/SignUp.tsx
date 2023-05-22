@@ -32,7 +32,7 @@ export function SignUpForm() {
     };
 
     const handleChange = (event) => {
-        console.log("Handle change", event.target.name, event.target.value); // Add console log
+        console.log("Handle change", event.target.name, event.target.value); 
         handleSignupDataChange(event.target.name, event.target.value);
     };
     return (

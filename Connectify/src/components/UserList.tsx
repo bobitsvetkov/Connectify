@@ -1,5 +1,5 @@
 import { useGetUsersQuery } from "../api/UsersApi";
-
+import { User } from "../types/interfaces";
 const UserList = () => {
   const { data: users, isLoading, isError } = useGetUsersQuery();
 

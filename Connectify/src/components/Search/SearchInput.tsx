@@ -1,9 +1,6 @@
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-
-interface SearchInputProps {
-  size: "sm" | "md" | "lg";
-}
+import { SearchInputProps } from "../../types/interfaces";
 
 const SearchInput: React.FC<SearchInputProps> = ({ size }) => {
   return (

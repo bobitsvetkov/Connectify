@@ -7,7 +7,9 @@ export interface User {
     phoneNumber: string;
     photoURL: string;
 }
-
+export interface SearchInputProps {
+    size: "sm" | "md" | "lg";
+}
 export interface LandingPageProps {
     welcomeText: string;
     detailsText: string;
