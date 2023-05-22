@@ -21,6 +21,7 @@ import { PasswordField } from "../Password Field/PasswordField";
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useSignIn from "../../Authentification/Hooks/Sign In Hook/useSignIn";
+import LandingPage from "../../pages/LandingPage";
 
 export const MotionBox = motion(Box);
 
@@ -71,5 +72,15 @@ export function SignInForm() {
                 </Flex>
             </Stack>
         </form>
+    );
+}
+
+export default function SignInPage() {
+    return (
+        <LandingPage
+            welcomeText="Welcome back"
+            detailsText="Let's get started! Please enter your details."
+            FormComponent={SignInForm}
+        />
     );
 }

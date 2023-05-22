@@ -8,9 +8,12 @@ import {
     Grid,
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../components/Dark Mode Toggle/DarkModeToggle";
-import { MotionBox } from "../components/SignIn/SignInForm";
-import { SignInForm } from "../components/SignIn/SignInForm";
-export default function SignInPage() {
+import { MotionBox } from "../components/SignIn/SignIn";
+import { SignInForm } from "../components/SignIn/SignIn";
+import { SignUpForm } from "../components/SignUp/SignUp";
+import { LandingPageProps } from "../types/interfaces";
+
+const LandingPage: React.FC<LandingPageProps> = ({ welcomeText, detailsText, FormComponent }) => {
     const bgImage = useColorModeValue(
         'https://images.unsplash.com/photo-1527181152855-fc03fc7949c8',
         'https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831'
@@ -24,11 +27,11 @@ export default function SignInPage() {
                         <ColorModeSwitcher />
                     </Flex>
                     <Box textAlign="center">
-                        <Text fontSize="2xl" fontWeight="bold">Welcome back</Text>
-                        <Text>Let's get started! Please enter your details.</Text>
+                        <Text fontSize="2xl" fontWeight="bold">{welcomeText}</Text>
+                        <Text>{detailsText}</Text>
                     </Box>
                     <Box w="100%">
-                        <SignInForm />
+                        <FormComponent />
                     </Box>
                 </VStack>
             </Flex>
@@ -45,3 +48,5 @@ export default function SignInPage() {
         </Grid>
     );
 }
+
+export default LandingPage;

@@ -8,6 +8,12 @@ export interface User {
     photoURL: string;
 }
 
+export interface LandingPageProps {
+    welcomeText: string;
+    detailsText: string;
+    FormComponent: React.FC;
+}
+
 export interface SignupData extends User {
     password: string;
     confirmPassword: string;
