@@ -1,21 +1,17 @@
 import { useState } from 'react';
 import { auth, database } from '../../../config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useToast } from "@chakra-ui/react";
+import useToastHandler from '../../../components/Toast/toastHandler';
 import { useNavigate } from 'react-router-dom';
-
-interface User {
-    email: string;
-    password: string;
-}
+import { SignInData } from '../../../types/interfaces';
 
 const useSignIn = () => {
-    const [user, setUser] = useState<User>({ email: '', password: '' });
+    const [user, setUser] = useState<SignInData>({ email: '', password: '' });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const toast = useToast();
+    const showToast = useToastHandler();
     const navigate = useNavigate();
 
-    const handleUserChange = (name: keyof User, value: string) => {
+    const handleUserChange = (name: keyof SignInData, value: string) => {  
         setUser({
             ...user,
             [name]: value
@@ -29,15 +25,9 @@ const useSignIn = () => {
             const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
             navigate('/home');
 
-            toast({
-                title: "Signed in.",
-                description: "You've successfully signed in!",
-                status: "success",
-                duration: 9000,
-                isClosable: true,
-                position: "top", 
-            });
+            showToast("Signed in.", "You've successfully signed in!", "success");
         } catch (error) {
+            console.log(error);
             if (error instanceof Error) {
                 setErrorMessage(error.message);
             } else {

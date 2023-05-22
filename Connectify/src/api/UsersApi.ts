@@ -1,16 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { get, ref } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
+import { User } from '../types/interfaces';
 
-export interface User {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    username: string;
-    phoneNumber: string;
-    photoURL: string;
-}
+
 
 export const usersApi = createApi({
     reducerPath: 'usersApi',

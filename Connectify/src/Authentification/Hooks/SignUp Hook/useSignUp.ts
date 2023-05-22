@@ -1,31 +1,16 @@
 import { useState } from 'react';
-import { auth, database } from '../../../config/firebaseConfig';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { ref, set, get, } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@chakra-ui/react';
-
-interface User {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-    username: string;  // nickname
-    phoneNumber: string;
-    photoURL: string;
-}
-
-interface SignupData extends User { }
-
+import { SignupData } from '../../../types/interfaces';
+import useToastHandler from '../../../components/Toast/toastHandler';
+import useValidationHandler from '../Validate Input/useValidation';
+import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
-    const toast = useToast();
-    const navigate = useNavigate();
     const [signupData, setSignupData] = useState<SignupData>({
         firstName: '',
         lastName: '',
+        id: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -34,8 +19,12 @@ const useSignUp = () => {
         photoURL: '',
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const { validateStepOne, validateStepTwo } = useValidationHandler();
+    const { checkUsernameExists, createUser } = useFirebaseHandler();
+    const showToast = useToastHandler();
 
-    const handleSignupDataChange = (name: keyof User, value: string) => {
+    const handleSignupDataChange = (name: keyof SignupData, value: string) => {
         setSignupData(prevData => ({
             ...prevData,
             [name]: value
@@ -44,59 +33,28 @@ const useSignUp = () => {
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Handle sign up start", step);
-
-        const { firstName, lastName, email, password, confirmPassword, username, phoneNumber, photoURL } = signupData;
-
         if (step === 1) {
-            console.log("Handle sign up step 1", { firstName, lastName, email, password, confirmPassword });
-
-            if (firstName === "" || lastName === "" || email === "" || password === "" || confirmPassword === "") {
-                console.log('One of the fields is empty', { firstName, lastName, email, password, confirmPassword });
-                setErrorMessage("Please fill all the fields");
+            const error = validateStepOne(signupData);
+            if (error) {
+                setErrorMessage(error);
                 return;
             }
-
-            if (password !== confirmPassword) {
-                console.log('Passwords do not match', { password, confirmPassword });
-                setErrorMessage('The passwords do not match.');
-                return;
-            }
-
-            console.log("Handle sign up step 1 passed", { firstName, lastName, email, password, confirmPassword }); // Add console log
-
-            // If all validations pass, go to next step
             setStep(2);
-            console.log("Handle sign up step updated to", step); 
         } else {
-
-            if (username === "" || phoneNumber === "") {
-                setErrorMessage("Please fill all the fields");
+            const error = validateStepTwo(signupData);
+            if (error) {
+                setErrorMessage(error);
                 return;
             }
-
-            const usernameRef = ref(database, `usernames/${username}`);
-            const usernameSnap = await get(usernameRef);
-            if (usernameSnap.exists()) {
+            const usernameExists = await checkUsernameExists(signupData.username);
+            if (usernameExists) {
                 setErrorMessage('This username is already taken.');
                 return;
             }
-
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await set(usernameRef, { exists: true });
-                await set(ref(database, `users/${userCredential.user.uid}`),
-                    { username, email, phoneNumber, photoURL, firstName, lastName });
+                await createUser(signupData);
                 navigate('/home');
-
-                toast({
-                    title: "Account created.",
-                    description: "You've successfully signed up!",
-                    status: "success",
-                    duration: 9000,
-                    isClosable: true,
-                    position: "top", 
-                });
+                showToast("Account created.", "You've successfully signed up!", "success");
             } catch (error) {
                 if (error instanceof Error) {
                     setErrorMessage(error.message);
