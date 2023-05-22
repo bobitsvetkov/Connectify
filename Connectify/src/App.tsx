@@ -1,24 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SignInPage from './pages/LandingPage';
 import SignUpPage from './components/SignUp/SignUp';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { ref, onValue } from 'firebase/database';
-import { database } from './config/firebaseConfig';
-import { setUsers } from './features/UsersSlice';
 import HomePage from './pages/HomePage';
 
 function App() {
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const usersRef = ref(database, 'users');
-    onValue(usersRef, (snapshot) => {
-      dispatch(setUsers(snapshot.val()));
-    });
-  }, [dispatch]);
-
   return (
     <Router>
       <Routes>

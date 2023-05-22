@@ -1,16 +1,22 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store';
+import { useGetUsersQuery } from "../api/UsersApi";
 
 const UserList = () => {
-  const users = useSelector((state: RootState) => state.users);
+  const { data: users, isLoading, isError } = useGetUsersQuery();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError || !users) {
+    return <div>Error loading users</div>;
+  }
 
   return (
     <div>
       <h2>Users</h2>
       <ul>
-        {Object.entries(users).map(([id, user]) => (
-          <li key={id}>
+        {Object.values(users).map((user: User, index: number) => (
+          <li key={index}>
             {user.email}
           </li>
         ))}

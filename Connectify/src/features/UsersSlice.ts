@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-
 interface User {
   id: string;
   firstName: string;
@@ -20,6 +19,6 @@ const usersSlice = createSlice({
     }
   },
 });
-
+ 
 export const { setUsers } = usersSlice.actions;
 export default usersSlice.reducer;
