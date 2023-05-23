@@ -20,7 +20,7 @@ export const usersApi = createApi({
             query: () => ({ url: 'users' }),
         }),
         getUserById: builder.query<User, string>({
-            query: (uid) => ({ url: `users/${uid}` }),
+            query: (uid) => ({ url: `users/${uid ? uid : ''}` }),
         }),
     }),
 });

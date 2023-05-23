@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { get, ref, set, push } from 'firebase/database';
+import { get, ref, set, update } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
 export interface Chat {
@@ -7,7 +7,6 @@ export interface Chat {
     participants: object;
     messages: object;
 }
-
 export interface Message {
     id: string;
     user: string;
@@ -24,12 +23,9 @@ export const chatsApi = createApi({
                     return { data: response.val() };
                 } else {
                     return { data: {} };
-                } 
-            case 'post':
-                await set(ref(database, url), body);
-                return { data: body };
-            case 'put':
-                await push(ref(database, url), body);
+                }
+            case 'update':
+                await update(ref(database, url), body);
                 return { data: body };
             default:
                 throw new Error('Invalid method');
@@ -39,13 +35,13 @@ export const chatsApi = createApi({
         getChats: builder.query<{ [key: string]: Chat }, void>({
             query: () => ({ url: 'chats', method: 'get' }),
         }),
-        createChat: builder.mutation<Chat, Partial<Chat>>({
-            query: (newChat) => ({ url: `chats/${newChat.id}`, method: 'post', body: newChat }),
+        getChatById: builder.query<Chat, string>({
+            query: (chatId) => ({ url: `chats/${chatId}`, method: 'get' }),
         }),
         addMessageToChat: builder.mutation<Message, { chatId: string, message: Message }>({
             query: ({ chatId, message }) => ({
                 url: `chats/${chatId}/messages/${message.id}`,
-                method: 'post',
+                method: 'update',
                 body: message,
             }),
         })
@@ -53,4 +49,4 @@ export const chatsApi = createApi({
     }),
 });
 
-export const { useGetChatsQuery, useCreateChatMutation, useAddMessageToChatMutation } = chatsApi;
+export const { useGetChatsQuery, useAddMessageToChatMutation, useGetChatByIdQuery } = chatsApi;
