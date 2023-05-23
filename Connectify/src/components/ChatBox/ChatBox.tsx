@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { useSelector, } from "react-redux";
+import { useSelector } from "react-redux";
 import { Box, VStack, Input, Button, Text } from "@chakra-ui/react";
 import { selectMessages } from "../../features/ChatSlice";
 import { v4 as uuidv4 } from 'uuid';
 import { RootState } from "../../store";
 import { useGetChatsQuery, useCreateChatMutation, useAddMessageToChatMutation } from "../../api/ChatsApi";
 import { getAuth } from "firebase/auth";
-import { User } from '../../api/UsersApi';
+import { User, useGetUserByIdQuery } from '../../api/UsersApi';
 
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
@@ -17,10 +17,19 @@ const ChatBox: React.FC = () => {
   const { data: chats = {} } = useGetChatsQuery();
   const auth = getAuth();
   const currUser = auth.currentUser;
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+
+  if (isUserLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isUserError || !user) {
+    return <div>Error loading user</div>;
+  }
 
   const handleSend = () => {
-    if (message.trim().length > 0 && currUser) {
-      const userIds = [activeChatUser.username, currUser.uid];
+    if (message.trim().length > 0 && currUser && activeChatUser && user) {
+      const userIds = [activeChatUser.username, user.username];
       userIds.sort();
       const chatId = userIds.join('-'); 
 
