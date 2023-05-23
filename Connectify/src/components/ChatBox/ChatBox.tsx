@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Box, VStack, Input, Button, Text } from "@chakra-ui/react";
 import { sendMessage, selectMessages } from "../../features/ChatSlice";
 import { v4 as uuidv4 } from 'uuid';
+import { RootState } from "../../store";
 
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const messages = useSelector(selectMessages);
+  const activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const dispatch = useDispatch();
 
   const handleSend = () => {
@@ -18,6 +20,7 @@ const ChatBox: React.FC = () => {
 
   return (
     <VStack height="80vh" width="80vw" borderWidth={1} borderRadius="lg" padding={5}>
+      <Box>{activeChatUser.firstName + ' ' + activeChatUser.lastName }</Box>
       <Box flexGrow={1} overflowY="auto" width="100%">
         {messages.map((message) => (
           <Text key={message.id}>
