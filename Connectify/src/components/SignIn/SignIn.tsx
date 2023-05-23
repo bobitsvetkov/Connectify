@@ -15,6 +15,7 @@ import {
   Stack,
   Divider,
   useToast,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { PasswordField } from "../Password Field/PasswordField";
@@ -53,6 +54,7 @@ export function SignInForm() {
             onChange={(e) => handleUserChange("password", e.target.value)}
           />
         </FormControl>
+        {errorMessage && <Text color="red.500">{errorMessage}</Text>}
         <Flex justifyContent="space-between" alignItems="center">
           <Checkbox name="persistent">Remember me</Checkbox>
           <Link href="#replace-with-a-link" fontWeight="bold">

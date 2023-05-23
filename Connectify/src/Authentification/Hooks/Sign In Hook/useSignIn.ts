@@ -28,10 +28,18 @@ const useSignIn = () => {
             showToast("Signed in.", "You've successfully signed in!", "success");
         } catch (error) {
             console.log(error);
-            if (error instanceof Error) {
-                setErrorMessage(error.message);
-            } else {
-                setErrorMessage("An unknown error occurred.");
+            let errorCode = (error as any).code; // TypeScript workaround
+            switch (errorCode) {
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    setErrorMessage('Invalid email or password.');
+                    break;
+                case 'auth/invalid-email':
+                    setErrorMessage('The email address is badly formatted.');
+                    break;
+                default:
+                    setErrorMessage('An unknown error occurred.');
+                    break;
             }
         }
     };
