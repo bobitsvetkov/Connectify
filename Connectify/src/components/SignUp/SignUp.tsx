@@ -42,19 +42,26 @@ export function SignUpForm() {
     passwordValidationStates,
     validationErrors,
     touchedFields,
+    formSubmitted,
+    handleNext
   } = useSignUp();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    handleSignUp(event);
-  };
+    const handleChange = (event) => {
+        handleSignupDataChange(event.target.name, event.target.value);
+    };
 
-  const handleChange = (event) => {
-    handleSignupDataChange(event.target.name, event.target.value);
-  };
+    const handleNextClick = (event) => {
+        event.preventDefault();
+        handleNext(event);
+    };
+
+    const handleSubmitClick = (event) => {
+        event.preventDefault();
+        handleSignUp(event);
+    };
 
     return (
-        <form onSubmit={handleSubmit} noValidate>
+        <form noValidate>
             <Stack spacing="6">
                 {step === 1 ? (
                     <>
@@ -71,7 +78,7 @@ export function SignUpForm() {
                                     onChange={handleChange}
                                     value={signupData.firstName}
                                 />
-                                <FormErrorMessage>{validationErrors.firstNameError}</FormErrorMessage>
+                                {(formSubmitted || touchedFields.firstName) && <FormErrorMessage>{validationErrors.firstNameError}</FormErrorMessage>}
                             </FormControl>
                             <FormControl
                                 isRequired
@@ -85,7 +92,7 @@ export function SignUpForm() {
                                     onChange={handleChange}
                                     value={signupData.lastName}
                                 />
-                                <FormErrorMessage>{validationErrors.lastNameError}</FormErrorMessage>
+                                {(formSubmitted || touchedFields.lastName) && <FormErrorMessage>{validationErrors.lastNameError}</FormErrorMessage>}
                             </FormControl>
                         </Grid>
                         <FormControl
@@ -161,7 +168,12 @@ export function SignUpForm() {
                         </FormControl>
                     </>
                 )}
-                <Button type="submit" width="full" mt={4}>
+                <Button
+                    type="button" // this prevents form submission
+                    width="full"
+                    mt={4}
+                    onClick={step === 1 ? handleNextClick : handleSubmitClick}
+                >
                     {step === 1 ? "Next" : "Sign Up"}
                 </Button>
             </Stack>

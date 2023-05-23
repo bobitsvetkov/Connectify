@@ -15,9 +15,6 @@ const validateUsername = (username) => {
     return re.test(username);
 }
 
-const validateName = (name) => {
-    return name !== '' && name.length <= 50;  // Name cannot be empty and should not exceed 50 characters
-}
 const useFieldValidation = () => {
     const [emailError, setEmailError] = useState<string | null>(null);
     const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
@@ -29,7 +26,7 @@ const useFieldValidation = () => {
         if (firstName === '') {
             setFirstNameError('First name is required');
             return false;
-        } else if (firstName.length > 50) {
+        } else if (firstName.length > 10) {
             setFirstNameError('First name should not exceed 50 characters');
             return false;
         }
@@ -41,7 +38,7 @@ const useFieldValidation = () => {
         if (lastName === '') {
             setLastNameError('Last name is required');
             return false;
-        } else if (lastName.length > 50) {
+        } else if (lastName.length > 10) {
             setLastNameError('Last name should not exceed 50 characters');
             return false;
         }
@@ -49,27 +46,69 @@ const useFieldValidation = () => {
         return true;
     };
 
-    const validateFields = (signupData) => {
-        validateFirstName(signupData.firstName);
-        validateLastName(signupData.lastName);
 
-        if (!validateEmail(signupData.email)) {
-            setEmailError("Invalid email address");
-        } else {
-            setEmailError(null);
-        }
+    const validateFields = async (data: Partial<SignupData>): Promise<string[]> => {
+        return new Promise<string[]>(resolve => {
+            let errorMessages: string[] = [];
 
-        if (!validatePhoneNumber(signupData.phoneNumber)) {
-            setPhoneNumberError("Invalid phone number");
-        } else {
-            setPhoneNumberError(null);
-        }
+            if (data.firstName !== undefined && data.firstName !== null) {
+                if (data.firstName === '') {
+                    errorMessages.push('First name is required');
+                } else if (!validateFirstName(data.firstName)) {
+                    errorMessages.push(firstNameError || '');
+                }
+            }
 
-        if (!validateUsername(signupData.username)) {
-            setUsernameError("Invalid username.");
-        } else {
-            setUsernameError(null);
-        }
+            if (data.lastName !== undefined && data.lastName !== null) {
+                if (data.lastName === '') {
+                    errorMessages.push('Last name is required');
+                } else if (!validateLastName(data.lastName)) {
+                    errorMessages.push(lastNameError || '');
+                }
+            }
+
+            if (data.email !== undefined && data.email !== null) {
+                if (data.email === '') {
+                    const errorMessage = 'Email is required';
+                    setEmailError(errorMessage);
+                    errorMessages.push(errorMessage);
+                } else if (!validateEmail(data.email)) {
+                    const errorMessage = "Invalid email address";
+                    setEmailError(errorMessage);
+                    errorMessages.push(errorMessage);
+                } else {
+                    setEmailError(null);
+                }
+            }
+
+            if (data.phoneNumber !== undefined && data.phoneNumber !== null) {
+                if (data.phoneNumber === '') {
+                    const errorMessage = 'Phone number is required';
+                    setPhoneNumberError(errorMessage);
+                    errorMessages.push(errorMessage);
+                } else if (!validatePhoneNumber(data.phoneNumber)) {
+                    const errorMessage = "Invalid phone number";
+                    setPhoneNumberError(errorMessage);
+                    errorMessages.push(errorMessage);
+                } else {
+                    setPhoneNumberError(null);
+                }
+            }
+
+            if (data.username !== undefined && data.username !== null) {
+                if (data.username === '') {
+                    setUsernameError('Username is required');
+                    errorMessages.push(usernameError || '');
+                } else if (!validateUsername(data.username)) {
+                    setUsernameError("Invalid username.");
+                    errorMessages.push(usernameError || '');
+                } else {
+                    setUsernameError(null);
+                }
+            }
+
+            resolve(errorMessages);
+        });
     };
 
     return {
@@ -81,6 +120,14 @@ const useFieldValidation = () => {
         validateFields,
         setFirstNameError,
         setLastNameError,
+        validateFirstName,
+        validateLastName,
+        setEmailError,
+        validateEmail,
+        setPhoneNumberError,
+        validatePhoneNumber,
+        setUsernameError,
+        validateUsername
     };
 };
 

@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
+    const [formSubmitted, setFormSubmitted] = useState(false); 
     const [signupData, setSignupData] = useState<SignupData>({
         firstName: '',
         lastName: '',
@@ -56,7 +57,15 @@ const useSignUp = () => {
         usernameError,
         validateFields,
         setFirstNameError,
-        setLastNameError
+        setLastNameError,
+        validateFirstName,
+        validateLastName,
+        setEmailError,
+        validateEmail,
+        setPhoneNumberError,
+        validatePhoneNumber,
+        setUsernameError,
+        validateUsername
     } = useFieldValidation();
 
     const handleSignupDataChange = (name: keyof SignupData, value: string) => {
@@ -71,63 +80,140 @@ const useSignUp = () => {
             [name]: true,
         });
 
-        validateFields(newSignupData);
+        // Existing field validation
+        if (name === 'firstName') {
+            validateFirstName(value);
+        }
+        if (name === 'lastName') {
+            validateLastName(value);
+        }
 
+        // Add validation for email, phoneNumber and username
+        if (name === 'email') {
+            if (value === '') {
+                setEmailError('Email is required');
+            } else if (!validateEmail(value)) {
+                setEmailError("Invalid email address");
+            } else {
+                setEmailError(null);
+            }
+        }
+        if (name === 'phoneNumber') {
+            if (value === '') {
+                setPhoneNumberError('Phone number is required');
+            } else if (!validatePhoneNumber(value)) {
+                setPhoneNumberError("Invalid phone number");
+            } else {
+                setPhoneNumberError(null);
+            }
+        }
+        if (name === 'username') {
+            if (value === '') {
+                setUsernameError('Username is required');
+            } else if (!validateUsername(value)) {
+                setUsernameError("Invalid username");
+            } else {
+                setUsernameError(null);
+            }
+        }
+
+        // Password validation
         if (name === 'password' || name === 'confirmPassword') {
             validatePassword(value);
         }
     };
 
-    // Add a useEffect hook to validate fields whenever signupData changes
-    useEffect(() => {
-        validateFields(signupData);
-    }, [signupData, validateFields]);
+
+    const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("handleNext function called.");  // Log here
+        setFormSubmitted(true);
+
+        // Set only the first step's fields to touched
+        setTouchedFields({
+            ...touchedFields,
+            firstName: true,
+            lastName: true,
+            password: true,
+            confirmPassword: true,
+        });
+
+        const errorMessages = await validateFields({
+            firstName: signupData.firstName,
+            lastName: signupData.lastName,
+            password: signupData.password,
+            confirmPassword: signupData.confirmPassword,
+        });
+
+        console.log("Signup data:", signupData); // Log signupData here
+        console.log("Validation error messages:", errorMessages); // Log validation errors here
+
+        if (signupData.password !== signupData.confirmPassword) {
+            const mismatchError = "Passwords do not match";
+            errorMessages.push(mismatchError);
+            setPasswordError(mismatchError); // set error for password
+            setConfirmPasswordError(mismatchError); // and for confirmPassword
+        }
+
+        if (errorMessages.length > 0) {
+            console.log("Errors found, not proceeding to next step."); // Log here
+            setErrorMessage(errorMessages.join(' '));
+            return;
+        }
+
+        // Clear any existing errors
+        setErrorMessage(null);
+
+        // If no errors, move to the next step
+        console.log("No errors found, proceeding to next step."); // Log here
+        setStep(step + 1);
+    };
+
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setFormSubmitted(true);
 
-        validateFields(signupData);
+        // Set all fields to touched when the form is submitted
+        setTouchedFields({
+            firstName: true,
+            lastName: true,
+            uid: true,
+            email: true,
+            password: true,
+            confirmPassword: true,
+            username: true,
+            phoneNumber: true,
+            photoURL: true,
+        });
+
+        const errorMessages = await validateFields(signupData);
 
         if (signupData.password !== signupData.confirmPassword) {
-            setConfirmPasswordError("Passwords do not match");
-        } else {
-            setConfirmPasswordError(null);
+            errorMessages.push("Passwords do not match");
         }
 
-        if (step === 1 && !confirmPasswordError && !firstNameError && !lastNameError) {
-            setStep(2);
-        } else {
-            if (firstNameError) {
-                setErrorMessage("First Name field cannot be empty.");
-                return;
-            }
+        if (errorMessages.length > 0) {
+            setErrorMessage(errorMessages.join(' '));
+            return;
+        }
 
-            if (lastNameError) {
-                setErrorMessage("Last Name field cannot be empty.");
-                return;
-            }
+        const usernameExists = await checkUsernameExists(signupData.username);
+        if (usernameExists) {
+            setErrorMessage('This username is already taken.');
+            return;
+        }
 
-            if (emailError || phoneNumberError || firstNameError || lastNameError || usernameError || passwordError || localPasswordError) {
-                return;
-            }
-
-            // Proceed with Firebase operations
-            const usernameExists = await checkUsernameExists(signupData.username);
-            if (usernameExists) {
-                setErrorMessage('This username is already taken.');
-                return;
-            }
-            try {
-                await createUser(signupData);
-                setErrorMessage(null); // clear error message
-                navigate('/home');
-                showToast("Account created.", "You've successfully signed up!", "success");
-            } catch (error) {
-                if (error instanceof Error) {
-                    setErrorMessage(error.message);
-                } else {
-                    setErrorMessage("An unknown error occurred.");
-                }
+        try {
+            await createUser(signupData);
+            setErrorMessage(null); // clear error message
+            navigate('/home');
+            showToast("Account created.", "You've successfully signed up!", "success");
+        } catch (error) {
+            if (error instanceof Error) {
+                setErrorMessage(error.message);
+            } else {
+                setErrorMessage("An unknown error occurred.");
             }
         }
     };
@@ -137,8 +223,10 @@ const useSignUp = () => {
         errorMessage,
         handleSignupDataChange,
         handleSignUp,
+        handleNext,
         step,
         setStep,
+        formSubmitted,
         touchedFields,
         passwordValidationStates: {
             isLengthValid,
@@ -147,8 +235,8 @@ const useSignUp = () => {
             isSpecialCharValid,
         },
         validationErrors: {
-            firstNameError, 
-            lastNameError,  
+            firstNameError,
+            lastNameError,
             emailError,
             phoneNumberError,
             usernameError,
