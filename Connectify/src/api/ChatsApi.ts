@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { get, ref, set, update } from 'firebase/database';
+import { get, ref, set, push } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
 export interface Chat {
@@ -24,12 +24,12 @@ export const chatsApi = createApi({
                     return { data: response.val() };
                 } else {
                     return { data: {} };
-                }
+                } 
             case 'post':
                 await set(ref(database, url), body);
                 return { data: body };
             case 'put':
-                await update(ref(database, url), body);
+                await push(ref(database, url), body);
                 return { data: body };
             default:
                 throw new Error('Invalid method');
