@@ -5,6 +5,8 @@ import useToastHandler from '../../../components/Toast/toastHandler';
 import useValidationHandler from '../Validate Input/useValidation';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 import usePasswordValidation from '../../Password Hook/usePassValid';
+import useFieldValidation from '../Validate Input/useValidation';
+import { useEffect } from 'react';
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
@@ -19,9 +21,21 @@ const useSignUp = () => {
         phoneNumber: '',
         photoURL: '',
     });
+
+    const [touchedFields, setTouchedFields] = useState({
+        firstName: false,
+        lastName: false,
+        id: false,
+        email: false,
+        password: false,
+        confirmPassword: false,
+        username: false,
+        phoneNumber: false,
+        photoURL: false,
+    });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [passwordError, setPasswordError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const { validateStepOne, validateStepTwo } = useValidationHandler();
     const { checkUsernameExists, createUser } = useFirebaseHandler();
     const showToast = useToastHandler();
 
@@ -33,34 +47,63 @@ const useSignUp = () => {
         validatePassword
     } = usePasswordValidation();
 
-    const handleSignupDataChange = (name: keyof SignupData, value: string) => {
-        setSignupData(prevData => ({
-            ...prevData,
-            [name]: value,
-        }));
+    const {
+        emailError,
+        phoneNumberError,
+        nameError,
+        usernameError,
+        validateFields,
+    } = useFieldValidation();
 
-        
-        if (name === 'password') {
+    const handleSignupDataChange = (name: keyof SignupData, value: string) => {
+        const newSignupData = {
+            ...signupData,
+            [name]: value,
+        };
+        setSignupData(newSignupData);
+
+        setTouchedFields({
+            ...touchedFields,
+            [name]: true,
+        });
+
+        validateFields(newSignupData);
+
+        if (name === 'password' || name === 'confirmPassword') {
             validatePassword(value);
         }
     };
 
+    // Add a useEffect hook to validate fields whenever signupData changes
+    useEffect(() => {
+        validateFields(signupData);
+    }, [signupData, validateFields]);
+
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (step === 1) {
-            const error = validateStepOne(signupData);
-            if (error) {
-                setErrorMessage(error);
-                return;
-            }
-            setErrorMessage(null); // clear error message
-            setStep(2);
+
+        // Validate fields
+        validateFields(signupData);
+
+        let localPasswordError = null;
+        // Validate password confirmation
+        if (signupData.password !== signupData.confirmPassword) {
+            localPasswordError = "Passwords do not match";
+            setPasswordError(localPasswordError);
         } else {
-            const error = validateStepTwo(signupData);
-            if (error) {
-                setErrorMessage(error);
+            setPasswordError(null);
+        }
+
+        // If step === 1, proceed to the next step as long as the password confirmation validation passed
+        if (step === 1 && !localPasswordError) {
+            setStep(2);
+        } else if (step !== 1) {
+            // If step !== 1, do not proceed with Firebase operations if any validation errors exist
+            if (emailError || phoneNumberError || nameError || usernameError || passwordError || localPasswordError) {
                 return;
             }
+
+            // Proceed with Firebase operations
             const usernameExists = await checkUsernameExists(signupData.username);
             if (usernameExists) {
                 setErrorMessage('This username is already taken.');
@@ -88,12 +131,21 @@ const useSignUp = () => {
         handleSignUp,
         step,
         setStep,
+        touchedFields,
         passwordValidationStates: {
             isLengthValid,
             isUpperAndLowerCaseValid,
             isNumberValid,
             isSpecialCharValid,
         },
+        validationErrors: {
+            nameError,
+            emailError,
+            phoneNumberError,
+            usernameError,
+            passwordError
+        }
     };
 };
+
 export default useSignUp;

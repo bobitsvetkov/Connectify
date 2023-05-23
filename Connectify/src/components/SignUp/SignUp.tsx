@@ -32,7 +32,17 @@ import PasswordValidationPopup from "../Password Popup/PasswordPopup";
 const MotionBox = motion(Box);
 export function SignUpForm() {
     const navigate = useNavigate();
-    const { signupData, errorMessage, handleSignupDataChange, handleSignUp, step, setStep, passwordValidationStates } = useSignUp();
+    const {
+        signupData,
+        errorMessage,
+        handleSignupDataChange,
+        handleSignUp,
+        step,
+        setStep,
+        passwordValidationStates,
+        validationErrors,
+        touchedFields
+    } = useSignUp();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -48,38 +58,46 @@ export function SignUpForm() {
             <Stack spacing="6">
                 {step === 1 ? (
                     <>
-                        <FormControl isRequired>
-                            <FormLabel>First Name</FormLabel>
-                            <Input placeholder="Enter your first name" type="text" name="firstName" onChange={handleChange} value={signupData.firstName} />
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormLabel>Last Name</FormLabel>
-                            <Input placeholder="Enter your last name" type="text" name="lastName" onChange={handleChange} value={signupData.lastName} />
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormLabel>Email</FormLabel>
-                            <Input placeholder="Enter your email" type="email" name="email" onChange={handleChange} value={signupData.email} />
-                        </FormControl>
+                        <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+                            <FormControl isRequired isInvalid={touchedFields.firstName && !!validationErrors.nameError}>
+                                <FormLabel>First Name</FormLabel>
+                                <Input placeholder="Enter your first name" type="text" name="firstName" onChange={handleChange} value={signupData.firstName} />
+                                <FormErrorMessage>{validationErrors.nameError}</FormErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired isInvalid={touchedFields.lastName && !!validationErrors.nameError}>
+                                <FormLabel>Last Name</FormLabel>
+                                <Input placeholder="Enter your last name" type="text" name="lastName" onChange={handleChange} value={signupData.lastName} />
+                                <FormErrorMessage>{validationErrors.nameError}</FormErrorMessage>
+                            </FormControl>
+                        </Grid>
                         <FormControl isRequired>
                             <FormLabel>Password</FormLabel>
                             <PasswordValidationPopup passwordValidationStates={passwordValidationStates}>
                                 <PasswordField name="password" onChange={handleChange} value={signupData.password} />
                             </PasswordValidationPopup>
                         </FormControl>
-                        <FormControl isRequired>
+                        <FormControl isRequired isInvalid={touchedFields.confirmPassword && !!validationErrors.passwordError}>
                             <FormLabel>Confirm Password</FormLabel>
                             <PasswordField name="confirmPassword" onChange={handleChange} value={signupData.confirmPassword} />
+                            <FormErrorMessage>{validationErrors.passwordError}</FormErrorMessage>
                         </FormControl>
                     </>
                 ) : (
                     <>
-                        <FormControl>
-                            <FormLabel>Nickname</FormLabel>
+                        <FormControl isInvalid={touchedFields.username && !!validationErrors.usernameError}>
+                            <FormLabel>Username</FormLabel>
                             <Input placeholder="Enter your nickname" type="text" name="username" onChange={handleChange} value={signupData.username} />
+                            <FormErrorMessage>{validationErrors.usernameError}</FormErrorMessage>
                         </FormControl>
-                        <FormControl>
+                        <FormControl isInvalid={touchedFields.phoneNumber && !!validationErrors.phoneNumberError}>
                             <FormLabel>Phone Number</FormLabel>
                             <Input placeholder="Enter your phone number" type="tel" name="phoneNumber" onChange={handleChange} value={signupData.phoneNumber} />
+                            <FormErrorMessage>{validationErrors.phoneNumberError}</FormErrorMessage>
+                        </FormControl>
+                        <FormControl isRequired isInvalid={touchedFields.email && !!validationErrors.emailError}>
+                            <FormLabel>Email</FormLabel>
+                            <Input placeholder="Enter your email" type="email" name="email" onChange={handleChange} value={signupData.email} />
+                            <FormErrorMessage>{validationErrors.emailError}</FormErrorMessage>
                         </FormControl>
                     </>
                 )}

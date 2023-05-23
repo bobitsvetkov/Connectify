@@ -1,49 +1,62 @@
-import { SignupData } from '../../../types/interfaces';
+import { SignupData } from "../../../types/interfaces";
+import { useState } from "react";
+const validateEmail = (email) => {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
 
-const useValidationHandler = () => {
-    const validateStepOne = ({ firstName, lastName, email, password, confirmPassword }: SignupData) => {
-        if (firstName === "") {
-            return "First name is required";
+const validatePhoneNumber = (phoneNumber) => {
+    const re = /^\d{10}$/;  // Assumes a phone number is valid if it consists of exactly 10 digits
+    return re.test(phoneNumber);
+}
+
+const validateUsername = (username) => {
+    const re = /^[a-z0-9_]{3,16}$/;  // Username can contain lower case letters, digits and underscore, and must be between 3 and 16 characters long
+    return re.test(username);
+}
+
+const validateName = (name) => {
+    return name !== '' && name.length <= 50;  // Name cannot be empty and should not exceed 50 characters
+}
+const useFieldValidation = () => {
+    const [emailError, setEmailError] = useState<string | null>(null);
+    const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
+    const [nameError, setNameError] = useState<string | null>(null);
+    const [usernameError, setUsernameError] = useState<string | null>(null);
+
+    const validateFields = (SignupData) => {
+        if (!validateEmail(SignupData.email)) {
+            setEmailError("Invalid email address");
+        } else {
+            setEmailError(null);
         }
-        if (lastName === "") {
-            return "Last name is required";
+
+        if (!validatePhoneNumber(SignupData.phoneNumber)) {
+            setPhoneNumberError("Invalid phone number");
+        } else {
+            setPhoneNumberError(null);
         }
-        if (email === "") {
-            return "Email is required";
+
+        if (!validateName(SignupData.firstName) || !validateName(SignupData.lastName)) {
+            setNameError("Name cannot be empty or exceed 50 characters");
+        } else {
+            setNameError(null);
         }
-        if (password === "") {
-            return "Password is required";
+
+        if (!validateUsername(SignupData.username)) {
+            setUsernameError("Invalid username.");
+        } else {
+            setUsernameError(null);
         }
-        if (confirmPassword === "") {
-            return "Please confirm your password";
-        }
-        if (password !== confirmPassword) {
-            return 'The passwords do not match.';
-        }
-        if (password.length < 8) {
-            return "Password must be at least 8 characters long.";
-        }
-        if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
-            return "Password must contain at least one uppercase and one lowercase letter.";
-        }
-        if (!/[0-9]/.test(password)) {
-            return "Password must contain at least one number.";
-        }
-        if (!/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password)) {
-            return "Password must contain at least one special character.";
-        }
-        return null;
     };
 
-    const validateStepTwo = ({ username, phoneNumber }: SignupData) => {
-        if (username === "" || phoneNumber === "") {
-            return "Please fill all the fields";
-        }
-
-        return null;
+    return {
+        emailError,
+        phoneNumberError,
+        nameError,
+        usernameError,
+        validateFields,
     };
-
-    return { validateStepOne, validateStepTwo };
 };
 
-export default useValidationHandler;
+export default useFieldValidation;
