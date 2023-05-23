@@ -13,7 +13,7 @@ const useSignUp = () => {
     const [signupData, setSignupData] = useState<SignupData>({
         firstName: '',
         lastName: '',
-        id: '',
+        uid: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -25,7 +25,7 @@ const useSignUp = () => {
     const [touchedFields, setTouchedFields] = useState({
         firstName: false,
         lastName: false,
-        id: false,
+        uid: false,
         email: false,
         password: false,
         confirmPassword: false,
@@ -35,6 +35,7 @@ const useSignUp = () => {
     });
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [passwordError, setPasswordError] = useState<string | null>(null);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
     const navigate = useNavigate();
     const { checkUsernameExists, createUser } = useFirebaseHandler();
     const showToast = useToastHandler();
@@ -50,9 +51,12 @@ const useSignUp = () => {
     const {
         emailError,
         phoneNumberError,
-        nameError,
+        firstNameError, 
+        lastNameError,  
         usernameError,
         validateFields,
+        setFirstNameError,
+        setLastNameError
     } = useFieldValidation();
 
     const handleSignupDataChange = (name: keyof SignupData, value: string) => {
@@ -82,24 +86,28 @@ const useSignUp = () => {
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        // Validate fields
         validateFields(signupData);
 
-        let localPasswordError = null;
-        // Validate password confirmation
         if (signupData.password !== signupData.confirmPassword) {
-            localPasswordError = "Passwords do not match";
-            setPasswordError(localPasswordError);
+            setConfirmPasswordError("Passwords do not match");
         } else {
-            setPasswordError(null);
+            setConfirmPasswordError(null);
         }
 
-        // If step === 1, proceed to the next step as long as the password confirmation validation passed
-        if (step === 1 && !localPasswordError) {
+        if (step === 1 && !confirmPasswordError && !firstNameError && !lastNameError) {
             setStep(2);
-        } else if (step !== 1) {
-            // If step !== 1, do not proceed with Firebase operations if any validation errors exist
-            if (emailError || phoneNumberError || nameError || usernameError || passwordError || localPasswordError) {
+        } else {
+            if (firstNameError) {
+                setErrorMessage("First Name field cannot be empty.");
+                return;
+            }
+
+            if (lastNameError) {
+                setErrorMessage("Last Name field cannot be empty.");
+                return;
+            }
+
+            if (emailError || phoneNumberError || firstNameError || lastNameError || usernameError || passwordError || localPasswordError) {
                 return;
             }
 
@@ -139,11 +147,13 @@ const useSignUp = () => {
             isSpecialCharValid,
         },
         validationErrors: {
-            nameError,
+            firstNameError, 
+            lastNameError,  
             emailError,
             phoneNumberError,
             usernameError,
-            passwordError
+            passwordError,
+            confirmPasswordError
         }
     };
 };

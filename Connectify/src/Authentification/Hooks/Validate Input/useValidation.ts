@@ -6,7 +6,7 @@ const validateEmail = (email) => {
 }
 
 const validatePhoneNumber = (phoneNumber) => {
-    const re = /^\d{10}$/;  // Assumes a phone number is valid if it consists of exactly 10 digits
+    const re = /^\+?\d{1,}$/;  // Assumes a phone number is valid if it starts with an optional '+' and followed only by digits
     return re.test(phoneNumber);
 }
 
@@ -21,29 +21,51 @@ const validateName = (name) => {
 const useFieldValidation = () => {
     const [emailError, setEmailError] = useState<string | null>(null);
     const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
-    const [nameError, setNameError] = useState<string | null>(null);
+    const [firstNameError, setFirstNameError] = useState<string | null>(null);
+    const [lastNameError, setLastNameError] = useState<string | null>(null);
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
-    const validateFields = (SignupData) => {
-        if (!validateEmail(SignupData.email)) {
+    const validateFirstName = (firstName) => {
+        if (firstName === '') {
+            setFirstNameError('First name is required');
+            return false;
+        } else if (firstName.length > 50) {
+            setFirstNameError('First name should not exceed 50 characters');
+            return false;
+        }
+        setFirstNameError(null);
+        return true;
+    };
+
+    const validateLastName = (lastName) => {
+        if (lastName === '') {
+            setLastNameError('Last name is required');
+            return false;
+        } else if (lastName.length > 50) {
+            setLastNameError('Last name should not exceed 50 characters');
+            return false;
+        }
+        setLastNameError(null);
+        return true;
+    };
+
+    const validateFields = (signupData) => {
+        validateFirstName(signupData.firstName);
+        validateLastName(signupData.lastName);
+
+        if (!validateEmail(signupData.email)) {
             setEmailError("Invalid email address");
         } else {
             setEmailError(null);
         }
 
-        if (!validatePhoneNumber(SignupData.phoneNumber)) {
+        if (!validatePhoneNumber(signupData.phoneNumber)) {
             setPhoneNumberError("Invalid phone number");
         } else {
             setPhoneNumberError(null);
         }
 
-        if (!validateName(SignupData.firstName) || !validateName(SignupData.lastName)) {
-            setNameError("Name cannot be empty or exceed 50 characters");
-        } else {
-            setNameError(null);
-        }
-
-        if (!validateUsername(SignupData.username)) {
+        if (!validateUsername(signupData.username)) {
             setUsernameError("Invalid username.");
         } else {
             setUsernameError(null);
@@ -53,9 +75,12 @@ const useFieldValidation = () => {
     return {
         emailError,
         phoneNumberError,
-        nameError,
+        firstNameError,
+        lastNameError,
         usernameError,
         validateFields,
+        setFirstNameError,
+        setLastNameError,
     };
 };
 
