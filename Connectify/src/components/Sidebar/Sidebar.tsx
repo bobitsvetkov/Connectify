@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Box, Flex, IconButton, Text } from '@chakra-ui/react';
-import { AddIcon, SearchIcon, InfoIcon } from '@chakra-ui/icons';
-import UserList from '../UserList';
+import React, { useState } from "react";
+import { Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
+import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
+import UserList from "../UserList";
 
 enum SidebarContent {
   ADD,
@@ -58,6 +58,7 @@ const Sidebar: React.FC = () => {
           onClick={() => setActiveContent(SidebarContent.INFO)}
         />
       </Box>
+      <Divider orientation="vertical" />
       <Box
         width="150px"
         height="100%"
@@ -66,7 +67,7 @@ const Sidebar: React.FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {activeContent === SidebarContent.ADD && <UserList/>}
+        {activeContent === SidebarContent.ADD && <UserList />}
         {activeContent === SidebarContent.SEARCH && <Text>Search Content</Text>}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
       </Box>
