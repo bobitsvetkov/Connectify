@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
 import UserList from "../UserList";
+import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
+import { useDisclosure } from "@chakra-ui/react";
 
 enum SidebarContent {
   ADD,
@@ -10,9 +12,13 @@ enum SidebarContent {
 }
 
 const Sidebar: React.FC = () => {
-  const [activeContent, setActiveContent] = useState<SidebarContent | null>(
-    null
-  );
+  const [activeContent, setActiveContent] = useState<SidebarContent | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const handleAddClick = () => {
+    setActiveContent(SidebarContent.ADD);
+    onOpen();
+  };
 
   return (
     <Flex
@@ -40,7 +46,7 @@ const Sidebar: React.FC = () => {
           mb="1rem"
           variant="ghost"
           colorScheme="teal"
-          onClick={() => setActiveContent(SidebarContent.ADD)}
+          onClick={handleAddClick}
         />
         <IconButton
           aria-label="Search Icon"
@@ -67,8 +73,10 @@ const Sidebar: React.FC = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {activeContent === SidebarContent.ADD && <UserList />}
-        {activeContent === SidebarContent.SEARCH && <Text>Search Content</Text>}
+        {activeContent === SidebarContent.ADD && (
+          <CreateTeamModal isOpen={isOpen} onClose={onClose} />
+        )}
+        {activeContent === SidebarContent.SEARCH && <UserList />}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
       </Box>
     </Flex>
