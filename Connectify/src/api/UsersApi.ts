@@ -22,7 +22,17 @@ export const usersApi = createApi({
         getUserById: builder.query<User, string>({
             query: (uid) => ({ url: `users/${uid ? uid : ''}` }),
         }),
-    }),
+        getUserSearchByUsername: builder.query<User[], string>({
+            query: (username) => ({
+                url: 'users',
+                params: {
+                  orderBy: 'username',
+                  equalTo: username,
+                },
+            }),
+          }),
+        }),
 });
 
-export const { useGetUsersQuery, useGetUserByIdQuery } = usersApi;
+export const { useGetUsersQuery, useGetUserByIdQuery ,useGetUserSearchByUsernameQuery} = usersApi;
+
