@@ -4,10 +4,7 @@ import PasswordValidationPopup from "../../Password Popup/PasswordPopup";
 import useSignUp from "../../../Authentification/Hooks/SignUp Hook/useSignUp";
 import { SignUpData } from "../../../types/interfaces";
 import { PasswordField } from "../../Password Field/PasswordField";
-
-const {
-    passwordValidationStates,
-} = useSignUp();
+import usePasswordValidation from "../../../Authentification/Password Hook/usePassValid";
 
 
 interface ValidationErrors {
@@ -37,12 +34,13 @@ interface SignUpStepOneFormProps {
     signupData: SignUpData;
     validationErrors: ValidationErrors;
     touchedFields: TouchedFields;
+    passwordValidationStates: typeof usePasswordValidation;  // Add this line
 }
 
-export const SignUpStepOneForm: React.FC<SignUpStepOneFormProps> = ({ handleChange, signupData, validationErrors, touchedFields }) => {
+export const SignUpStepOneForm: React.FC<SignUpStepOneFormProps> = ({ handleChange, signupData, validationErrors, touchedFields, passwordValidationStates }) => {
     return (
         <>
-            <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+            <Grid templateColumns="1fr" gap={6} >
                 <FormField
                     label="First Name"
                     placeholder="Enter your first name"
@@ -65,34 +63,26 @@ export const SignUpStepOneForm: React.FC<SignUpStepOneFormProps> = ({ handleChan
                     isInvalid={touchedFields.lastName && !!validationErrors.lastNameError}
                     errorMessage={validationErrors.lastNameError}
                 />
-                <FormField
-                    label="Password"
-                    placeholder="Enter your password"
-                    type="password"
-                    name="password"
-                    value={signupData.password}
-                    onChange={handleChange}
-                    isRequired
-                    isInvalid={touchedFields.password && !!validationErrors.passwordError}
-                    errorMessage={validationErrors.passwordError}
+                <PasswordValidationPopup
+                    passwordValidationStates={passwordValidationStates}
                 >
-                    <PasswordValidationPopup
-                        passwordValidationStates={passwordValidationStates}
-                    >
-                        <PasswordField
-                            name="password"
-                            onChange={handleChange}
-                            value={signupData.password}
-                        />
-                    </PasswordValidationPopup>
-                </FormField>
-                <FormField
+                    <PasswordField
+                        label="Password"
+                        placeholder="Enter your password"
+                        name="password"
+                        onChange={handleChange}
+                        value={signupData.password}
+                        isRequired
+                        isInvalid={touchedFields.password && !!validationErrors.passwordError}
+                        errorMessage={validationErrors.passwordError}
+                    />
+                </PasswordValidationPopup>
+                <PasswordField
                     label="Confirm Password"
                     placeholder="Confirm your password"
-                    type="password"
                     name="confirmPassword"
-                    value={signupData.confirmPassword}
                     onChange={handleChange}
+                    value={signupData.confirmPassword}
                     isRequired
                     isInvalid={touchedFields.confirmPassword && !!validationErrors.confirmPasswordError}
                     errorMessage={validationErrors.confirmPasswordError}

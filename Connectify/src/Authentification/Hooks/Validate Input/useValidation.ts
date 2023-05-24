@@ -27,7 +27,7 @@ const useFieldValidation = () => {
             setFirstNameError('First name is required');
             return false;
         } else if (firstName.length > 10) {
-            setFirstNameError('First name should not exceed 50 characters');
+            setFirstNameError('First name should not exceed 10 characters');
             return false;
         }
         setFirstNameError(null);
@@ -39,7 +39,7 @@ const useFieldValidation = () => {
             setLastNameError('Last name is required');
             return false;
         } else if (lastName.length > 10) {
-            setLastNameError('Last name should not exceed 50 characters');
+            setLastNameError('Last name should not exceed 10 characters');
             return false;
         }
         setLastNameError(null);

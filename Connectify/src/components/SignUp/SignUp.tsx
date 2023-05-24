@@ -5,6 +5,8 @@ import {
 import useSignUp from "../../Authentification/Hooks/SignUp Hook/useSignUp";
 import { SignUpStepOneForm } from "./Step One Form/StepOneForm";
 import { SignUpStepTwoForm } from "./Step Two Form/StepTwoForm";
+import usePasswordValidation from "../../Authentification/Password Hook/usePassValid";
+import useFieldValidation from "../../Authentification/Hooks/Validate Input/useValidation";
 
 export function SignUpForm() {
     const {
@@ -13,14 +15,18 @@ export function SignUpForm() {
         handleSignUp,
         step,
         setStep,
-        passwordValidationStates,
         validationErrors,
         touchedFields,
-        handleNext
+        handleNext,
     } = useSignUp();
+
+    const passwordValidationStates = usePasswordValidation();
 
     const handleChange = (event) => {
         handleSignupDataChange(event.target.name, event.target.value);
+        if (event.target.name === 'password') {
+            passwordValidationStates.validatePassword(event.target.value);
+        }
     };
 
     const handleNextClick = (event) => {
@@ -42,6 +48,7 @@ export function SignUpForm() {
                         signupData={signupData}
                         validationErrors={validationErrors}
                         touchedFields={touchedFields}
+                        passwordValidationStates={passwordValidationStates}
                     />
                 ) : (
                     <SignUpStepTwoForm
@@ -49,10 +56,11 @@ export function SignUpForm() {
                         signupData={signupData}
                         validationErrors={validationErrors}
                         touchedFields={touchedFields}
+                        passwordValidationStates={passwordValidationStates}
                     />
                 )}
                 <Button
-                    type="button" // this prevents form submission
+                    type="button" 
                     width="full"
                     mt={4}
                     onClick={step === 1 ? handleNextClick : handleSubmitClick}
