@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { get, ref, set, update } from 'firebase/database';
+import { get, push, ref, set, update } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
 export interface Team {
@@ -30,6 +30,9 @@ export const teamsApi = createApi({
             case 'update':
                 await update(ref(database, url), body);
                 return { data: body };
+            case 'set':
+                await set(ref(database, url), body);
+                return { data: body };
             default:
                 throw new Error('Invalid method');
         }
@@ -40,8 +43,8 @@ export const teamsApi = createApi({
         }),
         createTeam: builder.mutation<Team, Partial<Team>>({
             query: (newTeam) => ({
-                url: `teams/${newTeam.id}`,
-                method: 'update',
+                url: `teams/${newTeam.uid}`,
+                method: 'set',
                 body: newTeam,
             }),
         }),
