@@ -27,12 +27,17 @@ const LandingPage: React.FC<LandingPageProps> = ({
   const [formComponent, setFormComponent] = useState("signin");
 
   return (
-    <Grid templateColumns="repeat(6, 1fr)" gap={6} h="100vh" width="100vw">
+    <Grid
+      templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+      gap={6}
+      h="100vh"
+      width="100vw">
       <Flex
         alignItems="center"
         justifyContent="flex-end"
-        gridColumn="span 3"
-        mr={8}
+        gridColumn={{ base: "span 1", md: "span 1" }}
+        mr={{ base: "0", md: "8" }}
+        padding={{ base: "8", md: "0" }}
       >
         <VStack
           p={8}
@@ -86,7 +91,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         bgImage={`url(${bgImage})`}
         bgPos="center"
         bgSize="cover"
-        gridColumn="span 3"
+        gridColumn={{ base: "span 1", md: "span 1" }}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
