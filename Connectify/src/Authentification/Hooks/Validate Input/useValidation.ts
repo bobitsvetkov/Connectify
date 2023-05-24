@@ -1,4 +1,4 @@
-import { SignupData } from "../../../types/interfaces";
+import { SignUpData } from "../../../types/interfaces";
 import { useState } from "react";
 const validateEmail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -47,7 +47,7 @@ const useFieldValidation = () => {
     };
 
 
-    const validateFields = async (data: Partial<SignupData>): Promise<string[]> => {
+    const validateFields = async (data: Partial<SignUpData>): Promise<string[]> => {
         return new Promise<string[]>(resolve => {
             let errorMessages: string[] = [];
 
