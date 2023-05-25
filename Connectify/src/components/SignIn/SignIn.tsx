@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   FormControl,
@@ -9,12 +8,8 @@ import {
   Button,
   Text,
   Flex,
-  useColorModeValue,
-  VStack,
-  Grid,
   Stack,
   Divider,
-  useToast,
   FormErrorMessage,
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
@@ -22,12 +17,30 @@ import { PasswordField } from "../Password Field/PasswordField";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useSignIn from "../../Authentification/Hooks/Sign In Hook/useSignIn";
+import ForgotPassModal from "../ForgetPassword/ForgerPasswordModal";
+import { useState } from "react";
 
 export const MotionBox = motion(Box);
 
 export function SignInForm() {
   const navigate = useNavigate();
   const { user, handleUserChange, handleSignIn, errorMessage } = useSignIn();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleForgotPassword = () => {
+    console.log("Forgot password");
+  };
+
+  const handleResetPasswordSuccess = () => {
+    console.log("Password reset email sent");
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -58,9 +71,15 @@ export function SignInForm() {
         </FormControl>
         <Flex justifyContent="space-between" alignItems="center">
           <Checkbox name="persistent">Remember me</Checkbox>
-          <Link href="#replace-with-a-link" fontWeight="bold">
+          <Link onClick={handleOpenModal} fontWeight="bold">
             Forgot password
           </Link>
+          <ForgotPassModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onForgotPass={handleForgotPassword}
+            onSuccess={handleResetPasswordSuccess}
+          />
         </Flex>
         <Button type="submit" width="full" mt={4}>
           Sign in
