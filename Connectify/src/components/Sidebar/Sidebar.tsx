@@ -24,10 +24,10 @@ const Sidebar: React.FC = () => {
     <Flex
       as="nav"
       aria-label="Main Navigation"
-      position="fixed"
-      top="74.5"
+      position="absolute"
+      top="74.5px"
       left="0"
-      height="100vh"
+      height="80vh"
       direction="row"
       padding="1rem"
       bg="gray.700"
@@ -66,12 +66,14 @@ const Sidebar: React.FC = () => {
       </Box>
       <Divider orientation="vertical" />
       <Box
-        width="150px"
+        width={activeContent ? "150x" : "100"}
         height="100%"
         display="flex"
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        overflowX="hidden"
+        transition="width 0.3s ease-in-out"
       >
         {activeContent === SidebarContent.ADD && (
           <CreateTeamModal isOpen={isOpen} onClose={onClose} />
