@@ -7,15 +7,15 @@ import FooterDetails from "../components/Footer";
 
 function Layout({ children }) {
   return (
-    <Flex direction="column" height="100vh" mb="100px">
+    <Flex direction="column" height="100vh">
       <Header />
       <Flex direction="row" flexGrow="1">
-        <Sidebar />
+        <Sidebar flex="0 0 auto" />
         <Box
           bg="grey"
           flex="1"
-          height="700px"
-          width="100px"
+          height="100%"
+          display="flex"
           justifyContent="center"
           alignItems="center"
         >
