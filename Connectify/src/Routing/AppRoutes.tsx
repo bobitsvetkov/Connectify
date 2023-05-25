@@ -1,13 +1,30 @@
 import React from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
-import { useState } from "react";
+import Layout from "../pages/Layout";
 import HomePage from "../pages/HomePage";
+import ChatBox from "../components/ChatBox/ChatBox";
+
+const routes = [
+  {
+    name: "Home",
+    path: "/home",
+    element: (
+      <Layout>
+        <HomePage />
+      </Layout>
+    ),
+  },
+  {
+    name: "Chat",
+    path: "/chat",
+    element: (
+      <Layout>
+        <ChatBox />
+      </Layout>
+    ),
+  },
+];
 
 const AppRoutes = () => {
   return (
@@ -22,9 +39,16 @@ const AppRoutes = () => {
             />
           }
         />
-        <Route path="/home" element={<HomePage />} />
+        {generateRoutes()}
       </Routes>
     </Router>
   );
 };
+
+function generateRoutes() {
+  return routes.map((route) => (
+    <Route key={route.path} path={route.path} element={route.element} />
+  ));
+}
+
 export default AppRoutes;
