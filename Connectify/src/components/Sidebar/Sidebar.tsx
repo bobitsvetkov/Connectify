@@ -32,18 +32,14 @@ const Sidebar: React.FC = () => {
     <Flex
       as="nav"
       aria-label="Main Navigation"
-      position="absolute"
-      top="74.5px"
-      left="0"
-      height="80vh"
-      direction="row"
+      direction="column"
+      height="100%"
       padding="1rem"
       bg="gray.700"
       color="white"
     >
       <Box
         width="60px"
-        height="100%"
         display="flex"
         flexDirection="column"
         marginRight="1rem"
@@ -74,8 +70,7 @@ const Sidebar: React.FC = () => {
       </Box>
       <Divider orientation="vertical" />
       <Box
-        width={activeContent ? "150x" : "100"}
-        height="100%"
+        width={activeContent ? "150px" : "100%"}
         display="flex"
         flexDirection="column"
         justifyContent="center"
