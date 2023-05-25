@@ -1,4 +1,4 @@
-import { SignupData } from "../../../types/interfaces";
+import { SignUpData } from "../../../types/interfaces";
 import { useState } from "react";
 const validateEmail = (email) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -27,7 +27,7 @@ const useFieldValidation = () => {
             setFirstNameError('First name is required');
             return false;
         } else if (firstName.length > 10) {
-            setFirstNameError('First name should not exceed 50 characters');
+            setFirstNameError('First name should not exceed 10 characters');
             return false;
         }
         setFirstNameError(null);
@@ -39,7 +39,7 @@ const useFieldValidation = () => {
             setLastNameError('Last name is required');
             return false;
         } else if (lastName.length > 10) {
-            setLastNameError('Last name should not exceed 50 characters');
+            setLastNameError('Last name should not exceed 10 characters');
             return false;
         }
         setLastNameError(null);
@@ -47,7 +47,7 @@ const useFieldValidation = () => {
     };
 
 
-    const validateFields = async (data: Partial<SignupData>): Promise<string[]> => {
+    const validateFields = async (data: Partial<SignUpData>): Promise<string[]> => {
         return new Promise<string[]>(resolve => {
             let errorMessages: string[] = [];
 

@@ -1,7 +1,7 @@
 import { ref, set, get } from 'firebase/database';
 import { auth } from '../../../config/firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { SignupData } from '../../../types/interfaces';
+import { SignUpData } from '../../../types/interfaces';
 import { database } from '../../../config/firebaseConfig';
 const useFirebaseHandler = () => {
     const checkUsernameExists = async (username: string) => {
@@ -10,7 +10,7 @@ const useFirebaseHandler = () => {
         return usernameSnap.exists();
     };
 
-    const createUser = async (signupData: SignupData) => {
+    const createUser = async (signupData: SignUpData) => {
         const { email, password, username, phoneNumber, photoURL, firstName, lastName } = signupData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await set(ref(database, `users/${userCredential.user.uid}`), { username, email, phoneNumber, photoURL, firstName, lastName });
