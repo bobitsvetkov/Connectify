@@ -5,7 +5,7 @@ import { database } from '../config/firebaseConfig';
 export interface Team {
     name: string;
     owner: string;
-    id: string;
+    uid: string;
     participants: object;
     messages: object;
     photoUrl: string;
@@ -54,10 +54,14 @@ export const teamsApi = createApi({
                 method: 'update',
                 body: message,
             }),
-        })
+        }),
+        getTeamMessages: builder.query<{ [key: string]: Message }, string>({
+            query: (teamId) => ({ url: `teams/${teamId}/messages`, method: 'get' }),
+          }),
 
     }),
 });
 
-export const { useGetTeamsQuery, useAddMessageToTeamMutation, useCreateTeamMutation } = teamsApi;
+export const { useGetTeamsQuery, useCreateTeamMutation, useAddMessageToTeamMutation, useGetTeamMessagesQuery } = teamsApi;
+
 
