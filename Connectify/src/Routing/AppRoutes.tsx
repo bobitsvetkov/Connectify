@@ -24,6 +24,15 @@ const routes = [
       </Layout>
     ),
   },
+  {
+    name: "TeamChat",
+    path: "/teamChat/:teamUid",
+    element: (
+      <Layout>
+        <Route path="/teamChat/:teamUid" render={({match}) => <ChatBox id={match.params.teamUid} type='team'/>} />
+      </Layout>
+    ),
+}
 ];
 
 const AppRoutes = () => {
