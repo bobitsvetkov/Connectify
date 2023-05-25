@@ -4,6 +4,7 @@ import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
 import UserList from "../UserList";
 import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
 import { useDisclosure } from "@chakra-ui/react";
+import { useNavigate } from "react-router";
 
 enum SidebarContent {
   ADD,
@@ -12,12 +13,19 @@ enum SidebarContent {
 }
 
 const Sidebar: React.FC = () => {
-  const [activeContent, setActiveContent] = useState<SidebarContent | null>(null);
+  const [activeContent, setActiveContent] = useState<SidebarContent | null>(
+    null
+  );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
 
   const handleAddClick = () => {
     setActiveContent(SidebarContent.ADD);
     onOpen();
+  };
+  const handleSearchClick = () => {
+    setActiveContent(SidebarContent.SEARCH);
+    navigate("/chat");
   };
 
   return (
@@ -54,7 +62,7 @@ const Sidebar: React.FC = () => {
           mb="1rem"
           variant="ghost"
           colorScheme="teal"
-          onClick={() => setActiveContent(SidebarContent.SEARCH)}
+          onClick={handleSearchClick}
         />
         <IconButton
           aria-label="Info Icon"
