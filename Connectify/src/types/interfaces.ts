@@ -15,7 +15,7 @@ export interface LandingPageProps {
     detailsText: string;
 }
 
-export interface SignupData extends User {
+export interface SignUpData extends User {
     password: string;
     confirmPassword: string;
 }

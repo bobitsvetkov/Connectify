@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SignupData } from '../../../types/interfaces';
+import { SignUpData } from '../../../types/interfaces';
 import useToastHandler from '../../../components/Toast/toastHandler';
 import useValidationHandler from '../Validate Input/useValidation';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
@@ -11,7 +11,7 @@ import { useEffect } from 'react';
 const useSignUp = () => {
     const [step, setStep] = useState(1);
     const [formSubmitted, setFormSubmitted] = useState(false); 
-    const [signupData, setSignupData] = useState<SignupData>({
+    const [signupData, setSignupData] = useState<SignUpData>({
         firstName: '',
         lastName: '',
         uid: '',
@@ -68,7 +68,7 @@ const useSignUp = () => {
         validateUsername
     } = useFieldValidation();
 
-    const handleSignupDataChange = (name: keyof SignupData, value: string) => {
+    const handleSignupDataChange = (name: keyof SignUpData, value: string) => {
         const newSignupData = {
             ...signupData,
             [name]: value,

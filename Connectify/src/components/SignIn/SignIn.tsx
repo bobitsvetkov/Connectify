@@ -37,7 +37,7 @@ export function SignInForm() {
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing="6">
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={!!errorMessage.email}>
           <FormLabel>Email</FormLabel>
           <Input
             placeholder="Enter your email"
@@ -46,15 +46,16 @@ export function SignInForm() {
             value={user.email}
             onChange={(e) => handleUserChange("email", e.target.value)}
           />
+          <FormErrorMessage>{errorMessage.email}</FormErrorMessage>
         </FormControl>
-        <FormControl isRequired>
+        <FormControl isRequired isInvalid={!!errorMessage.password}>
           <FormLabel>Password</FormLabel>
           <PasswordField
             value={user.password}
             onChange={(e) => handleUserChange("password", e.target.value)}
           />
+          <FormErrorMessage>{errorMessage.password}</FormErrorMessage>
         </FormControl>
-        {errorMessage && <Text color="red.500">{errorMessage}</Text>}
         <Flex justifyContent="space-between" alignItems="center">
           <Checkbox name="persistent">Remember me</Checkbox>
           <Link href="#replace-with-a-link" fontWeight="bold">

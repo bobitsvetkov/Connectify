@@ -7,7 +7,7 @@ import { SignInData } from '../../../types/interfaces';
 
 const useSignIn = () => {
     const [user, setUser] = useState<SignInData>({ email: '', password: '' });
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
     const showToast = useToastHandler();
     const navigate = useNavigate();
 
@@ -31,14 +31,16 @@ const useSignIn = () => {
             let errorCode = (error as any).code; // TypeScript workaround
             switch (errorCode) {
                 case 'auth/user-not-found':
+                    setErrorMessage({ email: 'User with this email not found.', password: '' });
+                    break;
                 case 'auth/wrong-password':
-                    setErrorMessage('Invalid email or password.');
+                    setErrorMessage({ email: '', password: 'Invalid password.' });
                     break;
                 case 'auth/invalid-email':
-                    setErrorMessage('The email address is badly formatted.');
+                    setErrorMessage({ email: 'The email address is invalid.', password: '' });
                     break;
                 default:
-                    setErrorMessage('An unknown error occurred.');
+                    setErrorMessage({ email: 'An unknown error occurred.', password: 'An unknown error occurred.' });
                     break;
             }
         }
