@@ -27,25 +27,24 @@ const LandingPage: React.FC<LandingPageProps> = ({
   );
 
   const [formComponent, setFormComponent] = useState("signin");
-  const [isLargerThan800] = useMediaQuery("(min-width: 800px)");
 
   return (
     <Grid
-      templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+      templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(6, 1fr)"]}
       gap={6}
       h="100vh"
-      width="100vw"
-    >
+      width="100vw">
       <Flex
         alignItems="center"
-        justifyContent="center"
-        gridColumn={{ base: "span 1", md: "span 1" }}
-        padding={{ base: "8", md: "0" }}
+        justifyContent="flex-end"
+        gridColumn={["span 1", "span 1", "span 3"]}
+        mr={8}
       >
-        <Container
-          p={{ base: "5%", md: "8" }}
-          maxWidth="container.md"
+        <VStack
+          p={8}
+          maxWidth="500px"
           width="full"
+          spacing={6}
           boxShadow="lg"
           rounded="lg"
           bg={useColorModeValue("white", "gray.800")}
@@ -54,17 +53,17 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <ColorModeSwitcher />
           </Flex>
           <Box textAlign="center">
-            <Text fontSize={{ base: "4vw", md: "2xl" }} fontWeight="bold">
+            <Text fontSize="2xl" fontWeight="bold">
               {welcomeText}
             </Text>
-            <Text fontSize={{ base: "2vw", md: "md" }}>{detailsText}</Text>
+            <Text>{detailsText}</Text>
           </Box>
           <Box w="100%">
             {formComponent === "signin" ? (
               <>
                 <SignInForm />
                 <Flex justifyContent="center">
-                  <Text fontSize={{ base: "2vw", md: "md" }}>
+                  <Text>
                     Don't have an account?{" "}
                     <Link to="/" onClick={() => setFormComponent("signup")}>
                       Sign up
@@ -76,7 +75,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
               <>
                 <SignUpForm />
                 <Flex justifyContent="center">
-                  <Text fontSize={{ base: "2vw", md: "md" }}>
+                  <Text>
                     Already have an account?{" "}
                     <Link to="/" onClick={() => setFormComponent("signin")}>
                       Sign in
@@ -86,20 +85,19 @@ const LandingPage: React.FC<LandingPageProps> = ({
               </>
             )}
           </Box>
-        </Container>
+        </VStack>
       </Flex>
-      {isLargerThan800 && (
-        <MotionBox
-          key={bgImage}
-          bgImage={`url(${bgImage})`}
-          bgPos="center"
-          bgSize="cover"
-          gridColumn={{ base: "span 1", md: "span 1" }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
-        />
-      )}
+      <MotionBox
+        key={bgImage}
+        bgImage={`url(${bgImage})`}
+        bgPos="center"
+        bgSize="cover"
+        gridColumn={["span 1", "span 1", "span 3"]}
+        display={["none", "none", "block"]} 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      />
     </Grid>
   );
 };
