@@ -6,6 +6,8 @@ import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
 import { useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
 import { useGetTeamsQuery } from "../../api/TeamsApi";
+import { useGetUserByIdQuery } from "../../api/UsersApi";
+import { getAuth } from "firebase/auth";
 
 enum SidebarContent {
   ADD,
@@ -19,7 +21,8 @@ const Sidebar: React.FC = () => {
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
-
+  const currUser = getAuth().currentUser;
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
   const { data: teams = {} } = useGetTeamsQuery();
 
   const handleAddClick = () => {
@@ -31,6 +34,14 @@ const Sidebar: React.FC = () => {
     setActiveContent(SidebarContent.SEARCH);
     navigate("/chat");
   };
+
+  if (isUserLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isUserError || !user) {
+    return <div>Error loading user</div>;
+  }
 
   return (
     <Flex
@@ -77,11 +88,12 @@ const Sidebar: React.FC = () => {
         />
         <Box overflowY='auto' >
           {teams && Object.values(teams).map(team => {
+            const isInTeam = Object.values(team.participants).includes(user.username) || false;
             return (
-              <Avatar
+              isInTeam && <Avatar
                 mt={'5px'}
                 ml={'5px'}
-                key={team.id}
+                key={team.uid}
                 name={team.name}
                 src={team.photoUrl}
               />
