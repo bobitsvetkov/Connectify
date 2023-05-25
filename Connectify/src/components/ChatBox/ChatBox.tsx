@@ -24,7 +24,7 @@ import { User, useGetUserByIdQuery } from "../../api/UsersApi";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { Avatar } from "@chakra-ui/react";
-const ChatBox: React.FC = () => {
+const ChatBox: React.FC = ({ props }) => {
   const [message, setMessage] = useState<string>("");
   const activeChatUser: User | null = useSelector(
     (state: RootState) => state.activeUser.user
@@ -86,80 +86,85 @@ const ChatBox: React.FC = () => {
   };
 
   return (
-    <VStack
-      height="80vh"
-      width={boxSize}
-      borderWidth={1}
-      borderRadius="lg"
-      padding={5}
-      bg={bg}
-      boxShadow="xl"
-      ml="30px"
-      mt="30px"
-    >
-      <Box fontSize="xl">
-        {activeChatUser
-          ? activeChatUser.firstName + " " + activeChatUser.lastName
-          : ""}
-      </Box>
-      <Divider orientation="horizontal" color="black" />
-      <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
-        {chatData?.messages &&
-          Object.values(chatData.messages)
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map((message, index) => (
-              <Box
-                key={index}
-                display="flex"
-                alignItems="center"
-                justifyContent={
-                  message.user === user.uid ? "flex-end" : "flex-start"
-                }
-                marginBottom="1rem"
-              >
-                {message.user !== user.uid && (
-                  <Avatar
-                    size="sm"
-                    name={activeChatUser?.firstName}
-                    src={activeChatUser?.avatar}
-                    marginRight="0.5rem"
-                  />
-                )}
-                <Box
-                  maxWidth="40%"
-                  padding="1rem 1rem"
-                  borderRadius="lg"
-                  backgroundColor={
-                    message.user === user.uid ? "blue.500" : "#a2adbb"
-                  }
-                  color={message.user === user.uid ? "white" : "black"}
-                >
-                  {message.content}
-                </Box>
-              </Box>
-            ))}
-      </Box>
-      <HStack width="100%" spacing={4}>
-        <Input
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              handleSend();
-            }
-          }}
-          flexGrow={1}
-        />
-        <Button
-          onClick={handleSend}
-          isLoading={isAddingMessage}
-          colorScheme="teal"
+    <Flex direction="column" minHeight="100vh" ml={100}>
+      <Box flex="1" ml={{ base: 0, md: 60 }} p="4">
+        <VStack
+          height="70vh"
+          width={boxSize}
+          borderWidth={1}
+          borderRadius="lg"
+          padding={5}
+          bg={bg}
+          boxShadow="xl"
+          ml="30px"
+          mt="30px"
         >
-          Send
-        </Button>
-      </HStack>
-    </VStack>
+          <Box fontSize="xl">
+            {activeChatUser
+              ? activeChatUser.firstName + " " + activeChatUser.lastName
+              : ""}
+          </Box>
+          <Divider orientation="horizontal" color="black" />
+          <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
+            {chatData?.messages &&
+              Object.values(chatData.messages)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map((message, index) => (
+                  <Box
+                    key={index}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent={
+                      message.user === user.uid ? "flex-end" : "flex-start"
+                    }
+                    marginBottom="1rem"
+                  >
+                    {message.user !== user.uid && (
+                      <Avatar
+                        size="sm"
+                        name={activeChatUser?.firstName}
+                        src={activeChatUser?.avatar}
+                        marginRight="0.5rem"
+                      />
+                    )}
+                    <Box
+                      maxWidth="40%"
+                      padding="1rem 1rem"
+                      borderRadius="lg"
+                      backgroundColor={
+                        message.user === user.uid ? "blue.500" : "#a2adbb"
+                      }
+                      color={message.user === user.uid ? "white" : "black"}
+                    >
+                      {message.content}
+                    </Box>
+                  </Box>
+                ))}
+          </Box>
+          <HStack width="100%" spacing={4}>
+            <Input
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                }
+              }}
+              flexGrow={1}
+            />
+            <Button
+              onClick={handleSend}
+              isLoading={isAddingMessage}
+              colorScheme="teal"
+            >
+              Send
+            </Button>
+          </HStack>
+        </VStack>
+      </Box>
+      {/* <FooterDetails /> */}
+    </Flex>
   );
 };
 
