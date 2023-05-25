@@ -75,7 +75,7 @@ const Sidebar: React.FC = () => {
           colorScheme="teal"
           onClick={() => setActiveContent(SidebarContent.INFO)}
         />
-        <Box>
+        <Box overflowY='auto' >
           {teams && Object.values(teams).map(team => {
             return (
               <Avatar
