@@ -83,15 +83,13 @@ const ChatBox: React.FC = () => {
     <Flex direction="column" minHeight="100vh" ml={100}>
       <Box flex="1" ml={{ base: 0, md: 60 }} p="4">
         <VStack
-          height="70vh"
-          width={boxSize}
+          height="100%"
+          width="100%"
           borderWidth={1}
           borderRadius="lg"
           padding={5}
           bg={bg}
           boxShadow="xl"
-          ml="30px"
-          mt="30px"
         >
           <Box fontSize="xl">
             {activeChatUser
