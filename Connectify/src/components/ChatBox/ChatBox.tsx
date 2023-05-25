@@ -24,13 +24,11 @@ import { User, useGetUserByIdQuery } from "../../api/UsersApi";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { Avatar } from "@chakra-ui/react";
-const ChatBox: React.FC = ({ props }) => {
+
+const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
-  const activeChatUser: User | null = useSelector(
-    (state: RootState) => state.activeUser.user
-  );
-  const [addMessageToChat, { isLoading: isAddingMessage }] =
-    useAddMessageToChatMutation();
+  const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
+  const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
   const { data: chats = {} } = useGetChatsQuery();
   const boxSize = useBreakpointValue({ base: "80%", md: "60%", lg: "40%" });
   const bg = useColorModeValue("gray.200", "gray.700");
@@ -38,11 +36,7 @@ const ChatBox: React.FC = ({ props }) => {
 
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
   const activeChatId =
     user && activeChatUser
       ? [user.username, activeChatUser.username].sort().join("-")
