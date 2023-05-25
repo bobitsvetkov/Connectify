@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
+import { Avatar, Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
 import UserList from "../UserList";
 import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
 import { useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
+import { useGetTeamsQuery } from "../../api/TeamsApi";
 
 enum SidebarContent {
   ADD,
@@ -19,10 +20,13 @@ const Sidebar: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
 
+  const { data: teams = {} } = useGetTeamsQuery();
+
   const handleAddClick = () => {
     setActiveContent(SidebarContent.ADD);
     onOpen();
   };
+
   const handleSearchClick = () => {
     setActiveContent(SidebarContent.SEARCH);
     navigate("/chat");
@@ -71,6 +75,20 @@ const Sidebar: React.FC = () => {
           colorScheme="teal"
           onClick={() => setActiveContent(SidebarContent.INFO)}
         />
+        <Box>
+          {teams && Object.values(teams).map(team => {
+            return (
+              <Avatar
+                mt={'5px'}
+                ml={'5px'}
+                key={team.id}
+                name={team.name}
+                src={team.photoUrl}
+              />
+            );
+          })}
+        </Box>
+
       </Box>
       <Divider orientation="vertical" />
       <Box
