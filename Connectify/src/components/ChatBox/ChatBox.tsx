@@ -80,8 +80,8 @@ const ChatBox: React.FC = () => {
   };
 
   return (
-    <Flex direction="column" minHeight="100vh" ml={100}>
-      <Box flex="1" ml={{ base: 0, md: 60 }} p="4">
+    <Flex direction="column" height="100%">
+      <Box flex="1" overflow="auto" p="4">
         <VStack
           height="100%"
           width="100%"
