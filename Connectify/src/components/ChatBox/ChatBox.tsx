@@ -24,13 +24,15 @@ import { User, useGetUserByIdQuery } from "../../api/UsersApi";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { Avatar } from "@chakra-ui/react";
+import EmojiPicker from 'emoji-picker-react';
+import Emojis from "./Emojis/Emojis";
 
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
+  const [emojiPickerState, SetEmojiPicker] = useState(false);
   const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
   const { data: chats = {} } = useGetChatsQuery();
-  const boxSize = useBreakpointValue({ base: "80%", md: "60%", lg: "40%" });
   const bg = useColorModeValue("gray.200", "gray.700");
   const [chatData, setChatData] = useState<any | null>(null);
 
@@ -144,6 +146,12 @@ const ChatBox: React.FC = () => {
                 }
               }}
               flexGrow={1}
+            />
+            <Emojis
+              message={message}
+              setMessage={setMessage}
+              emojiPickerState={emojiPickerState}
+              setEmojiPickerState={SetEmojiPicker}
             />
             <Button
               onClick={handleSend}
