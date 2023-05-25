@@ -144,7 +144,9 @@ const ChatBox: React.FC = () => {
             align="center"
             mx="auto"
             mt={4}
+            bg="black"
             rounded="full"
+            padding="0.75rem 1rem"
             _focus={{
               outline: "none",
             }}
@@ -157,29 +159,25 @@ const ChatBox: React.FC = () => {
               emojiPickerState={emojiPickerState}
               setEmojiPickerState={SetEmojiPicker}
             />
-            <Box
+            <Spacer mx={2} />
+            <Input
+              placeholder="Type a message..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                }
+              }}
               flexGrow={1}
-              display="flex"
-              alignItems="center"
-              rounded="full"
-            >
-              <Input
-                placeholder="Type a message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend();
-                  }
-                }}
-                bg={useColorModeValue("gray.200", "gray.700")}
-                _placeholder={{
-                  color: "white",
-                }}
-                color="white"
-                border="none"
-              />
-            </Box>
+              bg="black"
+              _placeholder={{
+                color: "white",
+              }}
+              color="white"
+              border="none"
+            />
+            <Spacer mx={2} />
             <IconButton
               onClick={handleSend}
               isLoading={isAddingMessage}
