@@ -24,3 +24,8 @@ export interface SignInData {
     email: string;
     password: string;
 }
+
+export interface UserSettingsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+  }
