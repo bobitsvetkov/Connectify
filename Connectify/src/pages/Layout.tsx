@@ -3,22 +3,17 @@ import { Flex, Box } from "@chakra-ui/react";
 import Header from "../components/HeaderMenu/HeaderMenu";
 import Sidebar from "../components/Sidebar/Sidebar";
 import ChatBox from "../components/ChatBox/ChatBox";
+import { Divider } from "@chakra-ui/react";
 import FooterDetails from "../components/Footer";
 
 function Layout({ children }) {
   return (
-    <Flex direction="column" height="100vh" mb="100px">
+    <Flex direction="column" height="100vh" overflow="hidden">
       <Header />
-      <Flex direction="row" flexGrow="1">
-        <Sidebar />
-        <Box
-          bg="grey"
-          flex="1"
-          height="700px"
-          width="100px"
-          justifyContent="center"
-          alignItems="center"
-        >
+      <Flex direction="row" flex="1" overflow="hidden">
+        <Sidebar pr={4} />
+        <Divider orientation="vertical" />
+        <Box flex="1" overflow="hidden">
           {children}
         </Box>
       </Flex>
