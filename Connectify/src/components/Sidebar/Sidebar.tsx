@@ -32,7 +32,7 @@ const Sidebar: React.FC = () => {
     <Flex
       as="nav"
       aria-label="Main Navigation"
-      direction="column"
+      direction="row"
       height="100%"
       padding="1rem"
       bg="gray.700"
@@ -70,12 +70,13 @@ const Sidebar: React.FC = () => {
       </Box>
       <Divider orientation="vertical" />
       <Box
-        width={activeContent ? "150px" : "100%"}
+        width={activeContent ? "min-content" : "0"}
+        maxWidth="500px"
+        height="100%"
         display="flex"
         flexDirection="column"
-        justifyContent="center"
         alignItems="center"
-        overflowX="hidden"
+        overflowY="auto"
         transition="width 0.3s ease-in-out"
       >
         {activeContent === SidebarContent.ADD && (
@@ -87,5 +88,4 @@ const Sidebar: React.FC = () => {
     </Flex>
   );
 };
-
 export default Sidebar;
