@@ -12,7 +12,7 @@ import {
 import { RootState } from "../store";
 import ChatBox from "./ChatBox/ChatBox";
 
-export function RightPanel(props) {
+export function RightPanel({ children }) {
   const activeChatUser = useSelector(
     (state: RootState) => state.activeUser.user
   );
@@ -22,11 +22,10 @@ export function RightPanel(props) {
       bg="#f0f2f5"
       borderBottom="6px solid #43c960"
       position="relative"
-      {...props}
       w="70%"
     >
       {activeChatUser ? (
-        <ChatBox />
+        <>{children}</>
       ) : (
         <Flex
           direction="column"

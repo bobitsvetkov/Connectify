@@ -23,8 +23,6 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
   if (isUserError || !user) return <div>Error loading user</div>;
 
   return (
-    <Flex direction="column" height="100%">
-      <Box flex="1" overflow="auto" p="4">
         <VStack
           height="100%"
           width="100%"
@@ -41,8 +39,6 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
           <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
           <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
         </VStack>
-      </Box>
-    </Flex>
   );
 };
 
