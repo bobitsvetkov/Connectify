@@ -12,9 +12,14 @@ export interface Team {
     photoUrl: string;
 }
 export interface Message {
-    id: string;
+    uid: string;
     user: string;
     content: string;
+}
+export interface Channel {
+    uid: string;
+    name: string;
+    messages: object;
 }
 
 export const teamsApi = createApi({
@@ -58,11 +63,18 @@ export const teamsApi = createApi({
         }),
         getTeamMessages: builder.query<{ [key: string]: Message }, string>({
             query: (teamId) => ({ url: `teams/${teamId}/messages`, method: 'get' }),
-          }),
+        }),
+        createChannel: builder.mutation<Channel, { teamId: string, channel: Channel }>({
+            query: ({ teamId, channel }) => ({
+                url: `teams/${teamId}/channels/${channel.id}`,
+                method: 'update',
+                body: channel,
+            }),
+        }),
 
     }),
 });
 
-export const { useGetTeamsQuery, useCreateTeamMutation, useAddMessageToTeamMutation, useGetTeamMessagesQuery } = teamsApi;
+export const { useGetTeamsQuery, useCreateTeamMutation, useAddMessageToTeamMutation, useGetTeamMessagesQuery, useCreateChannelMutation } = teamsApi;
 
 
