@@ -14,11 +14,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
 
     const handleReply = () => {
         if (!currUser) {
-            return null; // Return null or a loading indicator while the user data is being fetched
-        }
-
-        const newMessage = {
-            id: uuidv4()
+            return null;
         }
 
         const reply = {
@@ -31,7 +27,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
         addReplyToMessage({ chatId, messageId, reply });
         setReplyContent("");
         setReplyInputShown(false);
-        setReplyTo(null); // Clear the replyTo state in the parent component
+        setReplyTo(null);
     };
     return (
         <VStack align="flex-start" spacing={4}>
