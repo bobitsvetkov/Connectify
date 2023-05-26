@@ -14,8 +14,11 @@ import UserSettingsModal from "../UserSettings/UserSettingsModal";
 import { database } from "../../config/firebaseConfig";
 import { auth } from "../../config/firebaseConfig";
 
-const AvatarButton: React.FC = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+interface AvatarButtonProps {
+  onClick?: () => void;
+}
+
+const AvatarButton: React.FC = ({ onClick }) => {
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
 
@@ -41,33 +44,14 @@ const AvatarButton: React.FC = () => {
   };
 
   return (
-    <Menu>
-      <MenuButton
-        as={Button}
-        rightIcon={
-          <Avatar
-            size="sm"
-            name={`${firstName} ${lastName}`}
-            src={auth.currentUser?.photoURL}
-          />
-        }
-        variant="outline"
-        borderColor="purple.800"
-        bg="green.100"
-        color="white"
-      >
-        {`${firstName} ${lastName}`}
-      </MenuButton>
-      <MenuList bg="white" color="black">
-        <MenuGroup title="Profile">
-          <MenuItem>My Account</MenuItem>
-          <MenuItem onClick={handleOpenModal}>Settings</MenuItem>
-          <UserSettingsModal isOpen={isModalOpen} onClose={handleCloseModal} />
-        </MenuGroup>
-        <MenuDivider />
-        <MenuItem>Logout</MenuItem>
-      </MenuList>
-    </Menu>
+    <>
+      <Avatar
+        size="sm"
+        name={`${firstName} ${lastName}`}
+        src={auth.currentUser?.photoURL}
+        onClick={onClick}
+      />
+    </>
   );
 };
 
