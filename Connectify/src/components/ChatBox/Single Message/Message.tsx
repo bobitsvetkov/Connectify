@@ -14,8 +14,11 @@ function Message({ message, messageId, chatId, setReplyTo }) {
 
     const handleReply = () => {
         if (!currUser) {
-            console.error("No user is currently logged in.");
-            return;
+            return null; // Return null or a loading indicator while the user data is being fetched
+        }
+
+        const newMessage = {
+            id: uuidv4()
         }
 
         const reply = {
@@ -41,7 +44,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
                     rounded={"lg"}
                     p={6}
                     textAlign="left"
-                    bg={message.user === currUser.uid ? "teal.200" : "gray.200"}
+                    bg={message.user === (currUser?.uid || '') ? "teal.200" : "gray.200"}
                     color="black"
                 >
                     <Text>{message.content}</Text>
