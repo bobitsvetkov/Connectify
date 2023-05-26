@@ -15,10 +15,9 @@ const UserList = () => {
 
   const handleUserClick = (user: User) => {
     dispatch(selectUser(user));
-    setIsOpen(false);
-    navigate(`/chat/${user.uid}`); // navigate to chat with user UID
+    // setIsOpen(false);
+    navigate(`/chat/${user.username}`);
   };
-
 
   const handleTransitionEnd = () => {
     if (!isOpen) {

@@ -24,22 +24,29 @@ import { User, useGetUserByIdQuery } from "../../api/UsersApi";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { Avatar } from "@chakra-ui/react";
+import { useAddMessageToChannelMutation } from "../../api/TeamsApi";
+import { useParams } from "react-router-dom";
 
-const ChatBox: React.FC = () => {
+const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
   const [message, setMessage] = useState<string>("");
   const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
-  const { data: chats = {} } = useGetChatsQuery();
-  const boxSize = useBreakpointValue({ base: "80%", md: "60%", lg: "40%" });
+  const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
   const bg = useColorModeValue("gray.200", "gray.700");
   const [chatData, setChatData] = useState<any | null>(null);
+  const { teamId, channelId, chatUserId } = useParams();
+  const isChat = chatType === 'individual' ? true : false;
 
   const auth = getAuth();
   const currUser = auth.currentUser;
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+
+  console.log(teamId);
+  
+
   const activeChatId =
-    user && activeChatUser
-      ? [user.username, activeChatUser.username].sort().join("-")
+    user && chatUserId
+      ? [user.username, chatUserId].sort().join("-")
       : null;
 
   useEffect(() => {
@@ -49,9 +56,19 @@ const ChatBox: React.FC = () => {
       const unsubscribe = onValue(chatRef, (snapshot) => {
         setChatData(snapshot.val());
       });
+
+      return () => unsubscribe();
+    } else if (teamId && channelId) {
+      const chatRef = ref(database, `teams/${teamId}/channels/${channelId}`);
+
+      const unsubscribe = onValue(chatRef, (snapshot) => {
+        setChatData(snapshot.val());
+      });
+
       return () => unsubscribe();
     }
-  }, [activeChatId]);
+  }, [activeChatId, teamId, channelId]);
+
 
   if (isUserLoading) {
     return <div>Loading...</div>;
@@ -63,18 +80,23 @@ const ChatBox: React.FC = () => {
 
   const handleSend = () => {
     if (message.trim().length > 0 && currUser && activeChatUser && user) {
-      const userIds = [activeChatUser.username, user.username];
+      const userIds = [chatUserId, user.username];
       userIds.sort();
       const chatId = userIds.join("-");
 
       const newMessage = {
-        id: uuidv4(),
+        uid: uuidv4(),
         user: currUser.uid,
         content: message,
         date: new Date().toISOString(),
       };
 
-      addMessageToChat({ chatId, message: newMessage });
+      if (isChat) {
+        addMessageToChat({ chatId: chatId, message: newMessage });
+      } else {
+        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+      }
+
       setMessage("");
     }
   };
@@ -155,7 +177,6 @@ const ChatBox: React.FC = () => {
           </HStack>
         </VStack>
       </Box>
-      {/* <FooterDetails /> */}
     </Flex>
   );
 };

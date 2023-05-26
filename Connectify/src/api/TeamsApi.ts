@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { get, push, ref, set, update } from 'firebase/database';
+import { get, set, update, ref } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
 export interface Team {
@@ -8,14 +8,15 @@ export interface Team {
     uid: string;
     channels: object;
     participants: object;
-    messages: object;
     photoUrl: string;
 }
+
 export interface Message {
     uid: string;
     user: string;
     content: string;
 }
+
 export interface Channel {
     uid: string;
     name: string;
@@ -54,27 +55,24 @@ export const teamsApi = createApi({
                 body: newTeam,
             }),
         }),
-        addMessageToTeam: builder.mutation<Message, { teamId: string, message: Message }>({
-            query: ({ teamId, message }) => ({
-                url: `teams/${teamId}/messages/${message.id}`,
+        addMessageToChannel: builder.mutation<Message, { teamId: string, channelId: string, message: Message }>({
+            query: ({ teamId, channelId, message }) => ({
+                url: `teams/${teamId}/channels/${channelId}/messages/${message.uid}`,
                 method: 'update',
                 body: message,
             }),
         }),
-        getTeamMessages: builder.query<{ [key: string]: Message }, string>({
-            query: (teamId) => ({ url: `teams/${teamId}/messages`, method: 'get' }),
+        getChannelMessages: builder.query<{ [key: string]: Message }, { teamId: string, channelId: string }>({
+            query: ({ teamId, channelId }) => ({ url: `teams/${teamId}/channels/${channelId}/messages`, method: 'get' }),
         }),
         createChannel: builder.mutation<Channel, { teamId: string, channel: Channel }>({
             query: ({ teamId, channel }) => ({
-                url: `teams/${teamId}/channels/${channel.id}`,
+                url: `teams/${teamId}/channels/${channel.uid}`,
                 method: 'update',
                 body: channel,
             }),
         }),
-
     }),
 });
 
-export const { useGetTeamsQuery, useCreateTeamMutation, useAddMessageToTeamMutation, useGetTeamMessagesQuery, useCreateChannelMutation } = teamsApi;
-
-
+export const { useGetTeamsQuery, useCreateTeamMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useAddMessageToChannelMutation } = teamsApi;

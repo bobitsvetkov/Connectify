@@ -6,12 +6,14 @@ import { ref, onValue, off } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
 import { Input, Button, Box, UnorderedList, ListItem } from "@chakra-ui/react";
 
-function ChannelList({ teamId, channels }) {
+function ChannelList({team}) {
 
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(true);
     const [newChannelName, setNewChannelName] = useState("");
     const [createChannel] = useCreateChannelMutation();
+    const teamId = team.uid;
+    const channels = team.channels ? team.channels : {};
     const [channelsData, setChannelsData] = useState(channels);
 
     useEffect(() => {
@@ -34,7 +36,7 @@ function ChannelList({ teamId, channels }) {
         }
     
         const channel = {
-            id: uuidv4(),
+            uid: uuidv4(),
             name: newChannelName,
             messages: {},
         };
@@ -48,7 +50,7 @@ function ChannelList({ teamId, channels }) {
     };
 
     const handleChannelClick = (channel) => {
-        navigate(`/${teamId}/${channel.name}`);
+        navigate(`/${teamId}/${channel.uid}`);
     };
 
     const handleTransitionEnd = () => {

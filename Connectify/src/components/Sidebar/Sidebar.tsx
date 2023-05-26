@@ -123,7 +123,7 @@ const Sidebar: React.FC = () => {
         {activeContent === SidebarContent.SEARCH && <UserList />}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
         {activeContent === SidebarContent.TEAM && selectedTeam && (
-          <ChannelList teamId={selectedTeam.uid} channels={selectedTeam.channels} />
+          <ChannelList team={selectedTeam} />
         )}
       </Box>
     </Flex>
