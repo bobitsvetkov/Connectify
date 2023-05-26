@@ -3,6 +3,7 @@ import { usersApi } from "./api/UsersApi";
 import { chatsApi } from "./api/ChatsApi"; // import chatsApi
 import activeUserReducer from "./features/ActiveUserSlice";
 import { teamsApi } from "./api/TeamsApi";
+import { createSelector } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
@@ -20,3 +21,4 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+export const selectActiveUser = (state: RootState) => state.activeUser.user;

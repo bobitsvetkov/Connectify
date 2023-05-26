@@ -15,16 +15,26 @@ const routes = [
       </Layout>
     ),
   },
-  // {
-  //   name: "Chat",
-  //   path: "/chat",
-  //   element: (
-  //     <Layout>
-  //       <ChatBox />
-  //     </Layout>
-  //   ),
-  // },
+  {
+    name: "Chat",
+    path: "/chat/:chatUserId",
+    element: (
+      <Layout>
+        <ChatBox chatType="individual" />
+      </Layout>
+    ),
+  },
+  {
+    name: "TeamChat",
+    path: "/:teamId/:channelId",
+    element: (
+      <Layout>
+        <ChatBox chatType="team" />
+      </Layout>
+    ),
+  }
 ];
+
 
 const AppRoutes = () => {
   return (

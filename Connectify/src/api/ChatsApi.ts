@@ -3,12 +3,12 @@ import { get, ref, set, update } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
 export interface Chat {
-    id: string;
+    uid: string;
     participants: object;
     messages: object;
 }
 export interface Message {
-    id: string;
+    uid: string;
     user: string;
     content: string;
 }
@@ -40,7 +40,7 @@ export const chatsApi = createApi({
         }),
         addMessageToChat: builder.mutation<Message, { chatId: string, message: Message }>({
             query: ({ chatId, message }) => ({
-                url: `chats/${chatId}/messages/${message.id}`,
+                url: `chats/${chatId}/messages/${message.uid}`,
                 method: 'update',
                 body: message,
             }),

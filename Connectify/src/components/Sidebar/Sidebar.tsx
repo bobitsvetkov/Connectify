@@ -8,17 +8,20 @@ import { useNavigate } from "react-router";
 import { useGetTeamsQuery } from "../../api/TeamsApi";
 import { useGetUserByIdQuery } from "../../api/UsersApi";
 import { getAuth } from "firebase/auth";
+import ChannelList from "../ChannelList/ChannelList";
 
 enum SidebarContent {
   ADD,
   SEARCH,
   INFO,
+  TEAM,
 }
 
 const Sidebar: React.FC = () => {
   const [activeContent, setActiveContent] = useState<SidebarContent | null>(
     null
   );
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const currUser = getAuth().currentUser;
@@ -32,7 +35,11 @@ const Sidebar: React.FC = () => {
 
   const handleSearchClick = () => {
     setActiveContent(SidebarContent.SEARCH);
-    navigate("/chat");
+  };
+
+  const handleTeamClick = (team) => {
+    setSelectedTeam(team);
+    setActiveContent(SidebarContent.TEAM);
   };
 
   if (isUserLoading) {
@@ -92,6 +99,7 @@ const Sidebar: React.FC = () => {
                 key={team.uid}
                 name={team.name}
                 src={team.photoUrl}
+                onClick={() => handleTeamClick(team)}
               />
             );
           })}
@@ -114,6 +122,9 @@ const Sidebar: React.FC = () => {
         )}
         {activeContent === SidebarContent.SEARCH && <UserList />}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
+        {activeContent === SidebarContent.TEAM && selectedTeam && (
+          <ChannelList team={selectedTeam} />
+        )}
       </Box>
     </Flex>
   );
