@@ -6,6 +6,7 @@ export interface Team {
     name: string;
     owner: string;
     uid: string;
+    channels: object;
     participants: object;
     messages: object;
     photoUrl: string;
