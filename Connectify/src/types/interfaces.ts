@@ -41,3 +41,8 @@ export interface UserSettingsModalProps {
     onSuccess?: () => void;
     onForgotPass?: () => void;
   }
+
+  
+export interface UserListProps {
+    setUserListOpen: (isOpen: boolean) => void;
+  }
