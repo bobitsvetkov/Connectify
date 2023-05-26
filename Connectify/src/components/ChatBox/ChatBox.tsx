@@ -144,7 +144,7 @@ const ChatBox: React.FC = () => {
             align="center"
             mx="auto"
             mt={4}
-            bg="black"
+            bg={bg}
             rounded="full"
             padding="0.75rem 1rem"
             _focus={{
@@ -170,12 +170,8 @@ const ChatBox: React.FC = () => {
                 }
               }}
               flexGrow={1}
-              bg="black"
-              _placeholder={{
-                color: "white",
-              }}
-              color="white"
-              border="none"
+              bg={bg}
+              border={"none"}
             />
             <Spacer mx={2} />
             <IconButton
