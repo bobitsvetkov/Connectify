@@ -11,6 +11,7 @@ export interface Message {
     id: string;
     user: string;
     content: string;
+    replies?: { [key: string]: Message };
 }
 
 export const chatsApi = createApi({
@@ -44,9 +45,15 @@ export const chatsApi = createApi({
                 method: 'update',
                 body: message,
             }),
-        })
-
+        }),
+        addReplyToMessage: builder.mutation<void, { chatId: string; messageId: string; reply: Message }>({
+            query: ({ chatId, messageId, reply }) => ({
+                url: `chats/${chatId}/messages/${messageId}/replies/${reply.id}`,
+                method: 'update',
+                body: reply,
+            }),
+        }),
     }),
 });
 
-export const { useGetChatsQuery, useAddMessageToChatMutation, useGetChatByIdQuery } = chatsApi;
+export const { useGetChatsQuery, useAddMessageToChatMutation, useAddReplyToMessageMutation, useGetChatByIdQuery } = chatsApi;

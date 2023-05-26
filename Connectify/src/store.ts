@@ -3,6 +3,7 @@ import { usersApi } from "./api/UsersApi";
 import { chatsApi } from "./api/ChatsApi"; // import chatsApi
 import activeUserReducer from "./features/ActiveUserSlice";
 import { teamsApi } from "./api/TeamsApi";
+import authReducer from "./features/AuthSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     [chatsApi.reducerPath]: chatsApi.reducer,
     [teamsApi.reducerPath]: teamsApi.reducer,
     activeUser: activeUserReducer,
+    auth: authReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
