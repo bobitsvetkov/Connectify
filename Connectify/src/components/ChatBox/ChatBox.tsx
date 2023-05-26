@@ -12,39 +12,48 @@ import {
   Fade,
   HStack,
   Divider,
-  Spacer
+  Spacer,
+  IconButton,
+  Tooltip,
+  Avatar,
 } from "@chakra-ui/react";
+import { ArrowRightIcon, CloseIcon } from "@chakra-ui/icons";
 import { v4 as uuidv4 } from "uuid";
 import { RootState } from "../../store";
+import { FaSmile, FaPaperPlane, FaMicrophone } from "react-icons/fa";
+import { onValue, ref } from "firebase/database";
+import { database } from "../../config/firebaseConfig";
 import {
   useGetChatsQuery,
   useAddMessageToChatMutation,
 } from "../../api/ChatsApi";
+import AppRoutes from "../../Routing/AppRoutes";
 import { getAuth } from "firebase/auth";
 import { User, useGetUserByIdQuery } from "../../api/UsersApi";
-import { onValue, ref } from "firebase/database";
-import { database } from "../../config/firebaseConfig";
-import { Avatar } from "@chakra-ui/react";
-import EmojiPicker from 'emoji-picker-react';
+import Message from "./Single Message/Message";
 import Emojis from "./Emojis/Emojis";
-import { IconButton } from "@chakra-ui/react";
-import { ArrowRightIcon } from "@chakra-ui/icons";
-import { FaSmile, FaPaperPlane, FaMicrophone } from "react-icons/fa";
+import { HiReply } from "react-icons/hi";
+
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPicker] = useState(false);
-  const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
-  const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
+  const [replyTo, setReplyTo] = useState(null);
+  const [showReplyIcon, setShowReplyIcon] = useState<string | null>(null);
+  const activeChatUser: User | null = useSelector(
+    (state: RootState) => state.activeUser.user
+  );
+  const [addMessageToChat, { isLoading: isAddingMessage }] =
+    useAddMessageToChatMutation();
   const triggerEmojiPicker = () => {
     SetEmojiPicker(!emojiPickerState);
   };
   const { data: chats = {} } = useGetChatsQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
   const [chatData, setChatData] = useState<any | null>(null);
-
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+  const { data: user, isLoading: isUserLoading, isError: isUserError } =
+    useGetUserByIdQuery(currUser && currUser.uid);
   const activeChatId =
     user && activeChatUser
       ? [user.username, activeChatUser.username].sort().join("-")
@@ -56,7 +65,19 @@ const ChatBox: React.FC = () => {
 
       const unsubscribe = onValue(chatRef, (snapshot) => {
         setChatData(snapshot.val());
+
+        // Add this part here
+        let ids = snapshot.val()?.messages && Object.values(snapshot.val().messages).map((message) => message.id);
+
+        let checkDuplicates = arr => {
+          let set = new Set(arr);
+          return set.size < arr.length;
+        }
+
+        console.log(checkDuplicates(ids));  // if true, there are duplicates
+
       });
+
       return () => unsubscribe();
     }
   }, [activeChatId]);
@@ -80,23 +101,19 @@ const ChatBox: React.FC = () => {
         user: currUser.uid,
         content: message,
         date: new Date().toISOString(),
+        replyTo: replyTo || null,
       };
 
       addMessageToChat({ chatId, message: newMessage });
       setMessage("");
+      setReplyTo(null);
     }
   };
 
   return (
     <Flex direction="column" height="100%">
       <Box flex="1" overflow="auto" p="4">
-        <VStack
-          height="100%"
-          width="100%"
-          padding={5}
-          boxShadow="xl"
-          spacing={6}
-        >
+        <VStack height="100%" width="100%" padding={5} boxShadow="xl" spacing={6}>
           <Box fontSize="xl">
             {activeChatUser
               ? activeChatUser.firstName + " " + activeChatUser.lastName
@@ -107,36 +124,14 @@ const ChatBox: React.FC = () => {
             {chatData?.messages &&
               Object.values(chatData.messages)
                 .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .map((message, index) => (
-                  <Box
-                    key={index}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={
-                      message.user === user.uid ? "flex-end" : "flex-start"
-                    }
-                    marginBottom="1rem"
-                  >
-                    {message.user !== user.uid && (
-                      <Avatar
-                        size="sm"
-                        name={activeChatUser?.firstName}
-                        src={activeChatUser?.avatar}
-                        marginRight="0.5rem"
-                      />
-                    )}
-                    <Box
-                      maxWidth="40%"
-                      padding="1rem 1rem"
-                      borderRadius="lg"
-                      backgroundColor={
-                        message.user === user.uid ? "blue.500" : "#a2adbb"
-                      }
-                      color={message.user === user.uid ? "white" : "black"}
-                    >
-                      {message.content}
-                    </Box>
-                  </Box>
+                .map((message: any, index: number) => (
+                  <Message
+                    key={message.id}
+                    message={message}
+                    messageId={message.id}
+                    chatId={activeChatId}
+                    setReplyTo={setReplyTo}
+                  />
                 ))}
           </Box>
           <Flex
@@ -144,12 +139,10 @@ const ChatBox: React.FC = () => {
             align="center"
             mx="auto"
             mt={4}
-            bg={bg}
+            bg= {bg}
             rounded="full"
             padding="0.75rem 1rem"
-            _focus={{
-              outline: "none",
-            }}
+            _focus={{ outline: "none" }}
             border="none"
             position="relative"
           >
@@ -170,8 +163,8 @@ const ChatBox: React.FC = () => {
                 }
               }}
               flexGrow={1}
-              bg={bg}
-              border={"none"}
+              bg= {bg}
+              border="none"
             />
             <Spacer mx={2} />
             <IconButton
