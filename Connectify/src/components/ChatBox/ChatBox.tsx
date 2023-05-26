@@ -12,6 +12,7 @@ import {
   Fade,
   HStack,
   Divider,
+  Spacer
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { RootState } from "../../store";
@@ -26,12 +27,17 @@ import { database } from "../../config/firebaseConfig";
 import { Avatar } from "@chakra-ui/react";
 import EmojiPicker from 'emoji-picker-react';
 import Emojis from "./Emojis/Emojis";
-
+import { IconButton } from "@chakra-ui/react";
+import { ArrowRightIcon } from "@chakra-ui/icons";
+import { FaSmile, FaPaperPlane, FaMicrophone } from "react-icons/fa";
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPicker] = useState(false);
   const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
+  const triggerEmojiPicker = () => {
+    SetEmojiPicker(!emojiPickerState);
+  };
   const { data: chats = {} } = useGetChatsQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
   const [chatData, setChatData] = useState<any | null>(null);
@@ -87,11 +93,9 @@ const ChatBox: React.FC = () => {
         <VStack
           height="100%"
           width="100%"
-          borderWidth={1}
-          borderRadius="lg"
           padding={5}
-          bg={bg}
           boxShadow="xl"
+          spacing={6}
         >
           <Box fontSize="xl">
             {activeChatUser
@@ -135,7 +139,27 @@ const ChatBox: React.FC = () => {
                   </Box>
                 ))}
           </Box>
-          <HStack width="100%" spacing={4}>
+          <Flex
+            width="80%"
+            align="center"
+            mx="auto"
+            mt={4}
+            bg={bg}
+            rounded="full"
+            padding="0.75rem 1rem"
+            _focus={{
+              outline: "none",
+            }}
+            border="none"
+            position="relative"
+          >
+            <Emojis
+              message={message}
+              setMessage={setMessage}
+              emojiPickerState={emojiPickerState}
+              setEmojiPickerState={SetEmojiPicker}
+            />
+            <Spacer mx={2} />
             <Input
               placeholder="Type a message..."
               value={message}
@@ -146,24 +170,20 @@ const ChatBox: React.FC = () => {
                 }
               }}
               flexGrow={1}
+              bg={bg}
+              border={"none"}
             />
-            <Emojis
-              message={message}
-              setMessage={setMessage}
-              emojiPickerState={emojiPickerState}
-              setEmojiPickerState={SetEmojiPicker}
-            />
-            <Button
+            <Spacer mx={2} />
+            <IconButton
               onClick={handleSend}
               isLoading={isAddingMessage}
               colorScheme="teal"
-            >
-              Send
-            </Button>
-          </HStack>
+              aria-label="Send Message"
+              icon={message ? <FaPaperPlane /> : <FaMicrophone />}
+            />
+          </Flex>
         </VStack>
       </Box>
-      {/* <FooterDetails /> */}
     </Flex>
   );
 };

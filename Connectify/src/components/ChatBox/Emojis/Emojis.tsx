@@ -1,6 +1,7 @@
 import React from 'react';
 import EmojiPicker from 'emoji-picker-react';
-import { Button } from '@chakra-ui/react';
+import { IconButton, Box } from '@chakra-ui/react';
+import { FaSmile } from "react-icons/fa";
 
 interface EmojiProps {
     message: string;
@@ -23,8 +24,20 @@ const Emojis: React.FC<EmojiProps> = ({ message, setMessage, emojiPickerState, s
 
     return (
         <>
-            <Button onClick={() => setEmojiPickerState(!emojiPickerState)}>Emoji</Button>
-            {emojiPicker}
+            <IconButton
+                aria-label="emoji picker"
+                icon={<FaSmile />}
+                onClick={() => setEmojiPickerState(!emojiPickerState)}
+            />
+            {emojiPickerState && (
+                <Box position="absolute" bottom="50px" zIndex="dropdown">
+                    <EmojiPicker
+                        onEmojiClick={(emojiObject) => {
+                            setMessage(message + emojiObject.emoji);
+                        }}
+                    />
+                </Box>
+            )}
         </>
     );
 };
