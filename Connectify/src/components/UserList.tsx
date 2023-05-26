@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { User } from "../api/UsersApi";
 import { useNavigate } from "react-router-dom";
 
-const UserList = () => {
+const UserList: React.FC<UserListProps> = ({ setUserListOpen }) => {
   const { data: users, isLoading, isError } = useGetUsersQuery();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true);
