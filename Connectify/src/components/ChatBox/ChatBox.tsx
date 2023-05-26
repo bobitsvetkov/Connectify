@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   Box,
@@ -115,9 +114,7 @@ const ChatBox: React.FC = () => {
       <Box flex="1" overflow="auto" p="4">
         <VStack height="100%" width="100%" padding={5} boxShadow="xl" spacing={6}>
           <Box fontSize="xl">
-            {activeChatUser
-              ? activeChatUser.firstName + " " + activeChatUser.lastName
-              : ""}
+            {activeChatUser ? activeChatUser.firstName + " " + activeChatUser.lastName : ""}
           </Box>
           <Divider orientation="horizontal" color="black" />
           <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
@@ -176,8 +173,6 @@ const ChatBox: React.FC = () => {
             />
           </Flex>
         </VStack>
-      </Box>
-    </Flex>
   );
 };
 

@@ -1,32 +1,54 @@
 import React, { useState } from "react";
-import { Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
+import { Avatar, Box, Divider, Flex, IconButton, Text } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, InfoIcon } from "@chakra-ui/icons";
 import UserList from "../UserList";
 import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
 import { useDisclosure } from "@chakra-ui/react";
 import { useNavigate } from "react-router";
+import { useGetTeamsQuery } from "../../api/TeamsApi";
+import { useGetUserByIdQuery } from "../../api/UsersApi";
+import { getAuth } from "firebase/auth";
+import ChannelList from "../ChannelList/ChannelList";
 
 enum SidebarContent {
   ADD,
   SEARCH,
   INFO,
+  TEAM,
 }
 
 const Sidebar: React.FC = () => {
   const [activeContent, setActiveContent] = useState<SidebarContent | null>(
     null
   );
+  const [selectedTeam, setSelectedTeam] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+  const currUser = getAuth().currentUser;
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+  const { data: teams = {} } = useGetTeamsQuery();
 
   const handleAddClick = () => {
     setActiveContent(SidebarContent.ADD);
     onOpen();
   };
+
   const handleSearchClick = () => {
     setActiveContent(SidebarContent.SEARCH);
-    navigate("/chat");
   };
+
+  const handleTeamClick = (team) => {
+    setSelectedTeam(team);
+    setActiveContent(SidebarContent.TEAM);
+  };
+
+  if (isUserLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isUserError || !user) {
+    return <div>Error loading user</div>;
+  }
 
   return (
     <Flex
@@ -67,6 +89,22 @@ const Sidebar: React.FC = () => {
           colorScheme="teal"
           onClick={() => setActiveContent(SidebarContent.INFO)}
         />
+        <Box overflowY='auto' >
+          {teams && Object.values(teams).map(team => {
+            const isInTeam = Object.values(team.participants).includes(user.username) || false;
+            return (
+              isInTeam && <Avatar
+                mt={'5px'}
+                ml={'5px'}
+                key={team.uid}
+                name={team.name}
+                src={team.photoUrl}
+                onClick={() => handleTeamClick(team)}
+              />
+            );
+          })}
+        </Box>
+
       </Box>
       <Divider orientation="vertical" />
       <Box
@@ -84,6 +122,9 @@ const Sidebar: React.FC = () => {
         )}
         {activeContent === SidebarContent.SEARCH && <UserList />}
         {activeContent === SidebarContent.INFO && <Text>Info Content</Text>}
+        {activeContent === SidebarContent.TEAM && selectedTeam && (
+          <ChannelList team={selectedTeam} />
+        )}
       </Box>
     </Flex>
   );
