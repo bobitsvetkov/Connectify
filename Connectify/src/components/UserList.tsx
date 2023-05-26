@@ -3,16 +3,22 @@ import { useGetUsersQuery } from "../api/UsersApi";
 import { selectUser } from "../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
 import { User } from "../api/UsersApi";
+import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
   const { data: users, isLoading, isError } = useGetUsersQuery();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true);
+  
+  const navigate = useNavigate();
+
 
   const handleUserClick = (user: User) => {
     dispatch(selectUser(user));
     setIsOpen(false);
+    navigate(`/chat/${user.uid}`); // navigate to chat with user UID
   };
+
 
   const handleTransitionEnd = () => {
     if (!isOpen) {

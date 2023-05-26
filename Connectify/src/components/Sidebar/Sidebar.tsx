@@ -32,7 +32,6 @@ const Sidebar: React.FC = () => {
 
   const handleSearchClick = () => {
     setActiveContent(SidebarContent.SEARCH);
-    navigate("/chat");
   };
 
   if (isUserLoading) {
@@ -92,6 +91,7 @@ const Sidebar: React.FC = () => {
                 key={team.uid}
                 name={team.name}
                 src={team.photoUrl}
+                onClick={() => navigate(`/teamChat/${team.uid}`)} 
               />
             );
           })}
