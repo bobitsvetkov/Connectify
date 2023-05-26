@@ -15,15 +15,15 @@ const routes = [
       </Layout>
     ),
   },
-  {
-    name: "Chat",
-    path: "/chat",
-    element: (
-      <Layout>
-        <ChatBox />
-      </Layout>
-    ),
-  },
+  // {
+  //   name: "Chat",
+  //   path: "/chat",
+  //   element: (
+  //     <Layout>
+  //       <ChatBox />
+  //     </Layout>
+  //   ),
+  // },
 ];
 
 const AppRoutes = () => {

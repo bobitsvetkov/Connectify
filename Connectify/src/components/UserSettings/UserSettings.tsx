@@ -23,6 +23,13 @@ import {
 } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/UsersApi";
 import { PhotoUploader } from "../UserPhotoUploader/UsersPhotoUploader";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
+} from "@chakra-ui/react";
 
 export const UserSetting: React.FC = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -111,84 +118,121 @@ export const UserSetting: React.FC = () => {
         console.error(errorCode, errorMessage);
       });
   };
+
   return (
-    <Box
-      className="container"
-      bg={useColorModeValue("gray.100", "gray.900")}
-      p={5}
-      borderRadius="lg"
-    >
+    <>
       {currentUser ? (
-        <VStack align="start">
-          <Heading>
-            Welcome, {firstName} {lastName}
-          </Heading>
-          <p>Email: {email}</p>
-          <PhotoUploader />
-          <FormControl id="newEmail" mt={4}>
-            <FormLabel>New Email</FormLabel>
-            <Input
-              type="text"
-              placeholder="New email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-            />
-          </FormControl>
-          <FormControl id="currentPasswordForEmail" mt={4}>
-            <FormLabel>Current Password</FormLabel>
-            <Input
-              type="password"
-              placeholder="Current password"
-              value={currentPasswordForEmail}
-              onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
-            />
-          </FormControl>
-          <Button
-            colorScheme="blue"
-            mt={4}
-            onClick={handleUpdateEmail}
-            width="200px"
-          >
-            Update Email
-          </Button>
-          <FormControl id="newPassword" mt={4}>
-            <FormLabel>New Password</FormLabel>
-            <Input
-              type="password"
-              placeholder="New password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </FormControl>
-          <FormControl id="currentPasswordForPassword" mt={4}>
-            <FormLabel>Current Password</FormLabel>
-            <Input
-              type="password"
-              placeholder="Current password"
-              value={currentPasswordForPassword}
-              onChange={(e) => setCurrentPasswordForPassword(e.target.value)}
-            />
-          </FormControl>
-          <Button
-            colorScheme="blue"
-            mt={4}
-            onClick={handleUpdatePassword}
-            width="200px"
-          >
-            Update Password
-          </Button>
-          <Button
-            colorScheme="red"
-            mt={4}
-            onClick={handleResetPassword}
-            width="200px"
-          >
-            Reset Password
-          </Button>
-        </VStack>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <h2>
+              <p>
+                Welcome, {firstName} {lastName}
+              </p>
+              <p>Email: {email}</p>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  Upload photo
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <PhotoUploader />
+            </AccordionPanel>
+          </AccordionItem>
+
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  Update Email
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <FormControl id="newEmail" mt={4}>
+                <FormLabel>New Email</FormLabel>
+                <Input
+                  type="text"
+                  placeholder="New email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="currentPasswordForEmail" mt={4}>
+                <FormLabel>Current Password</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Current password"
+                  value={currentPasswordForEmail}
+                  onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
+                />
+              </FormControl>
+              <Button
+                colorScheme="blue"
+                mt={4}
+                onClick={handleUpdateEmail}
+                width="200px"
+              >
+                Update Email
+              </Button>
+            </AccordionPanel>
+          </AccordionItem>
+
+          <AccordionItem>
+            <h2>
+              <AccordionButton>
+                <Box flex="1" textAlign="left">
+                  Update Password
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h2>
+            <AccordionPanel pb={4}>
+              <FormControl id="newPassword" mt={4}>
+                <FormLabel>New Password</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="New password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+              </FormControl>
+              <FormControl id="currentPasswordForPassword" mt={4}>
+                <FormLabel>Current Password</FormLabel>
+                <Input
+                  type="password"
+                  placeholder="Current password"
+                  height="25px"
+                  value={currentPasswordForPassword}
+                  onChange={(e) =>
+                    setCurrentPasswordForPassword(e.target.value)
+                  }
+                />
+              </FormControl>
+              <Button
+                colorScheme="blue"
+                mt={4}
+                onClick={handleUpdatePassword}
+                width="200px"
+              >
+                Update Password
+              </Button>
+              <Button
+                colorScheme="red"
+                mt={4}
+                onClick={handleResetPassword}
+                width="200px"
+              >
+                Reset Password
+              </Button>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       ) : (
         <Heading>Please sign in.</Heading>
       )}
-    </Box>
+    </>
   );
 };

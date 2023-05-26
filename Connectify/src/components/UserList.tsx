@@ -3,15 +3,16 @@ import { useGetUsersQuery } from "../api/UsersApi";
 import { selectUser } from "../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
 import { User } from "../api/UsersApi";
+import { UserListProps } from "../types/interfaces";
 
-const UserList = () => {
+const UserList: React.FC<UserListProps> = ({ setUserListOpen }) => {
   const { data: users, isLoading, isError } = useGetUsersQuery();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true);
 
   const handleUserClick = (user: User) => {
     dispatch(selectUser(user));
-    setIsOpen(false);
+    setUserListOpen(false);
   };
 
   const handleTransitionEnd = () => {
