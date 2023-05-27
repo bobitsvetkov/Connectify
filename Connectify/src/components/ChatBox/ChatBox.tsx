@@ -1,177 +1,43 @@
 import { useSelector } from "react-redux";
-import {
-  Box,
-  VStack,
-  Input,
-  Button,
-  Text,
-  useBreakpointValue,
-  useColorModeValue,
-  Flex,
-  Fade,
-  HStack,
-  Divider,
-  Spacer,
-  IconButton,
-  Tooltip,
-  Avatar,
-} from "@chakra-ui/react";
-import { ArrowRightIcon, CloseIcon } from "@chakra-ui/icons";
-import { v4 as uuidv4 } from "uuid";
+import { Box, VStack, useColorModeValue, Flex, Divider } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
-import { FaSmile, FaPaperPlane, FaMicrophone } from "react-icons/fa";
-import { onValue, ref } from "firebase/database";
-import { database } from "../../config/firebaseConfig";
-import {
-  useGetChatsQuery,
-  useAddMessageToChatMutation,
-} from "../../api/ChatsApi";
-import AppRoutes from "../../Routing/AppRoutes";
 import { getAuth } from "firebase/auth";
-import { User, useGetUserByIdQuery } from "../../api/UsersApi";
-import Message from "./Single Message/Message";
-import Emojis from "./Emojis/Emojis";
-import { HiReply } from "react-icons/hi";
+import { useGetUserByIdQuery } from "../../api/UsersApi";
+import { useSubscription } from "../../Hooks/useSubscribtion";
+import ChatMessages from "../ChatMessages/ChatMessages";
+import ChatInput from "../ChatInput/ChatInput";
 
-const ChatBox: React.FC = () => {
-  const [message, setMessage] = useState<string>("");
-  const [emojiPickerState, SetEmojiPicker] = useState(false);
-  const [replyTo, setReplyTo] = useState(null);
-  const [showReplyIcon, setShowReplyIcon] = useState<string | null>(null);
-  const activeChatUser: User | null = useSelector(
-    (state: RootState) => state.activeUser.user
-  );
-  const [addMessageToChat, { isLoading: isAddingMessage }] =
-    useAddMessageToChatMutation();
-  const triggerEmojiPicker = () => {
-    SetEmojiPicker(!emojiPickerState);
-  };
-  const { data: chats = {} } = useGetChatsQuery();
-  const bg = useColorModeValue("gray.200", "gray.700");
-  const [chatData, setChatData] = useState<any | null>(null);
+const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const { data: user, isLoading: isUserLoading, isError: isUserError } =
-    useGetUserByIdQuery(currUser && currUser.uid);
-  const activeChatId =
-    user && activeChatUser
-      ? [user.username, activeChatUser.username].sort().join("-")
-      : null;
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+  const activeChatUser = useSelector((state: RootState) => state.activeUser.user);
+  const { teamId, channelId, chatUserId } = useParams();
+  const bg = useColorModeValue("gray.200", "gray.700");
+  const isChat = chatType === 'individual' ? true : false;
 
-  useEffect(() => {
-    if (activeChatId) {
-      const chatRef = ref(database, `chats/${activeChatId}`);
+  const chatData = useSubscription(user, teamId, channelId, chatUserId, isChat);
 
-      const unsubscribe = onValue(chatRef, (snapshot) => {
-        setChatData(snapshot.val());
-
-        // Add this part here
-        let ids = snapshot.val()?.messages && Object.values(snapshot.val().messages).map((message) => message.id);
-
-        let checkDuplicates = arr => {
-          let set = new Set(arr);
-          return set.size < arr.length;
-        }
-
-        console.log(checkDuplicates(ids));  // if true, there are duplicates
-
-      });
-
-      return () => unsubscribe();
-    }
-  }, [activeChatId]);
-
-  if (isUserLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isUserError || !user) {
-    return <div>Error loading user</div>;
-  }
-
-  const handleSend = () => {
-    if (message.trim().length > 0 && currUser && activeChatUser && user) {
-      const userIds = [activeChatUser.username, user.username];
-      userIds.sort();
-      const chatId = userIds.join("-");
-
-      const newMessage = {
-        id: uuidv4(),
-        user: currUser.uid,
-        content: message,
-        date: new Date().toISOString(),
-        replyTo: replyTo || null,
-      };
-
-      addMessageToChat({ chatId, message: newMessage });
-      setMessage("");
-      setReplyTo(null);
-    }
-  };
+  if (isUserLoading) return <div>Loading...</div>;
+  if (isUserError || !user) return <div>Error loading user</div>;
 
   return (
-    <Flex direction="column" height="100%">
-      <Box flex="1" overflow="auto" p="4">
-        <VStack height="100%" width="100%" padding={5} boxShadow="xl" spacing={6}>
+        <VStack
+          height="100%"
+          width="100%"
+          borderWidth={1}
+          borderRadius="lg"
+          padding={5}
+          bg={bg}
+          boxShadow="xl"
+        >
           <Box fontSize="xl">
             {activeChatUser ? activeChatUser.firstName + " " + activeChatUser.lastName : ""}
           </Box>
           <Divider orientation="horizontal" color="black" />
-          <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
-            {chatData?.messages &&
-              Object.values(chatData.messages)
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .map((message: any, index: number) => (
-                  <Message
-                    key={message.id}
-                    message={message}
-                    messageId={message.id}
-                    chatId={activeChatId}
-                    setReplyTo={setReplyTo}
-                  />
-                ))}
-          </Box>
-          <Flex
-            width="80%"
-            align="center"
-            mx="auto"
-            mt={4}
-            bg= {bg}
-            rounded="full"
-            padding="0.75rem 1rem"
-            _focus={{ outline: "none" }}
-            border="none"
-            position="relative"
-          >
-            <Emojis
-              message={message}
-              setMessage={setMessage}
-              emojiPickerState={emojiPickerState}
-              setEmojiPickerState={SetEmojiPicker}
-            />
-            <Spacer mx={2} />
-            <Input
-              placeholder="Type a message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleSend();
-                }
-              }}
-              flexGrow={1}
-              bg= {bg}
-              border="none"
-            />
-            <Spacer mx={2} />
-            <IconButton
-              onClick={handleSend}
-              isLoading={isAddingMessage}
-              colorScheme="teal"
-              aria-label="Send Message"
-              icon={message ? <FaPaperPlane /> : <FaMicrophone />}
-            />
-          </Flex>
+          <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
+          <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
         </VStack>
   );
 };
