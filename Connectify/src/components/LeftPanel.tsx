@@ -3,10 +3,19 @@ import { Header } from "./HeaderMenu/HeaderMenu";
 import UserList from "./UserList";
 import SearchInput from "./Search/SearchInput";
 import { useState } from "react";
+import { SearchResults } from "./Search/SearchResults";
 
-export function LeftPanel(props) {
+export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
   const [isUserListOpen, setUserListOpen] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState(null);
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearch = (data) => {
+    setSearchResults(data);
+    setIsSearching(!!data);
+  };
 
   const handleViewChange = (newView) => {
     setView(newView);
@@ -17,18 +26,21 @@ export function LeftPanel(props) {
   };
 
   return (
-    <Flex direction="column" w={["100%", "100%", "30%"]} {...props}>
+    <Flex direction="column" w={["100%", "100%", "30%"]}>
       <Box>
         <Header
           onViewChange={handleViewChange}
           onChatClick={handleChatClick}
           setUserListOpen={setUserListOpen}
         />
-        <SearchInput />
+        <SearchInput size="sm" onSearch={handleSearch} />
       </Box>
-      {view === "chat" && isUserListOpen && (
-        <UserList flex="1" overflow="auto" setUserListOpen={setUserListOpen} />
+      {isSearching ? (
+        <SearchResults results={searchResults} searchQuery={searchQuery} />
+      ) : (
+        view === "chat" &&
+        isUserListOpen && <UserList setUserListOpen={setUserListOpen} />
       )}
     </Flex>
   );
-}
+};
