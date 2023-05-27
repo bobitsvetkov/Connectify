@@ -97,7 +97,7 @@ const ChatBox: React.FC = () => {
       const chatId = userIds.join("-");
 
       const newMessage = {
-        id: uuidv4(),
+        uid: uuidv4(),
         user: currUser.uid,
         content: message,
         date: new Date().toISOString(),
