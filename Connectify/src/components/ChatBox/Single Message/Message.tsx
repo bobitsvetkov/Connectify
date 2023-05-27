@@ -18,6 +18,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
         }
 
         const reply = {
+            uid: currUser.uid, 
             id: uuidv4(),
             user: currUser.uid,
             content: `Reply: ${replyContent}`,
