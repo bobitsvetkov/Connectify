@@ -11,17 +11,6 @@ interface EmojiProps {
 }
 
 const Emojis: React.FC<EmojiProps> = ({ message, setMessage, emojiPickerState, setEmojiPickerState }) => {
-    let emojiPicker;
-    if (emojiPickerState) {
-        emojiPicker = (
-            <EmojiPicker
-                onEmojiClick={(emojiObject) => {
-                    setMessage(message + emojiObject.emoji);
-                }}
-            />
-        );
-    }
-
     return (
         <>
             <IconButton
@@ -34,6 +23,7 @@ const Emojis: React.FC<EmojiProps> = ({ message, setMessage, emojiPickerState, s
                     <EmojiPicker
                         onEmojiClick={(emojiObject) => {
                             setMessage(message + emojiObject.emoji);
+                            setEmojiPickerState(false);  // closes the picker after an emoji is selected
                         }}
                     />
                 </Box>
