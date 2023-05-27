@@ -23,5 +23,5 @@ export const useSubscription = (user, teamId, channelId, chatUserId, isChat) => 
     }
   }, [activeChatId, teamId, channelId, isChat]);
 
-  return chatData;
+  return { chatData, activeChatId };
 }
