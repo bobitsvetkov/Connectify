@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { useGetUsersQuery } from "../api/UsersApi";
+import { useGetUsersQuery, User } from "../api/databaseApi";
 import { selectUser } from "../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
-import { User } from "../api/UsersApi";
 import { useNavigate } from "react-router-dom";
 
 const UserList: React.FC<UserListProps> = ({ setUserListOpen }) => {

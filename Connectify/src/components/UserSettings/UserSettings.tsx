@@ -21,7 +21,7 @@ import {
   Button,
   Box,
 } from "@chakra-ui/react";
-import { useGetUserByIdQuery } from "../../api/UsersApi";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { PhotoUploader } from "../UserPhotoUploader/UsersPhotoUploader";
 import {
   Accordion,

@@ -10,7 +10,7 @@ import {
 import { SearchIcon } from "@chakra-ui/icons";
 import { SearchInputProps } from "../../types/interfaces";
 import { useState } from "react";
-import { useGetUserSearchByUsernameQuery } from "../../api/UsersApi";
+import { useGetUserSearchByUsernameQuery } from "../../api/databaseApi";
 
 const SearchInput: React.FC<SearchInputProps> = ({ size, ...props }) => {
   const [searchQuery, setSearchQuery] = useState("");

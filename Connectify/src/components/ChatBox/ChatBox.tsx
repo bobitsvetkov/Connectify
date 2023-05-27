@@ -25,13 +25,14 @@ import { database } from "../../config/firebaseConfig";
 import {
   useGetChatsQuery,
   useAddMessageToChatMutation,
-} from "../../api/ChatsApi";
+} from "../../api/databaseApi";
 import AppRoutes from "../../Routing/AppRoutes";
 import { getAuth } from "firebase/auth";
-import { User, useGetUserByIdQuery } from "../../api/UsersApi";
+import { User, useGetUserByIdQuery } from "../../api/databaseApi";
 import Message from "./Single Message/Message";
 import Emojis from "./Emojis/Emojis";
 import { HiReply } from "react-icons/hi";
+import { useState, useEffect } from "react";
 
 const ChatBox: React.FC = () => {
   const [message, setMessage] = useState<string>("");
@@ -114,7 +115,9 @@ const ChatBox: React.FC = () => {
       <Box flex="1" overflow="auto" p="4">
         <VStack height="100%" width="100%" padding={5} boxShadow="xl" spacing={6}>
           <Box fontSize="xl">
-            {activeChatUser ? activeChatUser.firstName + " " + activeChatUser.lastName : ""}
+            {activeChatUser
+              ? activeChatUser.firstName + " " + activeChatUser.lastName
+              : ""}
           </Box>
           <Divider orientation="horizontal" color="black" />
           <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
@@ -136,7 +139,7 @@ const ChatBox: React.FC = () => {
             align="center"
             mx="auto"
             mt={4}
-            bg= {bg}
+            bg={bg}
             rounded="full"
             padding="0.75rem 1rem"
             _focus={{ outline: "none" }}
@@ -160,7 +163,7 @@ const ChatBox: React.FC = () => {
                 }
               }}
               flexGrow={1}
-              bg= {bg}
+              bg={bg}
               border="none"
             />
             <Spacer mx={2} />
@@ -173,7 +176,8 @@ const ChatBox: React.FC = () => {
             />
           </Flex>
         </VStack>
+      </Box>
+    </Flex>
   );
-};
-
+}
 export default ChatBox;

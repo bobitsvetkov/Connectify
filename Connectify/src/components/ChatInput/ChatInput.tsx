@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Input, Button, HStack } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation } from "../../api/ChatsApi";
-import { useAddMessageToChannelMutation } from "../../api/TeamsApi";
+import { useAddMessageToChatMutation } from "../../api/databaseApi";
+import { useAddMessageToChannelMutation } from "../../api/databaseApi";
 
 const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
   const [message, setMessage] = useState<string>("");
