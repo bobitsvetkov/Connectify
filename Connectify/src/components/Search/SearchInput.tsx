@@ -1,25 +1,36 @@
-import {
-  Input,
-  InputGroup,
-  InputLeftElement,
-  Box,
-  HStack,
-  Tooltip,
-  IconButton,
-} from "@chakra-ui/react";
+import { Input, InputGroup, InputLeftElement, HStack } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { SearchInputProps } from "../../types/interfaces";
 import { useState } from "react";
-import { useGetUserSearchByUsernameQuery } from "../../api/UsersApi";
+import { useGetUsersQuery } from "../../api/UsersApi";
 
-const SearchInput: React.FC<SearchInputProps> = ({ size, ...props }) => {
+const SearchInput: React.FC<SearchInputProps> = ({
+  size,
+  onSearch,
+  ...props
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, error, isLoading } =
-    useGetUserSearchByUsernameQuery(searchQuery);
+  const { data, error, isLoading } = useGetUsersQuery();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
+    if (event.target.value) {
+      const filteredData = Object.values(data ?? {}).filter(
+        (user) =>
+          user.firstName
+            .toLowerCase()
+            .includes(event.target.value.toLowerCase()) ||
+          user.lastName
+            .toLowerCase()
+            .includes(event.target.value.toLowerCase()) ||
+          user.email.toLowerCase().includes(event.target.value.toLowerCase())
+      );
+      onSearch(filteredData);
+    } else {
+      onSearch(null);
+    }
   };
+
   return (
     <HStack
       spacing={2}
@@ -48,27 +59,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ size, ...props }) => {
         />
       </InputGroup>
       {isLoading && <div>Loading...</div>}
-      {data && searchQuery.trim() !== "" && (
-        <div>
-          {Object.values(data)
-            .filter((user) =>
-              user.username.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-            .map((user) => (
-              <Box
-                key={user.uid}
-                border="1px solid gray"
-                borderRadius="md"
-                p={2}
-                mb={2}
-              >
-                <p>Username: {user.username}</p>
-              </Box>
-            ))}
-        </div>
-      )}
     </HStack>
   );
 };
-
 export default SearchInput;
