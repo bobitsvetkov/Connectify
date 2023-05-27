@@ -17,7 +17,7 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === 'individual' ? true : false;
 
-  const chatData = useSubscription(user, teamId, channelId, chatUserId, isChat);
+  const { chatData, activeChatId } = useSubscription(user, teamId, channelId, chatUserId, isChat);
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
@@ -36,7 +36,7 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
             {activeChatUser ? activeChatUser.firstName + " " + activeChatUser.lastName : ""}
           </Box>
           <Divider orientation="horizontal" color="black" />
-          <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
+          <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
           <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
         </VStack>
   );
