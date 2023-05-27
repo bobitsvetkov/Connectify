@@ -1,0 +1,149 @@
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { get, ref, set, update } from 'firebase/database';
+import { database } from '../config/firebaseConfig';
+
+// Define your interfaces here
+export interface Chat {
+    uid: string;
+    participants: object;
+    messages: object;
+}
+export interface Message {
+    uid: string;
+    user: string;
+    content: string;
+    replies?: { [key: string]: Message };
+}
+export interface Team {
+    name: string;
+    owner: string;
+    uid: string;
+    channels: object;
+    participants: object;
+    photoUrl: string;
+}
+export interface Channel {
+    uid: string;
+    name: string;
+    messages: object;
+}
+export interface User {
+    uid: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    username: string;
+    phoneNumber: string;
+    photoURL: string;
+}
+
+export const baseApi = createApi({
+    baseQuery: async ({ url, method, body }) => {
+        switch (method) {
+            case 'get':
+                const response = await get(ref(database, url));
+                if (response.exists()) {
+                    return { data: response.val() };
+                } else {
+                    return { data: {} };
+                }
+            case 'update':
+            case 'set':
+                await (method === 'update' ? update : set)(ref(database, url), body);
+                return { data: body };
+            default:
+                throw new Error('Invalid method');
+        }
+    },
+    endpoints: () => ({}),
+});
+
+export const chatsApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getChats: builder.query<{ [key: string]: Chat }, void>({
+            query: () => ({ url: 'chats', method: 'get' }),
+        }),
+        getChatById: builder.query<Chat, string>({
+            query: (chatId) => ({ url: `chats/${chatId}`, method: 'get' }),
+        }),
+        addMessageToChat: builder.mutation<Message, { chatId: string, message: Message }>({
+            query: ({ chatId, message }) => ({
+                url: `chats/${chatId}/messages/${message.uid}`,
+                method: 'update',
+                body: message,
+            }),
+        }),
+        addReplyToMessage: builder.mutation<void, { chatId: string; messageId: string; reply: Message }>({
+            query: ({ chatId, messageId, reply }) => ({
+                url: `chats/${chatId}/messages/${messageId}/replies/${reply.uid}`,
+                method: 'update',
+                body: reply,
+            }),
+        }),
+    }),
+});
+
+export const teamsApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getTeams: builder.query<{ [key: string]: Team }, void>({
+            query: () => ({ url: 'teams', method: 'get' }),
+        }),
+        createTeam: builder.mutation<Team, Partial<Team>>({
+            query: (newTeam) => ({
+                url: `teams/${newTeam.uid}`,
+                method: 'set',
+                body: newTeam,
+            }),
+        }),
+        addMessageToChannel: builder.mutation<Message, { teamId: string, channelId: string, message: Message }>({
+            query: ({ teamId, channelId, message }) => ({
+                url: `teams/${teamId}/channels/${channelId}/messages/${message.uid}`,
+                method: 'update',
+                body: message,
+            }),
+        }),
+        getChannelMessages: builder.query<{ [key: string]: Message }, { teamId: string, channelId: string }>({
+            query: ({ teamId, channelId }) => ({ url: `teams/${teamId}/channels/${channelId}/messages`, method: 'get' }),
+        }),
+        createChannel: builder.mutation<Channel, { teamId: string, channel: Channel }>({
+            query: ({ teamId, channel }) => ({
+                url: `teams/${teamId}/channels/${channel.uid}`,
+                method: 'set',
+                body: channel,
+            }),
+        }),
+    }),
+});
+
+export const usersApi = baseApi.injectEndpoints({
+    endpoints: (builder) => ({
+        getUsers: builder.query<{ [key: string]: User }, void>({
+            query: () => ({ url: 'users', method: 'get' }),
+        }),
+        getUserById: builder.query<User, string>({
+            query: (uid) => ({ url: `users/${uid}`, method: 'get' }),
+        }),
+        getUserSearchByUsername: builder.query<User[], string>({
+            query: (username) => ({
+                url: 'users',
+                params: {
+                    orderBy: 'username',
+                    equalTo: username,
+                },
+                method: 'get',
+            }),
+        }),
+    }),
+});
+
+export const {
+    useGetChatsQuery, useGetChatByIdQuery, useAddMessageToChatMutation, useAddReplyToMessageMutation
+} = chatsApi;
+
+export const {
+    useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation
+} = teamsApi;
+
+export const {
+    useGetUsersQuery, useGetUserByIdQuery, useGetUserSearchByUsernameQuery
+} = usersApi;
