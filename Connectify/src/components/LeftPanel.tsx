@@ -4,6 +4,7 @@ import UserList from "./UserList";
 import SearchInput from "./Search/SearchInput";
 import { useState } from "react";
 import { SearchResults } from "./Search/SearchResults";
+import LeftList from "./LeftList/LeftList";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
@@ -36,7 +37,7 @@ export const LeftPanel: React.FC = () => {
         <SearchInput size="sm" onSearch={handleSearch} />
       </Box>
       {isSearching ? (
-        <SearchResults results={searchResults} searchQuery={searchQuery} />
+        <LeftList results={searchResults} searchQuery={searchQuery} />
       ) : (
         view === "chat" &&
         isUserListOpen && <UserList setUserListOpen={setUserListOpen} />
