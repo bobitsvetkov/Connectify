@@ -9,6 +9,7 @@ export interface User {
 }
 export interface SearchInputProps {
     size: "sm" | "md" | "lg";
+    onSearch: (data: any) =>any
 }
 export interface LandingPageProps {
     welcomeText: string;
