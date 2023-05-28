@@ -7,7 +7,7 @@ import {
   VStack,
   Grid,
   useMediaQuery,
-  Container
+  Container,
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../components/Dark Mode Toggle/DarkModeToggle";
 import { MotionBox } from "../components/SignIn/SignIn";
@@ -16,6 +16,7 @@ import { SignUpForm } from "../components/SignUp/SignUp";
 import { LandingPageProps } from "../types/interfaces";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import ActiveUsers from "../components/ActiveUsers";
 
 const LandingPage: React.FC<LandingPageProps> = ({
   welcomeText,
@@ -33,7 +34,8 @@ const LandingPage: React.FC<LandingPageProps> = ({
       templateColumns={["repeat(1, 1fr)", "repeat(1, 1fr)", "repeat(6, 1fr)"]}
       gap={6}
       h="100vh"
-      width="100vw">
+      width="100vw"
+    >
       <Flex
         alignItems="center"
         justifyContent="flex-end"
@@ -56,6 +58,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <Text fontSize="2xl" fontWeight="bold">
               {welcomeText}
             </Text>
+            <ActiveUsers />
             <Text>{detailsText}</Text>
           </Box>
           <Box w="100%">
@@ -93,7 +96,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         bgPos="center"
         bgSize="cover"
         gridColumn={["span 1", "span 1", "span 3"]}
-        display={["none", "none", "block"]} 
+        display={["none", "none", "block"]}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}

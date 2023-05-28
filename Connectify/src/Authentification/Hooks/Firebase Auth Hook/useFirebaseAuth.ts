@@ -15,6 +15,7 @@ const useFirebaseHandler = () => {
         const { email, password, username, phoneNumber, photoURL, firstName, lastName } = signupData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await set(ref(database, `users/${userCredential.user.uid}`), { username, email, phoneNumber, photoURL, firstName, lastName });
+        await set(ref(database, `usernames/${username}`), { exists: true });
         return userCredential.user.uid;
     };
 
