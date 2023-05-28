@@ -33,12 +33,16 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
           boxShadow="xl"
         >
           <Box fontSize="xl">
-            {activeChatUser ? activeChatUser.firstName + " " + activeChatUser.lastName : ""}
+            {activeChatUser
+              ? activeChatUser.firstName + " " + activeChatUser.lastName
+              : ""}
           </Box>
           <Divider orientation="horizontal" color="black" />
           <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
           <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
         </VStack>
+      </Box>
+    </Flex>
   );
 };
 
