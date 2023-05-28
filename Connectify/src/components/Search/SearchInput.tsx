@@ -2,7 +2,7 @@ import { Input, InputGroup, InputLeftElement, HStack } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { SearchInputProps } from "../../types/interfaces";
 import { useState } from "react";
-import { useGetUserSearchByUsernameQuery } from "../../api/databaseApi";
+import { useGetUserSearchByUsernameQuery, useGetUsersQuery } from "../../api/databaseApi";
 
 const SearchInput: React.FC<SearchInputProps> = ({
   size,

@@ -3,7 +3,7 @@ import { Box, VStack, useColorModeValue, Flex, Divider } from "@chakra-ui/react"
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery } from "../../api/UsersApi";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -41,8 +41,6 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
           <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
           <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
         </VStack>
-      </Box>
-    </Flex>
   );
 };
 

@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button, HStack } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation } from "../../api/ChatsApi";
-import { useAddMessageToChannelMutation } from "../../api/TeamsApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 
 const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
