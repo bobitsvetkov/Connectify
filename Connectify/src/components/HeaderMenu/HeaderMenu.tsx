@@ -19,6 +19,7 @@ import {
   DrawerCloseButton,
 } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
+import { AiOutlineTeam } from 'react-icons/ai';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
