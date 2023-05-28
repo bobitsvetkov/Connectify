@@ -1,12 +1,21 @@
 import { Box, Avatar, HStack, VStack, Text } from "@chakra-ui/react";
 import { User } from "../../types/interfaces";
-
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { selectUser } from "../../features/ActiveUserSlice";
 interface SingleUserProps {
   user: User;
 }
 
 const SingleUser: React.FC<SingleUserProps> = ({ user }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const hasPhotoURL = user.photoURL && user.photoURL !== "";
+
+  const onUserClick = (user: User) => {
+    dispatch(selectUser(user));
+    navigate(`/chat/${user.username}`);
+  }
 
   return (
     <Box
@@ -17,6 +26,7 @@ const SingleUser: React.FC<SingleUserProps> = ({ user }) => {
         backgroundColor: "#f5f6f6",
         cursor: "pointer",
       }}
+      onClick={() => onUserClick(user)}
     >
       <HStack spacing={2} align="start">
         {hasPhotoURL ? (

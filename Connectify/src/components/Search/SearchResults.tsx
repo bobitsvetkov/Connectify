@@ -1,17 +1,14 @@
 import { User } from "../../types/interfaces";
 import SingleUser from "../LeftList/SingleUser";
 import { Stack, StackDivider } from "@chakra-ui/react";
-
 interface SearchResultsProps {
   results: User[];
   searchQuery: string;
-  //   onUserClick: (user: SearchResult) => void;
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
   results,
   searchQuery,
-  //   onUserClick,
 }) => {
   if (!results) return null;
 
@@ -33,7 +30,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           <SingleUser
             key={user.uid}
             user={user}
-            // onClick={() => onUserClick(user)}
           />
         ))}
     </Stack>
