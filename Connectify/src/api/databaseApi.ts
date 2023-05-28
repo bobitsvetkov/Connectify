@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { get, ref, set, update } from 'firebase/database';
 import { database } from '../config/firebaseConfig';
 
-// Define your interfaces here
 export interface Chat {
     uid: string;
     participants: object;
@@ -80,6 +79,27 @@ export const chatsApi = baseApi.injectEndpoints({
                 body: reply,
             }),
         }),
+        addReactionToMessage: builder.mutation<void, { chatId: string; messageId: string; reaction: { uid: string, emoji: string, user: string } }>({
+            query: ({ chatId, messageId, reaction }) => ({
+                url: `chats/${chatId}/messages/${messageId}/reactions/${reaction.uid}`,
+                method: 'update',
+                body: reaction,
+                }),
+            }),
+        addReactionToReply: builder.mutation<void, { chatId: string; messageId: string; replyId: string; reaction: { uid: string, emoji: string, user: string } }>({
+            query: ({ chatId, messageId, replyId, reaction }) => ({
+                url: `chats/${chatId}/messages/${messageId}/replies/${replyId}/reactions/${reaction.uid}`,
+                method: 'update',
+                body: reaction,
+                }),
+            }),
+         removeReactionFromMessage: builder.mutation<void, { chatId: string; messageId: string; reactionId: string }>({
+            query: ({ chatId, messageId, reactionId }) => ({
+                url: `chats/${chatId}/messages/${messageId}/reactions/${reactionId}`,
+                method: 'set',
+                body: null,
+                }),
+            }),
     }),
 });
 
@@ -137,7 +157,13 @@ export const usersApi = baseApi.injectEndpoints({
 });
 
 export const {
-    useGetChatsQuery, useGetChatByIdQuery, useAddMessageToChatMutation, useAddReplyToMessageMutation
+    useAddMessageToChatMutation,
+    useAddReplyToMessageMutation,
+    useGetChatByIdQuery,
+    useAddReactionToMessageMutation,
+    useAddReactionToReplyMutation,
+    useRemoveReactionFromMessageMutation
+
 } = chatsApi;
 
 export const {
