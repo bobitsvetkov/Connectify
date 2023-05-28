@@ -18,7 +18,7 @@ const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId }) => {
           .sort((a, b) => new Date(a.date) - new Date(b.date))
           .map((message) => (
             <Box
-              key={message.uid} 
+              key={message.uid}
               display="flex"
               alignItems="center"
               justifyContent={
@@ -34,17 +34,6 @@ const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId }) => {
                   marginRight="0.5rem"
                 />
               )}
-              <Box
-                maxWidth="40%"
-                padding="1rem 1rem"
-                borderRadius="lg"
-                backgroundColor={
-                  message.user === userId ? "blue.500" : "#a2adbb"
-                }
-                color={message.user === userId ? "white" : "black"}
-              >
-                {message.content}
-              </Box>
               <Message
                 key={message.uid}
                 message={message}
