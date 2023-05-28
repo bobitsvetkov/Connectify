@@ -13,7 +13,6 @@ function Message({ message, messageId, chatId, setReplyTo }) {
     const [addReactionToMessage] = useAddReactionToMessageMutation();
     const [replyInputShown, setReplyInputShown] = useState(false);
     const [replyContent, setReplyContent] = useState("");
-    console.log(currUser);
     if (!messageId) {
         return <div>Loading...</div>; // Add loading state
     }
@@ -57,10 +56,21 @@ function Message({ message, messageId, chatId, setReplyTo }) {
         setReplyInputShown(false);
         setReplyTo(null);
     };
+
+    // const getAvatarInitials = (message) => {
+    //     if (!message.user) {
+    //         return ''; // or any default value you prefer
+    //     }
+        
+
+    //     const initials = `${message.user.firstName?.charAt(0)}${message.user.lastName?.charAt(0)}`;
+    //     return initials.toUpperCase();
+    // };
+      console.log("message", message); 
     return (
         <VStack align="flex-start" spacing={4}>
             <Flex align="center">
-                <Avatar name={message.user} size="sm" />
+                {/* <Avatar name={getAvatarInitials(message)} size="sm" /> */}
                 <Box
                     maxW={"lg"}
                     w={"full"}
@@ -84,10 +94,12 @@ function Message({ message, messageId, chatId, setReplyTo }) {
                 >
                     Reply
                 </Button>
+                <EmojiReactions messageId={messageId} addReaction={addReaction} />
             </Flex>
             {replyInputShown && (
                 <Flex align="center">
-                    <Avatar name={currUser?.uid} size="sm" />
+                    {/* <Avatar name={getAvatarInitials(reply)} size="sm" /> */}
+
                     <Input
                         type="text"
                         value={replyContent}
@@ -112,7 +124,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
             {message.replies &&
                 Object.values(message.replies).map((reply) => (
                     <HStack key={reply.uid} spacing={4} pl={8}>
-                        <Avatar name={reply.user} size="sm" />
+                        {/* <Avatar name={getAvatarInitials(reply.firstName, reply.lastName)} size="sm" /> */}
                         <Box
                             maxW={"lg"}
                             w={"full"}
