@@ -1,30 +1,44 @@
+import { useEffect, useState } from "react";
 import { Box, Button, useDisclosure } from "@chakra-ui/react";
-import { useGetTeamsQuery, useGetUserByIdQuery, Team } from '../../api/databaseApi';
+import { useGetUserByIdQuery, Team } from '../../api/databaseApi';
 import { getAuth } from "firebase/auth";
 import SingleTeam from "../SingleTeam/SingleTeam";
 import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
+import { ref, onValue, off } from "firebase/database";
+import { database } from '../../config/firebaseConfig';
 
 const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
-  const { data: teams, isLoading, isError } = useGetTeamsQuery();
   const currUser = getAuth().currentUser;
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [teamsData, setTeamsData] = useState({});
 
-  if (isLoading) {
+  useEffect(() => {
+    const teamsRef = ref(database, `teams/`);
+    const handleValueChange = (snapshot) => {
+        setTeamsData(snapshot.val());
+    };
+    onValue(teamsRef, handleValueChange);
+    return () => {
+        off(teamsRef, handleValueChange);
+    };
+  }, []);
+
+  if (isUserLoading) {
     return <Box>Loading...</Box>;
   }
 
-  if (isError || !teams) {
+  if (isUserError || !teamsData) {
     return <Box>Error loading teams</Box>;
   }
 
   const handleTeamClick = (team: Team) => {
     setSelectedTeam(team)
   }
-  
+
   return (
     <Box>
-      {teams && Object.values(teams).map((team: Team) => {
+      {Object.values(teamsData).map((team: Team) => {
         const isInTeam = Object.values(team.participants).includes(user.username);
         return (
           isInTeam &&
@@ -43,4 +57,3 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
 };
 
 export default TeamsList;
-

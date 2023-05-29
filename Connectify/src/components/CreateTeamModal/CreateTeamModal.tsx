@@ -44,6 +44,7 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
             photoUrl: '', //shte se promeni na url-a na snimkata kato se navurje s firebase storage-a
         }
         createTeam(newTeam);
+        onClose();
     }
 
     return (
