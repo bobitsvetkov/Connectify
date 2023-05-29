@@ -108,6 +108,9 @@ export const teamsApi = baseApi.injectEndpoints({
         getTeams: builder.query<{ [key: string]: Team }, void>({
             query: () => ({ url: 'teams', method: 'get' }),
         }),
+        getTeamById: builder.query<Team, string>({
+            query: (teamId) => ({ url: `teams/${teamId}`, method: 'get' }),
+        }),
         createTeam: builder.mutation<Team, Partial<Team>>({
             query: (newTeam) => ({
                 url: `teams/${newTeam.uid}`,
@@ -167,7 +170,7 @@ export const {
 } = chatsApi;
 
 export const {
-    useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation
+    useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery,
 } = teamsApi;
 
 export const {
