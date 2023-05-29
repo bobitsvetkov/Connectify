@@ -21,10 +21,10 @@ const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected }
       onClick={() => onTeamClick(team)}
     >
       <HStack spacing={2} align="start">
-      <Avatar name={team.name} src={team.photoUrl} />
-          <Text>
-            {team.name}
-          </Text>
+        <Avatar name={team.name} src={team.photoUrl} borderRadius="6" />
+        <Text>
+          {team.name}
+        </Text>
       </HStack>
     </Box>
   );
