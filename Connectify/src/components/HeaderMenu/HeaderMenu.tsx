@@ -19,6 +19,7 @@ import {
   DrawerCloseButton,
 } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
+import { AiOutlineTeam } from 'react-icons/ai';
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -41,17 +42,14 @@ interface CustomTooltipProps extends React.ComponentProps<typeof Tooltip> {
 export const Header: React.FC = ({
   onViewChange,
   onChatClick,
+  onTeamsClick,
   setUserListOpen,
+  setTeamListOpen,
 }) => {
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
     onClose: onAvatarClose,
-  } = useDisclosure();
-  const {
-    isOpen: isCommunityChatOpen,
-    onOpen: onCommunityChatOpen,
-    onClose: onCommunityChatClose,
   } = useDisclosure();
   const {
     isOpen: isSettingsOpen,
@@ -64,6 +62,13 @@ export const Header: React.FC = ({
     onViewChange("chat");
     setUserListOpen(true);
   };
+
+  const handleTeamsClick = () => {
+    onTeamsClick();
+    onViewChange("teams");
+    setTeamListOpen(true);
+  };
+
   const navigate = useNavigate();
   const handleLogOut = () => {
     navigate("/");
@@ -92,24 +97,13 @@ export const Header: React.FC = ({
       <HStack spacing="3">
         <IconButton
           variant="ghost"
-          onClick={onCommunityChatOpen}
-          icon={<IoIosPeople />}
-        />
-        <Drawer
-          placement="left"
-          onClose={onCommunityChatClose}
-          isOpen={isCommunityChatOpen}
-        >
-          <DrawerOverlay />
-          <DrawerContent>
-            <DrawerHeader borderBottomWidth="1px">Community Chat</DrawerHeader>
-            <DrawerBody>{/* content */}</DrawerBody>
-          </DrawerContent>
-        </Drawer>
-        <IconButton
-          variant="ghost"
           onClick={handleChatClick}
           icon={<BsFillChatLeftTextFill />}
+        />
+        <IconButton
+          variant="ghost"
+          onClick={handleTeamsClick}
+          icon={<AiOutlineTeam />}
         />
 
         <Menu>

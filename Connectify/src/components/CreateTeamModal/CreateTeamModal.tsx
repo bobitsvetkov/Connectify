@@ -13,8 +13,8 @@ import {
     Center,
 } from '@chakra-ui/react';
 import { getAuth } from '@firebase/auth';
-import { useGetUserByIdQuery } from '../../api/UsersApi';
-import { useCreateTeamMutation } from '../../api/TeamsApi';
+import { useGetUserByIdQuery } from '../../api/databaseApi';
+import { useCreateTeamMutation } from '../../api/databaseApi';
 import { useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 interface CreateTeamModalProps {
@@ -44,6 +44,7 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
             photoUrl: '', //shte se promeni na url-a na snimkata kato se navurje s firebase storage-a
         }
         createTeam(newTeam);
+        onClose();
     }
 
     return (
