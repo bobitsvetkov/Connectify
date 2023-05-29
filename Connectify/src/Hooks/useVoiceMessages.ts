@@ -7,10 +7,9 @@ import { v4 as uuidv4 } from 'uuid';
 const useVoiceMessages = (currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast) => {
     const [recording, setRecording] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState(null);
-    let chunks = [];
 
     const handleStart = () => {
-        chunks = [];
+        let chunks = [];
 
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
