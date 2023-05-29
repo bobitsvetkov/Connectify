@@ -2,8 +2,9 @@ import { Box } from "@chakra-ui/react";
 import { useGetTeamsQuery, useGetUserByIdQuery, Team } from '../../api/databaseApi';
 import { getAuth } from "firebase/auth";
 import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 
-const TeamsList = ({ setTeamListOpen }) => {
+const TeamsList = ({ setTeamListOpen, setSelectedTeam }) => {
   const { data: teams, isLoading, isError } = useGetTeamsQuery();
   const currUser = getAuth().currentUser;
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
@@ -16,6 +17,10 @@ const TeamsList = ({ setTeamListOpen }) => {
     return <Box>Error loading teams</Box>;
   }
 
+  const handleTeamClick = (team) => {
+    setSelectedTeam(team)
+  }
+
 
   return (
     <Box>
@@ -23,9 +28,11 @@ const TeamsList = ({ setTeamListOpen }) => {
       {teams && Object.values(teams).map(team => {
         const isInTeam = Object.values(team.participants).includes(user.username);
         return (
-          isInTeam && <li
+          isInTeam &&
+          <li
             key={uuidv4()}
             style={{ cursor: "pointer" }}
+            onClick={() => handleTeamClick(team)}
           >
             {team.name}
           </li>
