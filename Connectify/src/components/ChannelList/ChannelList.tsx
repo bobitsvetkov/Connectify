@@ -63,7 +63,7 @@ function ChannelList({ team }) {
                         icon={<AddIcon />}
                         variant="outline"
                         size="sm"
-                        onClick={() => setIsAddingChannel(!isAddingChannel)}
+                        onClick={() => setIsAddingChannel(isAddingChannel)}
                     />
                     {isAddingChannel && (
                         <><Input
