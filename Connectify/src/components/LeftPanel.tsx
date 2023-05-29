@@ -57,7 +57,7 @@ export const LeftPanel: React.FC = () => {
           {view === "chat" && isUserListOpen && <UserList setUserListOpen={setUserListOpen} />}
           {view === "teams" && isTeamListOpen && 
             <Flex direction="row" w="100%">
-              <TeamsList setTeamListOpen={setTeamListOpen} setSelectedTeam={setSelectedTeam} />
+              <TeamsList setTeamListOpen={setTeamListOpen} setSelectedTeam={setSelectedTeam} selectedTeam={selectedTeam}/>
               {selectedTeam && <ChannelList team={selectedTeam}/>}
             </Flex>
           }
