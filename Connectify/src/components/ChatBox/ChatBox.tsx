@@ -33,9 +33,9 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
           boxShadow="xl"
         >
           <Box fontSize="xl">
-            {activeChatUser
+            {isChat
               ? activeChatUser.firstName + " " + activeChatUser.lastName
-              : ""}
+              : chatData.name}
           </Box>
           <Divider orientation="horizontal" color="black" />
           <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} />
