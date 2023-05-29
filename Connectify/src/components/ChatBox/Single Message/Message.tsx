@@ -66,7 +66,7 @@ function Message({ message, messageId, chatId, setReplyTo }) {
     //     const initials = `${message.user.firstName?.charAt(0)}${message.user.lastName?.charAt(0)}`;
     //     return initials.toUpperCase();
     // };
-      console.log("message", message); 
+
     return (
         <VStack align="flex-start" spacing={4}>
             <Flex align="center">
