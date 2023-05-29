@@ -25,11 +25,13 @@ export const LeftPanel: React.FC = () => {
   };
 
   const handleChatClick = () => {
-    setUserListOpen(true);
+    setUserListOpen(!isUserListOpen);
+    setTeamListOpen(false); 
   };
 
   const handleTeamsClick = () => {
-    setTeamListOpen(true);
+    setTeamListOpen(!isTeamListOpen);
+    setUserListOpen(false);
   };
 
 
@@ -39,9 +41,9 @@ export const LeftPanel: React.FC = () => {
         <Header
           onViewChange={handleViewChange}
           onChatClick={handleChatClick}
-          onTeamsClick={handleTeamsClick}  // Add this line
+          onTeamsClick={handleTeamsClick}
           setUserListOpen={setUserListOpen}
-          setTeamListOpen={setTeamListOpen} // Add this line
+          setTeamListOpen={setTeamListOpen}
         />
         <SearchInput size="sm" onSearch={handleSearch} />
       </Box>
