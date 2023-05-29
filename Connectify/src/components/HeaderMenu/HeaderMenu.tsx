@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   Avatar,
   Flex,
@@ -17,6 +17,8 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
+  Button,
+  Divider,
 } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
 import { AiOutlineTeam } from 'react-icons/ai';
@@ -27,17 +29,10 @@ import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
 import ProfileInfo from "../ProfileInfo";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-
-interface IconData {
-  icon: ReactNode;
-  label: string;
-}
-
-interface CustomTooltipProps extends React.ComponentProps<typeof Tooltip> {
-  label: string;
-  icon: ReactNode;
-}
+import { ref as refDB, onValue } from "firebase/database";
+import { database } from "../../config/firebaseConfig";
+import { auth } from "../../config/firebaseConfig";
+import ProfileStatus from "../ProfileStatus";
 
 export const Header: React.FC = ({
   onViewChange,
@@ -46,6 +41,9 @@ export const Header: React.FC = ({
   setUserListOpen,
   setTeamListOpen,
 }) => {
+  const [status, setStatus] = useState("available");
+  const currUser = auth.currentUser;
+
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
@@ -56,6 +54,17 @@ export const Header: React.FC = ({
     onOpen: onSettingsOpen,
     onClose: onSettingsClose,
   } = useDisclosure();
+
+  useEffect(() => {
+    const userStatusRef = refDB(database, `users/${currUser?.uid}/status`);
+    const userStatusListener = onValue(userStatusRef, (snapshot) => {
+      const userStatus = snapshot.val();
+      if (userStatus) {
+        setStatus(userStatus);
+      }
+    });
+    return userStatusListener;
+  }, [currUser]);
 
   const handleChatClick = () => {
     onChatClick();
@@ -83,17 +92,22 @@ export const Header: React.FC = ({
       borderRight="1px solid #f2f2f2"
       color="#54656f"
     >
-      <AvatarButton onClick={onAvatarOpen} boxSize="40px" />
-      <Drawer placement="left" onClose={onAvatarClose} isOpen={isAvatarOpen}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Profile</DrawerHeader>
-          <DrawerBody>
-            <ProfileInfo />
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-
+      <Menu>
+        <Tooltip label={status} placement="right-end">
+          <MenuButton
+            onClick={onAvatarOpen}
+            boxSize="60px"
+            display={{ md: "flex" }}
+          >
+            <AvatarButton status={status} />
+          </MenuButton>
+        </Tooltip>
+        <MenuList>
+          <ProfileInfo />
+          <MenuDivider />
+          <ProfileStatus />
+        </MenuList>
+      </Menu>
       <HStack spacing="3">
         <IconButton
           variant="ghost"
@@ -124,7 +138,6 @@ export const Header: React.FC = ({
                 <DrawerHeader borderBottomWidth="1px">
                   <UserSetting />
                 </DrawerHeader>
-                <DrawerBody>{/* content */}</DrawerBody>
               </DrawerContent>
             </Drawer>
             <MenuItem>New Window</MenuItem>
