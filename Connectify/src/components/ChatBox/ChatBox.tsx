@@ -7,10 +7,9 @@ import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import { FaUsers } from "react-icons/fa";
-import { useDebugValue, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import MemberList from "../MemberList/MemberList";
-import { selectUser } from "../../features/ActiveUserSlice";
 
 const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
   const [showMembers, setShowMembers] = useState(false);
@@ -22,6 +21,12 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === 'individual' ? true : false;
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (chatType === 'individual' && showMembers) {
+      setShowMembers(false);
+    }
+  }, [chatType, showMembers]);
 
   if (isChat === false) {
     activeChatUser = null;
