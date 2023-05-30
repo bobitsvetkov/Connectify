@@ -179,6 +179,9 @@ export const usersApi = baseApi.injectEndpoints({
         getUserById: builder.query<User, string>({
             query: (uid) => ({ url: `users/${uid}`, method: "get" }),
         }),
+        getLatestChatsById: builder.query<object, string>({
+          query: (uid) => ({ url: `users/${uid}/latestChats`, method: "get" }),
+      }),
         getUserSearchByUsername: builder.query<User[], string>({
             query: (username) => ({
                 url: "users",
@@ -223,5 +226,6 @@ export const {
     useGetUserByIdQuery,
     useGetUserSearchByUsernameQuery,
     useUpdateUserStatusMutation,
-    useUpdateUserLatestChatsMutation
+    useUpdateUserLatestChatsMutation,
+    useGetLatestChatsByIdQuery
 } = usersApi;
