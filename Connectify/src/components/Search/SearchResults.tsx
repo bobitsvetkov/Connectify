@@ -29,7 +29,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         .map((user) => (
           <SingleUser
             key={user.uid}
-            user={user}
+            userUid={user.uid} //puskame mu uid kato prop i se opravqme kato cqlo
           />
         ))}
     </Stack>
