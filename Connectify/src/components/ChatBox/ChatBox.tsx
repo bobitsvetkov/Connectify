@@ -6,6 +6,7 @@ import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
+import CreateRoom from "../Video Call/CreateRoom";
 import { FaUsers } from "react-icons/fa";
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
@@ -58,12 +59,16 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
                 : (chatData && chatData.name) || "Loading..."}
             </Box>
           </Box>
+          <Flex direction="row" justify="flex-end">
+            <CreateRoom />
+          </Flex>
           {isChat ||
             <>
               <Spacer />
               <Button rightIcon={<Icon as={FaUsers} />} onClick={() => setShowMembers(!showMembers)}>Team Members</Button>
             </>}
         </Flex>
+
         <Divider orientation="horizontal" color="black" />
         <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
         <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
@@ -80,6 +85,7 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
         </VStack>
       )}
     </Flex>
+
   );
 };
 
