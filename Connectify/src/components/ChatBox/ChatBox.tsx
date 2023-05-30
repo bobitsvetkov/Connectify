@@ -7,6 +7,7 @@ import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
+import CreateRoom from "../Video Call/CreateRoom";
 
 const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
   const auth = getAuth();
@@ -23,24 +24,27 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
   if (isUserError || !user) return <div>Error loading user</div>;
 
   return (
-        <VStack
-          height="100%"
-          width="100%"
-          borderWidth={1}
-          borderRadius="lg"
-          padding={5}
-          bg={bg}
-          boxShadow="xl"
-        >
-          <Box fontSize="xl">
-            {isChat
-              ? activeChatUser.firstName + " " + activeChatUser.lastName
-              : chatData.name}
-          </Box>
-          <Divider orientation="horizontal" color="black" />
-          <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
-          <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
-        </VStack>
+    <VStack
+      height="100%"
+      width="100%"
+      borderWidth={1}
+      borderRadius="lg"
+      padding={5}
+      bg={bg}
+      boxShadow="xl"
+    >
+      <Box fontSize="xl">
+        {isChat
+          ? activeChatUser.firstName + " " + activeChatUser.lastName
+          : chatData.name}
+      </Box>
+      <Flex direction="row" justify="flex-end">
+        <CreateRoom />
+      </Flex>
+      <Divider orientation="horizontal" color="black" />
+      <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
+      <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
+    </VStack>
   );
 };
 
