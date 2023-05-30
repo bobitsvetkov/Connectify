@@ -11,7 +11,7 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
   const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
 
   const handleSend = () => {
-    if (message.trim().length > 0 && currUser && activeChatUser && user) {
+    if (message.trim().length > 0 && currUser && user) {
       const userIds = [chatUserId, user.username];
       userIds.sort();
       const chatId = userIds.join("-");

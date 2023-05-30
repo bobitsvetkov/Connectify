@@ -7,19 +7,25 @@ import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import { FaUsers } from "react-icons/fa";
-import { useState } from 'react';
-import { useSelector } from "react-redux";
+import { useDebugValue, useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import MemberList from "../MemberList/MemberList";
+import { selectUser } from "../../features/ActiveUserSlice";
 
 const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
   const [showMembers, setShowMembers] = useState(false);
   const auth = getAuth();
   const currUser = auth.currentUser;
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
-  const activeChatUser = useSelector((state: RootState) => state.activeUser.user);
+  let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === 'individual' ? true : false;
+  const dispatch = useDispatch();
+
+  if (isChat === false) {
+    activeChatUser = null;
+  }
 
   const { chatData, activeChatId } = useSubscription(user, teamId, channelId, chatUserId, isChat);
 
@@ -41,16 +47,17 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
       >
         <Flex width="100%">
           <Box fontSize="xl">
-            {isChat
-              ? activeChatUser.firstName + " " + activeChatUser.lastName
-              : chatData.name}
+            <Box fontSize="xl">
+              {isChat
+                ? activeChatUser.firstName + " " + activeChatUser.lastName
+                : (chatData && chatData.name) || "Loading..."}
+            </Box>
           </Box>
           {isChat ||
             <>
               <Spacer />
               <Button rightIcon={<Icon as={FaUsers} />} onClick={() => setShowMembers(!showMembers)}>Team Members</Button>
             </>}
-
         </Flex>
         <Divider orientation="horizontal" color="black" />
         <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
@@ -64,7 +71,7 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
           boxShadow="xl"
           borderLeftWidth={1}
         >
-          <MemberList teamId={teamId}/>
+          <MemberList teamId={teamId} />
         </VStack>
       )}
     </Flex>
