@@ -16,11 +16,11 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
   useEffect(() => {
     const teamsRef = ref(database, `teams/`);
     const handleValueChange = (snapshot) => {
-        setTeamsData(snapshot.val());
+      setTeamsData(snapshot.val());
     };
     onValue(teamsRef, handleValueChange);
     return () => {
-        off(teamsRef, handleValueChange);
+      off(teamsRef, handleValueChange);
     };
   }, []);
 
@@ -28,7 +28,7 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
     return <Box>Loading...</Box>;
   }
 
-  if (isUserError || !teamsData) {
+  if (isUserError) {
     return <Box>Error loading teams</Box>;
   }
 
@@ -38,8 +38,8 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
 
   return (
     <Box>
-      {Object.values(teamsData).map((team: Team) => {
-        const isInTeam = Object.values(team.participants).includes(user.username);
+      {(teamsData && Object.values(teamsData).length) && Object.values(teamsData).map((team: Team) => {
+        const isInTeam = user.uid in team.participants;
         return (
           isInTeam &&
           <SingleTeam

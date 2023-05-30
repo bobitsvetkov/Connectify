@@ -14,7 +14,7 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
 
   const handleSend = () => {
-    if (message.trim().length > 0 && currUser && activeChatUser && user) {
+    if (message.trim().length > 0 && currUser && user) {
       const userIds = [chatUserId, user.username];
       userIds.sort();
       const chatId = userIds.join("-");

@@ -3,14 +3,19 @@ import { User } from "../../types/interfaces";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
 interface SingleUserProps {
-  user: User;
+  userUid: string;
 }
 
-const SingleUser: React.FC<SingleUserProps> = ({ user }) => {
+const SingleUser: React.FC<SingleUserProps> = ({ userUid }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const hasPhotoURL = user.photoURL && user.photoURL !== "";
+  const { data: user, isLoading: isUserLoading, isError: isError } = useGetUserByIdQuery(userUid);
+
+  // const hasPhotoURL = user.photoURL && user.photoURL !== "";
+  if (isUserLoading) return <div>Loading...</div>;
+  if (isError || !user) return <div>Error loading user</div>;
 
   const onUserClick = (user: User) => {
     dispatch(selectUser(user));
@@ -29,11 +34,7 @@ const SingleUser: React.FC<SingleUserProps> = ({ user }) => {
       onClick={() => onUserClick(user)}
     >
       <HStack spacing={2} align="start">
-        {hasPhotoURL ? (
-          <Avatar size="sm" src={user.photoURL} />
-        ) : (
-          <Avatar size="sm" name={`${user.firstName} ${user.lastName}`} />
-        )}
+          <Avatar size="sm" name={`${user.firstName} ${user.lastName}`} src={user.photoURL} />
         <VStack spacing={0} align="start">
           <Text>
             {user.firstName} {user.lastName}

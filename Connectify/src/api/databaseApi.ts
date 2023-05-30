@@ -129,26 +129,45 @@ export const chatsApi = baseApi.injectEndpoints({
 });
 
 export const teamsApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    getTeams: builder.query<{ [key: string]: Team }, void>({
-      query: () => ({ url: "teams", method: "get" }),
-    }),
-    createTeam: builder.mutation<Team, Partial<Team>>({
-      query: (newTeam) => ({
-        url: `teams/${newTeam.uid}`,
-        method: "set",
-        body: newTeam,
-      }),
-    }),
-    addMessageToChannel: builder.mutation<
-      Message,
-      { teamId: string; channelId: string; message: Message }
-    >({
-      query: ({ teamId, channelId, message }) => ({
-        url: `teams/${teamId}/channels/${channelId}/messages/${message.uid}`,
-        method: "update",
-        body: message,
-      }),
+    endpoints: (builder) => ({
+        getTeams: builder.query<{ [key: string]: Team }, void>({
+            query: () => ({ url: 'teams', method: 'get' }),
+        }),
+        getTeamById: builder.query<Team, string>({
+            query: (teamId) => ({ url: `teams/${teamId}`, method: 'get' }),
+        }),
+        createTeam: builder.mutation<Team, Partial<Team>>({
+            query: (newTeam) => ({
+                url: `teams/${newTeam.uid}`,
+                method: 'set',
+                body: newTeam,
+            }),
+        }),
+        addMessageToChannel: builder.mutation<Message, { teamId: string, channelId: string, message: Message }>({
+            query: ({ teamId, channelId, message }) => ({
+                url: `teams/${teamId}/channels/${channelId}/messages/${message.uid}`,
+                method: 'update',
+                body: message,
+            }),
+        }),
+        getChannelMessages: builder.query<{ [key: string]: Message }, { teamId: string, channelId: string }>({
+            query: ({ teamId, channelId }) => ({ url: `teams/${teamId}/channels/${channelId}/messages`, method: 'get' }),
+        }),
+        createChannel: builder.mutation<Channel, { teamId: string, channel: Channel }>({
+            query: ({ teamId, channel }) => ({
+                url: `teams/${teamId}/channels/${channel.uid}`,
+                method: 'set',
+                body: channel,
+            }),
+        }),
+        addUserToTeam: builder.mutation<void, { teamId: string, userId: string }>({
+            query: ({ teamId, userId }) => ({
+                url: `teams/${teamId}/participants`,
+                method: 'update',
+                body: { [userId]: true },
+            }),
+        }),
+        
     }),
     getChannelMessages: builder.query<
       { [key: string]: Message },
@@ -209,11 +228,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery,
-  useCreateTeamMutation,
-  useAddMessageToChannelMutation,
-  useGetChannelMessagesQuery,
-  useCreateChannelMutation,
+    useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation 
 } = teamsApi;
 
 export const {
