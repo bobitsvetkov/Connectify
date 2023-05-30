@@ -196,6 +196,13 @@ export const usersApi = baseApi.injectEndpoints({
                 body: status,
             }),
         }),
+        updateUserLatestChats: builder.mutation<void, { userUid: string, chatUid: string, message: object}>({
+          query: ({ userUid, chatUid, message  }) => ({
+              url: `users/${userUid}/latestChats/${chatUid}`,
+              method: "set",
+              body: message,
+          }),
+      }),
     }),
 });
 export const {
@@ -216,4 +223,5 @@ export const {
     useGetUserByIdQuery,
     useGetUserSearchByUsernameQuery,
     useUpdateUserStatusMutation,
+    useUpdateUserLatestChatsMutation
 } = usersApi;
