@@ -1,14 +1,17 @@
 import React, { useState } from "react";
-import { Input, Button, HStack } from "@chakra-ui/react";
+import { Input, Button, HStack, useToast } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 import { useAddMessageToChatMutation, useAddMessageToChannelMutation } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
-
+import useVoiceMessages from "../../Hooks/useVoiceMessages";
 const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
   const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
+  const toast = useToast();
+
+  const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
 
   const handleSend = () => {
     if (message.trim().length > 0 && currUser && user) {
@@ -52,13 +55,33 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
         }}
         flexGrow={1}
       />
-      <Button
-        onClick={handleSend}
-        isLoading={isAddingMessage}
-        colorScheme="teal"
-      >
-        Send
-      </Button>
+      {message ? (
+        <Button
+          onClick={handleSend}
+          isLoading={isAddingMessage || isAddingMessageToChannel}
+          colorScheme="teal"
+        >
+          Send
+        </Button>
+      ) : (
+        !recording ? (
+          <Button
+            onClick={handleStart}
+            colorScheme="teal"
+          >
+            Record
+          </Button>
+        ) : (
+          <>
+            <Button
+              onClick={handleSendAudio}
+              colorScheme="blue"
+            >
+              Send Audio
+            </Button>
+          </>
+        )
+      )}
     </HStack>
   )
 }

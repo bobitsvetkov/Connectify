@@ -1,56 +1,52 @@
-import React, { useEffect, useState } from "react";
-import {
-  Avatar,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuGroup,
-  MenuDivider,
-} from "@chakra-ui/react";
-import { ref as refDB, onValue } from "firebase/database";
-import UserSettingsModal from "../UserSettings/UserSettingsModal";
-import { database } from "../../config/firebaseConfig";
-import { auth } from "../../config/firebaseConfig";
+import React from "react";
+import { Avatar, AvatarBadge } from "@chakra-ui/react";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { getAuth } from "@firebase/auth";
 
 interface AvatarButtonProps {
   onClick?: () => void;
+  status: string;
 }
 
-const AvatarButton: React.FC = ({ onClick }) => {
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
+const AvatarButton: React.FC<AvatarButtonProps> = ({ onClick, status }) => {
+  const auth = getAuth();
+  const currUser = auth.currentUser;
+  const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
 
-  useEffect(() => {
-    const userRef = refDB(database, `users/${auth.currentUser?.uid}`);
-    const unsubscribe = onValue(userRef, (snapshot) => {
-      const userData = snapshot.val();
-      setFirstName(userData?.firstName);
-      setLastName(userData?.lastName);
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, []);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Available":
+        return "green.400";
+      case "Offline":
+        return "gray.500";
+      case "Away":
+        return "yellow.400";
+      case "In a meeting":
+        return "purple.300";
+      case "Busy":
+        return "red.600";
+      default:
+        return "blue.500";
+    }
   };
 
   return (
     <>
-      <Avatar
-        size="sm"
-        name={`${firstName} ${lastName}`}
-        src={auth.currentUser?.photoURL}
-        onClick={onClick}
-      />
+      {user && (
+        <Avatar
+          size="sm"
+          name={`${user.firstName} ${user.lastName}`}
+          src={user.photoURL || auth.currentUser?.photoURL}
+          onClick={onClick}
+        >
+          <AvatarBadge
+            boxSize="1.25em"
+            bg={getStatusColor(status)}
+            border="2px"
+            borderColor="white"
+          />
+        </Avatar>
+      )}
     </>
   );
 };

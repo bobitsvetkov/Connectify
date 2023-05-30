@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import EmojiPicker from 'emoji-picker-react';
 import { IconButton, Box } from '@chakra-ui/react';
 import { FaSmile } from "react-icons/fa";
