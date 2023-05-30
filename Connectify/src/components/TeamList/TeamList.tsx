@@ -38,7 +38,7 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
 
   return (
     <Box>
-      {teamsData && Object.values(teamsData).length ? Object.values(teamsData).map((team: Team) => {
+      {(teamsData && Object.values(teamsData).length) && Object.values(teamsData).map((team: Team) => {
         const isInTeam = Object.values(team.participants).includes(user.uid)
         return (
           isInTeam &&
@@ -49,7 +49,8 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
             isSelected={selectedTeam === team}
           />
         );
-      }) : <Button onClick={onOpen}>Add Team</Button>}
+      })}
+      <Button onClick={onOpen}>Add Team</Button>
       <CreateTeamModal isOpen={isOpen} onClose={onClose} />
     </Box>
   );
