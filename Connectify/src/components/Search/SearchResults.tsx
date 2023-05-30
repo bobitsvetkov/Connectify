@@ -3,6 +3,9 @@ import SingleUser from "../LeftList/SingleUser";
 import { Stack, StackDivider, Button, HStack, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { useGetTeamsQuery, useGetUserByIdQuery, useAddUserToTeamMutation } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
+import { onValue, ref, off } from "firebase/database";
+import { useEffect, useState } from "react";
+import { database } from "../../config/firebaseConfig";
 
 interface SearchResultsProps {
   results: User[];
@@ -10,11 +13,23 @@ interface SearchResultsProps {
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({ results, searchQuery }) => {
-  const { data: teams, isLoading: areTeamsLoading, isError: isError } = useGetTeamsQuery();
+  // const { data: teams, isLoading: areTeamsLoading, isError: isError } = useGetTeamsQuery();
   const [addUserToTeam, { isLoading: isAddingUser }] = useAddUserToTeamMutation();
   const auth = getAuth();
   const curr = auth.currentUser;
   const { data: currUser, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(curr && curr.uid);
+  const [teams, setTeams] = useState({});
+
+  useEffect(() => {
+    const teamsRef = ref(database, `teams/`);
+    const handleValueChange = (snapshot) => {
+      setTeams(snapshot.val());
+    };
+    onValue(teamsRef, handleValueChange);
+    return () => {
+      off(teamsRef, handleValueChange);
+    };
+  }, []);
 
   const handleAddToTeam = (userId: string, teamId: string) => {
     if (!isAddingUser) {
