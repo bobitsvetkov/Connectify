@@ -39,7 +39,7 @@ const TeamsList = ({ setTeamListOpen, setSelectedTeam, selectedTeam }) => {
   return (
     <Box>
       {(teamsData && Object.values(teamsData).length) && Object.values(teamsData).map((team: Team) => {
-        const isInTeam = Object.values(team.participants).includes(user.uid)
+        const isInTeam = user.uid in team.participants;
         return (
           isInTeam &&
           <SingleTeam

@@ -37,9 +37,9 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
 
         const newTeam = {
             name: teamNameValue,
-            owner: user.username,
+            owner: user.uid,
             uid: uuidv4(),
-            participants: [user.uid],
+            participants: { [user.uid]: true },
             messages: {},
             photoUrl: '', //shte se promeni na url-a na snimkata kato se navurje s firebase storage-a
         }
