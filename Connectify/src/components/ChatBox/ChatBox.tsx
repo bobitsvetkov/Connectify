@@ -65,7 +65,7 @@ const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) =>
       </VStack>
       {showMembers && (
         <VStack
-          width="300px"
+          width="200px"
           padding={5}
           bg={bg}
           boxShadow="xl"
