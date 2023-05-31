@@ -7,6 +7,7 @@ import { SearchResults } from "./Search/SearchResults";
 import LeftList from "./LeftList/LeftList";
 import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
+import LatestChatsList from "./LatestChatsList/LatestChatsList";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
@@ -54,7 +55,7 @@ export const LeftPanel: React.FC = () => {
         <SearchResults results={searchResults} searchQuery={searchQuery} />
       ) : (
         <Flex direction="row">
-          {view === "chat" && isUserListOpen && <UserList setUserListOpen={setUserListOpen} />}
+          {view === "chat" && isUserListOpen && <LatestChatsList setUserListOpen={setUserListOpen} />}
           {view === "teams" && isTeamListOpen && 
             <Flex direction="row" w="100%">
               <TeamsList setTeamListOpen={setTeamListOpen} setSelectedTeam={setSelectedTeam} selectedTeam={selectedTeam}/>
