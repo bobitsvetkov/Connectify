@@ -17,13 +17,18 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  AvatarBadge,
+  Spacer
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
 import DeleteMessage from "../Delete/DeleteMessage";
 import EditMessage from "../Edit/EditMessage";
 import { HamburgerIcon } from "@chakra-ui/icons";
+import { useGetUserByIdQuery } from "../../../api/databaseApi";
+import { getAuth } from "@firebase/auth";
 
-function Message({ message, messageId, chatId, setReplyTo }) {
+function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
+
   const [addReplyToMessage] = useAddReplyToMessageMutation();
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();
@@ -31,8 +36,12 @@ function Message({ message, messageId, chatId, setReplyTo }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [replyInputShown, setReplyInputShown] = useState(false);
   const [replyContent, setReplyContent] = useState("");
+  const {data: user, isLoading: isUserLoading, isError: isUserError} = useGetUserByIdQuery(message.user);
+  const currUserUid = getAuth().currentUser?.uid;
+  
+
   if (!messageId) {
-    return <div>Loading...</div>; // Add loading state
+    return <div>Loading...</div>; 
   }
 
   const addReaction = (emoji) => {
@@ -75,35 +84,30 @@ function Message({ message, messageId, chatId, setReplyTo }) {
     setReplyTo(null);
   };
 
-  // const getAvatarInitials = (message) => {
-  //     if (!message.user) {
-  //         return ''; // or any default value you prefer
-  //     }
-
-  //     const initials = `${message.user.firstName?.charAt(0)}${message.user.lastName?.charAt(0)}`;
-  //     return initials.toUpperCase();
-  // };
+  
 
   return (
     <VStack align="flex-start" spacing={4}>
       <Flex align="center">
+        {message.user !== currUserUid && (
+          <Avatar
+            size="sm"
+            name={`${user?.firstName} ${user?.lastName}`}
+            src={user?.photoURL}
+            marginRight="0.5rem"
+          >
+            <AvatarBadge
+              boxSize="1.25em"
+              bg={getStatusColor(user?.status)}
+              border="2px"
+              borderColor="white"
+            />
+          </Avatar>
+        )}
+        <Spacer />
         <Menu>
-          <MenuButton as={Button} variant="outline">
-            <HamburgerIcon />
-          </MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => setIsDeleting(true)}>
-              Delete Message
-            </MenuItem>
-            <MenuItem onClick={() => setIsEditing(true)}>
-              Edit Message
-            </MenuItem>
-          </MenuList>
-
-          <DeleteMessage chatId={chatId} messageId={messageId} isDeleting={isDeleting} setIsDeleting={setIsDeleting} />
-          <EditMessage chatId={chatId} messageId={messageId} initialMessageContent={message.content} isEditing={isEditing} setIsEditing={setIsEditing} />
+          {/*... rest of the code ...*/}
         </Menu>
-        {/* <Avatar name={getAvatarInitials(message)} size="sm" /> */}
         <EmojiReactions messageId={messageId} addReaction={addReaction} />
         <Box
           maxW={"lg"}
