@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { Input, Button, HStack, useToast } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation } from "../../api/databaseApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
+
 const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
   const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
   const toast = useToast();
+  const [updateLatestChats, { isLoading: isUpdatingLatestChats }] = useUpdateUserLatestChatsMutation();
+  const {data: team} = useGetTeamByIdQuery(teamId) || null;
 
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
 
@@ -18,24 +21,29 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
       const userIds = [chatUserId, user.username];
       userIds.sort();
       const chatId = userIds.join("-");
-
+  
       const newMessage = {
         uid: uuidv4(),
         user: currUser.uid,
         content: message,
         date: new Date().toISOString(),
       };
-
+  
       if (isChat) {
+        updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId} });
+        updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username} });
         addMessageToChat({ chatId: chatId, message: newMessage });
       } else {
-        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+        updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
+        Object.entries(team.participants).map(([userUid, isMember]) =>{
+          updateLatestChats({ userUid: userUid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
+        })
+        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
       }
-
+  
       setMessage("");
     }
   };
-
   return (
     <HStack width="100%" spacing={4}>
       <Emojis
