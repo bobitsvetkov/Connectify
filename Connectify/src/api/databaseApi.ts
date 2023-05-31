@@ -59,9 +59,92 @@ export const baseApi = createApi({
 });
 
 export const chatsApi = baseApi.injectEndpoints({
-  endpoints: (builder) => ({
-    getChats: builder.query<{ [key: string]: Chat }, void>({
-      query: () => ({ url: "chats", method: "get" }),
+    endpoints: (builder) => ({
+        getChats: builder.query<{ [key: string]: Chat }, void>({
+            query: () => ({ url: "chats", method: "get" }),
+        }),
+        getChatById: builder.query<Chat, string>({
+            query: (chatId) => ({ url: `chats/${chatId}`, method: "get" }),
+        }),
+        addMessageToChat: builder.mutation<
+            Message,
+            { chatId: string; message: Message }
+        >({
+            query: ({ chatId, message }) => ({
+                url: `chats/${chatId}/messages/${message.uid}`,
+                method: "update",
+                body: message,
+            }),
+        }),
+        addReplyToMessage: builder.mutation<
+            void,
+            { chatId: string; messageId: string; reply: Message }
+        >({
+            query: ({ chatId, messageId, reply }) => ({
+                url: `chats/${chatId}/messages/${messageId}/replies/${reply.uid}`,
+                method: "update",
+                body: reply,
+            }),
+        }),
+        addReactionToMessage: builder.mutation<
+            void,
+            {
+                chatId: string;
+                messageId: string;
+                reaction: { uid: string; emoji: string; user: string };
+            }
+        >({
+            query: ({ chatId, messageId, reaction }) => ({
+                url: `chats/${chatId}/messages/${messageId}/reactions/${reaction.uid}`,
+                method: "update",
+                body: reaction,
+            }),
+        }),
+        addReactionToReply: builder.mutation<
+            void,
+            {
+                chatId: string;
+                messageId: string;
+                replyId: string;
+                reaction: { uid: string; emoji: string; user: string };
+            }
+        >({
+            query: ({ chatId, messageId, replyId, reaction }) => ({
+                url: `chats/${chatId}/messages/${messageId}/replies/${replyId}/reactions/${reaction.uid}`,
+                method: "update",
+                body: reaction,
+            }),
+        }),
+        removeReactionFromMessage: builder.mutation<
+            void,
+            { chatId: string; messageId: string; reactionId: string }
+        >({
+            query: ({ chatId, messageId, reactionId }) => ({
+                url: `chats/${chatId}/messages/${messageId}/reactions/${reactionId}`,
+                method: "set",
+                body: null,
+            }),
+        }),
+        removeMessageFromChat: builder.mutation<
+            void,
+            { chatId: string; messageId: string }
+        >({
+            query: ({ chatId, messageId }) => ({
+                url: `chats/${chatId}/messages/${messageId}`,
+                method: "set",
+                body: null,
+            }),
+        }),
+        updateMessageInChat: builder.mutation<
+            Message,
+            { chatId: string; messageId: string; newMessageContent: string }
+        >({
+            query: ({ chatId, messageId, newMessageContent }) => ({
+                url: `chats/${chatId}/messages/${messageId}/content`,
+                method: "set",
+                body: newMessageContent,
+            }),
+        }),
     }),
     getChatById: builder.query<Chat, string>({
       query: (chatId) => ({ url: `chats/${chatId}`, method: "get" }),
@@ -212,12 +295,14 @@ export const usersApi = baseApi.injectEndpoints({
   }),
 });
 export const {
-  useAddMessageToChatMutation,
-  useAddReplyToMessageMutation,
-  useGetChatByIdQuery,
-  useAddReactionToMessageMutation,
-  useAddReactionToReplyMutation,
-  useRemoveReactionFromMessageMutation,
+    useAddMessageToChatMutation,
+    useAddReplyToMessageMutation,
+    useGetChatByIdQuery,
+    useAddReactionToMessageMutation,
+    useAddReactionToReplyMutation,
+    useRemoveReactionFromMessageMutation,
+    useRemoveMessageFromChatMutation,
+    useUpdateMessageInChatMutation,
 } = chatsApi;
 
 export const {
