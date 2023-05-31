@@ -30,8 +30,8 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
       };
   
       if (isChat) {
-        updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: activeChatUser.uid} });
-        updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: currUser.uid} });
+        updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId} });
+        updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username} });
         addMessageToChat({ chatId: chatId, message: newMessage });
       } else {
         updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
