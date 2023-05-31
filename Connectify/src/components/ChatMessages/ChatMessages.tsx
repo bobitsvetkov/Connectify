@@ -3,8 +3,16 @@ import { Avatar } from "@chakra-ui/react";
 import Message from "../ChatBox/Single Message/Message";
 import { useState } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
+import { AvatarBadge } from "@chakra-ui/react";
 
-const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId }) => {
+const ChatMessages = ({
+  chatData,
+  userId,
+  activeChatUser,
+  activeChatId,
+  activeChatUserStatus,
+  getStatusColor,
+}) => {
   const [replyTo, setReplyTo] = useState(null);
   const [replyContent, setReplyContent] = useState("");
 
@@ -30,12 +38,20 @@ const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId }) => {
               {message.user !== userId && (
                 <Avatar
                   size="sm"
-                  name={activeChatUser?.firstName}
+                  name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
                   src={activeChatUser?.avatar}
                   marginRight="0.5rem"
-                />
+                >
+                  <AvatarBadge
+                    boxSize="1.25em"
+                    bg={getStatusColor(activeChatUserStatus)}
+                    border="2px"
+                    borderColor="white"
+                  />
+                </Avatar>
               )}
-              {message.type === "audio" ? ( // Conditionally render VoiceMessage component for audio messages
+
+              {message.type === "audio" ? (
                 <VoiceMessage url={message.content} />
               ) : (
                 <Message
