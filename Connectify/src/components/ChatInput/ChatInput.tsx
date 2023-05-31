@@ -29,13 +29,9 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
         date: new Date().toISOString(),
       };
   
-      // Update latest chat for the current user
-      
-  
-      // Update latest chat for the other user (if it's a personal chat)
       if (isChat) {
-        updateLatestChats({ userUid: currUser.uid, chatUid: chatUserId, message: {...newMessage, isChat: isChat} });
-        
+        updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: activeChatUser.uid} });
+        updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: currUser.uid} });
         addMessageToChat({ chatId: chatId, message: newMessage });
       } else {
         updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
