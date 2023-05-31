@@ -125,6 +125,26 @@ export const chatsApi = baseApi.injectEndpoints({
                 body: null,
             }),
         }),
+        removeMessageFromChat: builder.mutation<
+            void,
+            { chatId: string; messageId: string }
+        >({
+            query: ({ chatId, messageId }) => ({
+                url: `chats/${chatId}/messages/${messageId}`,
+                method: "set",
+                body: null,
+            }),
+        }),
+        updateMessageInChat: builder.mutation<
+            Message,
+            { chatId: string; messageId: string; newMessageContent: string }
+        >({
+            query: ({ chatId, messageId, newMessageContent }) => ({
+                url: `chats/${chatId}/messages/${messageId}/content`,
+                method: "set",
+                body: newMessageContent,
+            }),
+        }),
     }),
 });
 
@@ -205,6 +225,8 @@ export const {
     useAddReactionToMessageMutation,
     useAddReactionToReplyMutation,
     useRemoveReactionFromMessageMutation,
+    useRemoveMessageFromChatMutation,
+    useUpdateMessageInChatMutation,
 } = chatsApi;
 
 export const {
