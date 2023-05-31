@@ -70,7 +70,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
     }
   }, [activeChatUser?.uid]);
 
-  const { chatData, activeChatId } = useSubscription( user, teamId, channelId, chatUserId, isChat );
+  const { chatData, activeChatId } = useSubscription(user, teamId, channelId, chatUserId, isChat);
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
@@ -104,25 +104,26 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
       <VStack flex="1" padding={5}>
         <Flex width="100%">
           <Box fontSize="xl">
-            <Box fontSize="xl">
-              <Avatar
-                size="sm"
-                name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
-                src={activeChatUser?.avatar}
-                marginRight="0.5rem"
-              >
-                {!isStatusLoading && (
-                  <AvatarBadge
-                    boxSize="1.25em"
-                    bg={getStatusColor(activeChatUserStatus)}
-                    border="2px"
-                    borderColor="white"
-                  />
-                )}
-              </Avatar>
-
+            <Box fontSize="xl" mr={3}>
               {isChat
-                ? activeChatUser.firstName + " " + activeChatUser.lastName
+                ? <HStack>
+                  <Avatar
+                    size="sm"
+                    name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
+                    src={activeChatUser?.photoURL}
+                    marginRight="0.5rem"
+                  >
+                    {!isStatusLoading && (
+                      <AvatarBadge
+                        boxSize="1.25em"
+                        bg={getStatusColor(activeChatUserStatus)}
+                        border="2px"
+                        borderColor="white"
+                      />
+                    )}
+                  </Avatar>
+                  <Text>{activeChatUser.firstName + " " + activeChatUser.lastName}</Text>
+                </HStack>
                 : (chatData && chatData.name) || "Loading..."}
             </Box>
           </Box>
