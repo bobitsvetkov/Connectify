@@ -13,13 +13,22 @@ import {
   HStack,
   Button,
   Input,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
+import DeleteMessage from "../Delete/DeleteMessage";
+import EditMessage from "../Edit/EditMessage";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 function Message({ message, messageId, chatId, setReplyTo }) {
   const [addReplyToMessage] = useAddReplyToMessageMutation();
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [replyInputShown, setReplyInputShown] = useState(false);
   const [replyContent, setReplyContent] = useState("");
   if (!messageId) {
@@ -78,6 +87,22 @@ function Message({ message, messageId, chatId, setReplyTo }) {
   return (
     <VStack align="flex-start" spacing={4}>
       <Flex align="center">
+        <Menu>
+          <MenuButton as={Button} variant="outline">
+            <HamburgerIcon />
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => setIsDeleting(true)}>
+              Delete Message
+            </MenuItem>
+            <MenuItem onClick={() => setIsEditing(true)}>
+              Edit Message
+            </MenuItem>
+          </MenuList>
+
+          <DeleteMessage chatId={chatId} messageId={messageId} isDeleting={isDeleting} setIsDeleting={setIsDeleting} />
+          <EditMessage chatId={chatId} messageId={messageId} initialMessageContent={message.content} isEditing={isEditing} setIsEditing={setIsEditing} />
+        </Menu>
         {/* <Avatar name={getAvatarInitials(message)} size="sm" /> */}
         <EmojiReactions messageId={messageId} addReaction={addReaction} />
         <Box
