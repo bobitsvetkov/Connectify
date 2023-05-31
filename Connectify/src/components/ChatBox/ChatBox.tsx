@@ -29,19 +29,14 @@ import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
-const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
-  chatType,
-}) => {
+const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) => {
+
   const [showMembers, setShowMembers] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
   const [isStatusLoading, setIsStatusLoading] = useState(true);
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
+  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
   const bg = useColorModeValue("gray.200", "gray.700");
@@ -58,13 +53,24 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
     activeChatUser = null;
   }
 
-  const { chatData, activeChatId } = useSubscription(
-    user,
-    teamId,
-    channelId,
-    chatUserId,
-    isChat
-  );
+  useEffect(() => {
+    if (activeChatUser?.uid) {
+      const userStatusRef = ref(database, `users/${activeChatUser.uid}/status`);
+      const unsubscribe = onValue(userStatusRef, (snapshot) => {
+        const status = snapshot.val();
+        if (status) {
+          setActiveChatUserStatus(status);
+          setIsStatusLoading(false);
+        }
+      });
+
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [activeChatUser?.uid]);
+
+  const { chatData, activeChatId } = useSubscription( user, teamId, channelId, chatUserId, isChat );
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
@@ -85,25 +91,6 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
         return "blue.500";
     }
   };
-
-  useEffect(() => {
-    if (activeChatUser?.uid) {
-      const userStatusRef = ref(database, `users/${activeChatUser.uid}/status`);
-      const unsubscribe = onValue(userStatusRef, (snapshot) => {
-        const status = snapshot.val();
-        if (status) {
-          setActiveChatUserStatus(status);
-          setIsStatusLoading(false);
-        }
-      });
-
-      return () => {
-        unsubscribe();
-      };
-    }
-  }, [activeChatUser?.uid]);
-
-  console.log(activeChatUserStatus);
 
   return (
     <Flex
@@ -163,6 +150,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
           activeChatId={activeChatId}
           activeChatUserStatus={activeChatUserStatus}
           getStatusColor={getStatusColor}
+          isChat={isChat}
         />
         <ChatInput
           currUser={currUser}
