@@ -4,15 +4,20 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import useToastHandler from '../../../components/Toast/toastHandler';
 import { useNavigate } from 'react-router-dom';
 import { SignInData } from '../../../types/interfaces';
+import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../features/AuthSlice';
 
 const useSignIn = () => {
-    const [user, setUser] = useState<SignInData>({ email: '', password: '' });
+    const { getUserData } = useFirebaseHandler();
+    const dispatch = useDispatch();
+    const [user, setSignInData] = useState<SignInData>({ email: '', password: '' });
     const [errorMessage, setErrorMessage] = useState({ email: '', password: '' });
     const showToast = useToastHandler();
     const navigate = useNavigate();
 
-    const handleUserChange = (name: keyof SignInData, value: string) => {  
-        setUser({
+    const handleUserChange = (name: keyof SignInData, value: string) => {
+        setSignInData({
             ...user,
             [name]: value
         });
@@ -23,9 +28,14 @@ const useSignIn = () => {
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
-            navigate('/home');
-
-            showToast("Signed in.", "You've successfully signed in!", "success");
+            const fetchedUserData = await getUserData(userCredential.user.uid);
+            if (fetchedUserData) {
+                dispatch(setUser(fetchedUserData));
+                navigate('/home');
+                showToast("Signed in.", "You've successfully signed in!", "success");
+            } else {
+                setErrorMessage({ email: 'Unable to fetch user data.', password: '' });
+            }
         } catch (error) {
             console.log(error);
             let errorCode = (error as any).code; // TypeScript workaround

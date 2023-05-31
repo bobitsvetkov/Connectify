@@ -1,162 +1,91 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import {
-  Box,
-  VStack,
-  Input,
-  Button,
-  Text,
-  useBreakpointValue,
-  useColorModeValue,
-  Flex,
-  Fade,
-  HStack,
-  Divider,
-} from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
+import { Box, VStack, useColorModeValue, Flex, Divider, HStack, Button, Icon, Spacer, Slide, Drawer, Text } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
-import {
-  useGetChatsQuery,
-  useAddMessageToChatMutation,
-} from "../../api/ChatsApi";
 import { getAuth } from "firebase/auth";
-import { User, useGetUserByIdQuery } from "../../api/UsersApi";
-import { onValue, ref } from "firebase/database";
-import { database } from "../../config/firebaseConfig";
-import { Avatar } from "@chakra-ui/react";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { useSubscription } from "../../Hooks/useSubscribtion";
+import ChatMessages from "../ChatMessages/ChatMessages";
+import ChatInput from "../ChatInput/ChatInput";
+import CreateRoom from "../Video Call/CreateRoom";
+import { FaUsers } from "react-icons/fa";
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import MemberList from "../MemberList/MemberList";
 
-const ChatBox: React.FC = () => {
-  const [message, setMessage] = useState<string>("");
-  const activeChatUser: User | null = useSelector((state: RootState) => state.activeUser.user);
-  const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
-  const { data: chats = {} } = useGetChatsQuery();
-  const boxSize = useBreakpointValue({ base: "80%", md: "60%", lg: "40%" });
-  const bg = useColorModeValue("gray.200", "gray.700");
-  const [chatData, setChatData] = useState<any | null>(null);
-
+const ChatBox: React.FC<{ chatType: 'individual' | 'team' }> = ({ chatType }) => {
+  const [showMembers, setShowMembers] = useState(false);
   const auth = getAuth();
   const currUser = auth.currentUser;
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
-  const activeChatId =
-    user && activeChatUser
-      ? [user.username, activeChatUser.username].sort().join("-")
-      : null;
+  let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
+  const { teamId, channelId, chatUserId } = useParams();
+  const bg = useColorModeValue("gray.200", "gray.700");
+  const isChat = chatType === 'individual' ? true : false;
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (activeChatId) {
-      const chatRef = ref(database, `chats/${activeChatId}`);
-
-      const unsubscribe = onValue(chatRef, (snapshot) => {
-        setChatData(snapshot.val());
-      });
-      return () => unsubscribe();
+    if (chatType === 'individual' && showMembers) {
+      setShowMembers(false);
     }
-  }, [activeChatId]);
+  }, [chatType, showMembers]);
 
-  if (isUserLoading) {
-    return <div>Loading...</div>;
+  if (isChat === false) {
+    activeChatUser = null;
   }
 
-  if (isUserError || !user) {
-    return <div>Error loading user</div>;
-  }
+  const { chatData, activeChatId } = useSubscription(user, teamId, channelId, chatUserId, isChat);
 
-  const handleSend = () => {
-    if (message.trim().length > 0 && currUser && activeChatUser && user) {
-      const userIds = [activeChatUser.username, user.username];
-      userIds.sort();
-      const chatId = userIds.join("-");
-
-      const newMessage = {
-        id: uuidv4(),
-        user: currUser.uid,
-        content: message,
-        date: new Date().toISOString(),
-      };
-
-      addMessageToChat({ chatId, message: newMessage });
-      setMessage("");
-    }
-  };
+  if (isUserLoading) return <div>Loading...</div>;
+  if (isUserError || !user) return <div>Error loading user</div>;
 
   return (
-    <Flex direction="column" height="100%">
-      <Box flex="1" overflow="auto" p="4">
+    <Flex
+      height="100%"
+      width="100%"
+      borderWidth={1}
+      borderRadius="lg"
+      bg={bg}
+      boxShadow="xl"
+    >
+      <VStack
+        flex="1"
+        padding={5}
+      >
+        <Flex width="100%">
+          <Box fontSize="xl">
+            <Box fontSize="xl">
+              {isChat
+                ? activeChatUser.firstName + " " + activeChatUser.lastName
+                : (chatData && chatData.name) || "Loading..."}
+            </Box>
+          </Box>
+          <Flex direction="row" justify="flex-end">
+            <CreateRoom />
+          </Flex>
+          {isChat ||
+            <>
+              <Spacer />
+              <Button rightIcon={<Icon as={FaUsers} />} onClick={() => setShowMembers(!showMembers)}>Team Members</Button>
+            </>}
+        </Flex>
+
+        <Divider orientation="horizontal" color="black" />
+        <ChatMessages chatData={chatData} userId={user.uid} activeChatUser={activeChatUser} activeChatId={activeChatId} />
+        <ChatInput currUser={currUser} user={user} chatUserId={chatUserId} activeChatUser={activeChatUser} isChat={isChat} teamId={teamId} channelId={channelId} />
+      </VStack>
+      {showMembers && (
         <VStack
-          height="100%"
-          width="100%"
-          borderWidth={1}
-          borderRadius="lg"
+          width="200px"
           padding={5}
           bg={bg}
           boxShadow="xl"
+          borderLeftWidth={1}
         >
-          <Box fontSize="xl">
-            {activeChatUser
-              ? activeChatUser.firstName + " " + activeChatUser.lastName
-              : ""}
-          </Box>
-          <Divider orientation="horizontal" color="black" />
-          <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
-            {chatData?.messages &&
-              Object.values(chatData.messages)
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .map((message, index) => (
-                  <Box
-                    key={index}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={
-                      message.user === user.uid ? "flex-end" : "flex-start"
-                    }
-                    marginBottom="1rem"
-                  >
-                    {message.user !== user.uid && (
-                      <Avatar
-                        size="sm"
-                        name={activeChatUser?.firstName}
-                        src={activeChatUser?.avatar}
-                        marginRight="0.5rem"
-                      />
-                    )}
-                    <Box
-                      maxWidth="40%"
-                      padding="1rem 1rem"
-                      borderRadius="lg"
-                      backgroundColor={
-                        message.user === user.uid ? "blue.500" : "#a2adbb"
-                      }
-                      color={message.user === user.uid ? "white" : "black"}
-                    >
-                      {message.content}
-                    </Box>
-                  </Box>
-                ))}
-          </Box>
-          <HStack width="100%" spacing={4}>
-            <Input
-              placeholder="Type a message..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === "Enter") {
-                  handleSend();
-                }
-              }}
-              flexGrow={1}
-            />
-            <Button
-              onClick={handleSend}
-              isLoading={isAddingMessage}
-              colorScheme="teal"
-            >
-              Send
-            </Button>
-          </HStack>
+          <MemberList teamId={teamId} />
         </VStack>
-      </Box>
-      {/* <FooterDetails /> */}
+      )}
     </Flex>
+
   );
 };
 
