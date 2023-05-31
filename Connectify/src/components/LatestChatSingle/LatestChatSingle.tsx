@@ -1,4 +1,4 @@
-import { HStack, VStack, Text, Box } from "@chakra-ui/layout";
+import { HStack, VStack, Text, Box, Spacer } from "@chakra-ui/layout";
 import { useGetUserByIdQuery, useGetChannelByIdQuery, useGetTeamByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
 import { Avatar } from "@chakra-ui/avatar";
@@ -27,6 +27,11 @@ function LatestChatSingle({ chat, handleChatClick, handleChannelClick }) {
         }
     }
 
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      }
+
     const currUserUid = getAuth().currentUser?.uid;
 
     return chat.isChat ?
@@ -35,9 +40,13 @@ function LatestChatSingle({ chat, handleChatClick, handleChannelClick }) {
                 <Avatar name={`${userChattingWith?.firstName} ${userChattingWith?.lastName}`} src={userChattingWith?.photoURL} />
                 <VStack align="start" spacing={1}>
                     <Text>{`${userChattingWith?.firstName} ${userChattingWith?.lastName}`}</Text>
-                    {currUserUid === chat.user ?
-                        <Text>You: {chat.content}</Text> :
-                        <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>}
+                    <HStack width="100%">
+                        {currUserUid === chat.user ?
+                            <Text>You: {chat.content}</Text> :
+                            <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>}
+                        <Spacer />
+                        <Text fontSize="sm" color="gray.500">{formatDate(chat.date)}</Text>
+                    </HStack>
                 </VStack>
             </HStack>
         </Box>
@@ -46,10 +55,14 @@ function LatestChatSingle({ chat, handleChatClick, handleChannelClick }) {
             <HStack ml={2} mb={2}>
                 <Avatar name={team?.name} src={team?.photoUrl} borderRadius="6" />
                 <VStack align="start" spacing={1}>
-                    <Text>{`${team?.name} ${channel?.name}`}</Text>
-                    {currUserUid === chat.user ?
-                        <Text>You: {chat.content}</Text> :
-                        <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>}
+                    <Text>{`${team?.name} #${channel?.name}`}</Text>
+                    <HStack width="100%">
+                        {currUserUid === chat.user ?
+                            <Text>You: {chat.content}</Text> :
+                            <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>}
+                        <Spacer />
+                        <Text fontSize="sm" color="gray.500">{formatDate(chat.date)}</Text>
+                    </HStack>
                 </VStack>
             </HStack>
         </Box>
