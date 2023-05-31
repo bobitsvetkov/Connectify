@@ -21,10 +21,11 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
-import { AiOutlineTeam } from 'react-icons/ai';
+import { AiOutlineTeam } from "react-icons/ai";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { FiCalendar } from "react-icons/fi";
 import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
 import ProfileInfo from "../ProfileInfo";
@@ -33,7 +34,9 @@ import { ref as refDB, onValue } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { auth } from "../../config/firebaseConfig";
 import ProfileStatus from "../ProfileStatus";
-
+import CalendarApp from "../Calendar/Calendar";
+import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { getAuth } from "firebase/auth";
 export const Header: React.FC = ({
   onViewChange,
   onChatClick,
@@ -42,8 +45,15 @@ export const Header: React.FC = ({
   setTeamListOpen,
 }) => {
   const [status, setStatus] = useState("available");
+  const auth = getAuth();
   const currUser = auth.currentUser;
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetUserByIdQuery(currUser && currUser.uid);
 
+  const [isCalendarOpen, setCalendarOpen] = useState(false);
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
@@ -64,7 +74,7 @@ export const Header: React.FC = ({
       }
     });
     return userStatusListener;
-  }, [currUser]);
+  }, [user]);
 
   const handleChatClick = () => {
     onChatClick();
@@ -76,6 +86,10 @@ export const Header: React.FC = ({
     onTeamsClick();
     onViewChange("teams");
     setTeamListOpen(true);
+  };
+
+  const handleCalendarClick = () => {
+    setCalendarOpen(!isCalendarOpen);
   };
 
   const navigate = useNavigate();
@@ -119,7 +133,7 @@ export const Header: React.FC = ({
           onClick={handleTeamsClick}
           icon={<AiOutlineTeam />}
         />
-
+        <CalendarApp />
         <Menu>
           <MenuButton
             as={IconButton}
