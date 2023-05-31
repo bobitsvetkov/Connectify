@@ -6,9 +6,14 @@ import LatestChatSingle from "../LatestChatSingle/LatestChatSingle";
 import { useNavigate } from "react-router";
 import { selectUser } from "../../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
+import { User, Team, Channel, Chat } from "../../api/databaseApi";
+import { string } from "prop-types";
+interface LatestChatsListProps {
+  setUserListOpen: (open: boolean) => void;
+}
 
-function LatestChatsList({ setUserListOpen }) {
-  const [latestChats, setLatestChats] = useState([]);
+const LatestChatsList: FC<LatestChatsListProps> = ({ setUserListOpen }) => {
+  const [latestChats, setLatestChats] = useState<Chat[]>([]);
   const dispatch = useDispatch();
   const currUserUid = getAuth().currentUser?.uid;
 
@@ -28,12 +33,12 @@ function LatestChatsList({ setUserListOpen }) {
 
   const navigate = useNavigate();
 
-  const handleChatClick = (user) => {
+  const handleChatClick = (user: User) => {
     dispatch(selectUser(user));
     navigate(`/chat/${user.username}`);
   }
 
-  const handleChannelClick = (teamId, channelId) => {
+  const handleChannelClick = (teamId: string, channelId: string) => {
     navigate(`/${teamId}/${channelId}`);
   }
 
@@ -41,7 +46,7 @@ function LatestChatsList({ setUserListOpen }) {
     <div >
       {
         latestChats.map((chat) => {
-          return <LatestChatSingle key={chat.uid} chat={chat} handleChatClick={handleChatClick} handleChannelClick={handleChannelClick}/>
+          return <LatestChatSingle key={chat.uid} chat={chat} handleChatClick={handleChatClick} handleChannelClick={handleChannelClick} />
         })
       }
     </div >
