@@ -1,5 +1,6 @@
 import { Box, HStack, VStack, Text, Avatar } from "@chakra-ui/react";
 import { Team } from '../../api/databaseApi';
+import { useColorModeValue } from "@chakra-ui/react";
 
 interface SingleTeamProps {
   team: Team;
@@ -8,14 +9,16 @@ interface SingleTeamProps {
 }
 
 const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected }) => {
+  const hoverBgColor = useColorModeValue('gray.100', 'gray.800');
+  const selectedBgColor = useColorModeValue('gray.100', 'gray.800');
   return (
     <Box
       key={team.uid}
       p={1}
       mb={1}
-      backgroundColor={isSelected ? "#f5f6f6" : "transparent"}
+      backgroundColor={isSelected ? selectedBgColor : "transparent"}
       _hover={{
-        backgroundColor: "#f5f6f6",
+        backgroundColor: hoverBgColor,
         cursor: "pointer",
       }}
       onClick={() => onTeamClick(team)}
