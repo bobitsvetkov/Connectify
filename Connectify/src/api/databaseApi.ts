@@ -190,6 +190,13 @@ export const teamsApi = baseApi.injectEndpoints({
         body: { [userId]: true },
       }),
     }),
+    addReactionToTeamMessage: builder.mutation<void, { teamId: string; channelId: string; messageId: string; reaction: { uid: string, emoji: string, user: string } }>({
+      query: ({ teamId, channelId, messageId, reaction }) => ({
+          url: `teams/${teamId}/channels/${channelId}/messages/${messageId}/reactions/${reaction.uid}`,
+          method: 'update',
+          body: reaction,
+      }),
+  }),
 
   }),
 });
@@ -243,7 +250,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery
+  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery,useAddReactionToTeamMessageMutation
 } = teamsApi;
 
 export const {
