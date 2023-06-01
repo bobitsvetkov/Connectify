@@ -133,18 +133,27 @@ export const Header: React.FC = ({
           onClick={handleChatClick}
           icon={<Box color={useColorModeValue('black', 'white')} as={BsFillChatLeftTextFill} />}
         />
+
         <IconButton
           variant="ghost"
           onClick={handleTeamsClick}
           icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineTeam} />}
         />
+
         <CalendarApp />
+
+        <IconButton
+          variant="ghost"
+          aria-label="Toggle color mode"
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          onClick={toggleColorMode}
+        />
+
         <Menu>
-          <IconButton
+          <MenuButton
+            as={IconButton}
             variant="ghost"
-            aria-label="Toggle color mode"
-            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-            onClick={toggleColorMode}
+            icon={<GiHamburgerMenu />}
           />
           <MenuList>
             <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
