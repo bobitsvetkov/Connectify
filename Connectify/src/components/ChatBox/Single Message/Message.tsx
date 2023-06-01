@@ -17,8 +17,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  AvatarBadge,
-  Spacer
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
 import DeleteMessage from "../Delete/DeleteMessage";
@@ -26,6 +24,8 @@ import EditMessage from "../Edit/EditMessage";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useGetUserByIdQuery } from "../../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
+import { Spacer } from "@chakra-ui/react";
+import { AvatarBadge } from "@chakra-ui/react";
 
 function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
 
@@ -106,8 +106,16 @@ function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
         )}
         <Spacer />
         <Menu>
-          {/*... rest of the code ...*/}
+          <MenuButton as={Button} variant="outline">
+            <HamburgerIcon />
+          </MenuButton>
+          <MenuList>
+            <MenuItem onClick={() => setIsDeleting(true)}>Delete Message</MenuItem>
+            <MenuItem onClick={() => setIsEditing(true)}>Edit Message</MenuItem>
+          </MenuList>
         </Menu>
+        <DeleteMessage chatId={chatId} messageId={messageId} isDeleting={isDeleting} setIsDeleting={setIsDeleting} />
+        <EditMessage chatId={chatId} messageId={messageId} initialMessageContent={message.content} isEditing={isEditing} setIsEditing={setIsEditing} />
         <EmojiReactions messageId={messageId} addReaction={addReaction} />
         <Box
           maxW={"lg"}
@@ -135,8 +143,6 @@ function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
       </Flex>
       {replyInputShown && (
         <Flex align="center">
-          {/* <Avatar name={getAvatarInitials(reply)} size="sm" /> */}
-
           <Input
             type="text"
             value={replyContent}
@@ -163,7 +169,6 @@ function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
       {message.replies &&
         Object.values(message.replies).map((reply) => (
           <HStack key={reply.uid} spacing={4} pl={8}>
-            {/* <Avatar name={getAvatarInitials(reply.firstName, reply.lastName)} size="sm" /> */}
             <Box
               maxW={"lg"}
               w={"full"}
@@ -174,20 +179,10 @@ function Message({ message, messageId, chatId, setReplyTo, getStatusColor }) {
               bg="gray.100"
               color="black"
             >
-              <Box>
-                {/* {message.reactions &&
-                  Object.values(message.reactions).map((reaction) => (
-                    <span key={reaction.uid}>{reaction.emoji}</span>
-                  ))} */}
-                {/* <EmojiReactions
-                  messageId={reply.uid}
-                  addReaction={(emoji) => addReaction(emoji, reply.uid)}
-                /> */}
-                <Text>{reply.content}</Text>
-                <Text fontSize="sm" mt={2}>
-                  {new Date(reply.date).toLocaleTimeString()}
-                </Text>
-              </Box>
+              <Text>{reply.content}</Text>
+              <Text fontSize="sm" mt={2}>
+                {new Date(reply.date).toLocaleTimeString()}
+              </Text>
             </Box>
           </HStack>
         ))}
