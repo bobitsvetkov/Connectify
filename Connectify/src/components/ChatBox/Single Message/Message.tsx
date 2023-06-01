@@ -173,7 +173,10 @@ function Message({
           />
           <Text>{message.content}</Text>
           <Text fontSize="sm" mt={2}>
-            {new Date(message.date).toLocaleTimeString()}
+            {new Date(message.date).toLocaleTimeString(undefined, {
+              hour: "numeric",
+              minute: "numeric",
+            })}
           </Text>
         </Box>
       </Flex>
