@@ -28,7 +28,7 @@ const ChatMessages = ({
       flexGrow={1}
       overflowY="auto"
       width="100%"
-      marginBottom={20}
+      // marginBottom={20}
       overflowX="hidden"
     >
       {chatData?.messages &&
