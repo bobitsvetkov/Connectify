@@ -29,14 +29,19 @@ import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
-const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) => {
-
+const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
+  chatType,
+}) => {
   const [showMembers, setShowMembers] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
   const [isStatusLoading, setIsStatusLoading] = useState(true);
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
   const bg = useColorModeValue("gray.200", "gray.700");
@@ -70,7 +75,13 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
     }
   }, [activeChatUser?.uid]);
 
-  const { chatData, activeChatId } = useSubscription(user, teamId, channelId, chatUserId, isChat);
+  const { chatData, activeChatId } = useSubscription(
+    user,
+    teamId,
+    channelId,
+    chatUserId,
+    isChat
+  );
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
@@ -93,20 +104,13 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
   };
 
   return (
-    <Flex
-      height="100%"
-      width="100%"
-      borderWidth={1}
-      borderRadius="lg"
-      bg={bg}
-      boxShadow="xl"
-    >
+    <Flex height="100%" width="100%" borderWidth={1} bg={bg} boxShadow="xl">
       <VStack flex="1" padding={5}>
         <Flex width="100%">
           <Box fontSize="xl">
             <Box fontSize="xl" mr={3}>
-              {isChat
-                ? <HStack>
+              {isChat ? (
+                <HStack>
                   <Avatar
                     size="sm"
                     name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
@@ -122,23 +126,34 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
                       />
                     )}
                   </Avatar>
-                  <Text>{activeChatUser.firstName + " " + activeChatUser.lastName}</Text>
+                  <Text>
+                    {activeChatUser.firstName + " " + activeChatUser.lastName}
+                  </Text>
                 </HStack>
-                : (chatData && chatData.name) || "Loading..."}
+              ) : (
+                (chatData && chatData.name) || "Loading..."
+              )}
             </Box>
           </Box>
-          <Flex direction="row" justify="flex-end">
-            <CreateRoom />
-          </Flex>
-          {isChat || (
+          {isChat ? (
             <>
               <Spacer />
-              <Button
-                rightIcon={<Icon as={FaUsers} />}
-                onClick={() => setShowMembers(!showMembers)}
-              >
-                Team Members
-              </Button>
+              <Flex direction="row">
+                <CreateRoom />
+              </Flex>
+            </>
+          ) : (
+            <>
+              <Spacer />
+              <Flex direction="row" alignItems="center">
+                <CreateRoom />
+                <Button
+                  onClick={() => setShowMembers(!showMembers)}
+                  style={{ fontSize: "24px", marginLeft: "8px" }}
+                >
+                  <FaUsers />
+                </Button>
+              </Flex>
             </>
           )}
         </Flex>
@@ -152,6 +167,8 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
           activeChatUserStatus={activeChatUserStatus}
           getStatusColor={getStatusColor}
           isChat={isChat}
+          teamId={teamId}
+          channelId={channelId}
         />
         <ChatInput
           currUser={currUser}

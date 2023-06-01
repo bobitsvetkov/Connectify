@@ -5,8 +5,17 @@ import { useState } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import { AvatarBadge } from "@chakra-ui/react";
 
-const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId, activeChatUserStatus, getStatusColor, isChat }) => {
-
+const ChatMessages = ({
+  chatData,
+  userId,
+  activeChatUser,
+  activeChatId,
+  activeChatUserStatus,
+  getStatusColor,
+  isChat,
+  teamId,
+  channelId,
+}) => {
   const [replyTo, setReplyTo] = useState(null);
   const [replyContent, setReplyContent] = useState("");
 
@@ -39,6 +48,9 @@ const ChatMessages = ({ chatData, userId, activeChatUser, activeChatId, activeCh
                   chatId={activeChatId}
                   setReplyTo={setReplyTo}
                   getStatusColor={getStatusColor}
+                  isChat={isChat}
+                  teamId={teamId}
+                  channelId={channelId}
                 />
               )}
             </Box>

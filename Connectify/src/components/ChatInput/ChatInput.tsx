@@ -1,97 +1,178 @@
-import React, { useState } from "react";
-import { Input, Button, HStack, useToast } from "@chakra-ui/react";
+import { useState } from "react";
+import { Input, Button, HStack, useToast, Icon } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery } from "../../api/databaseApi";
+import {
+  useAddMessageToChatMutation,
+  useAddMessageToChannelMutation,
+  useUpdateUserLatestChatsMutation,
+  useGetTeamByIdQuery,
+} from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
+import { FaMicrophone } from "react-icons/fa";
+import { BsFillSendFill } from "react-icons/bs";
 
-const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
+const ChatInput = ({
+  currUser,
+  user,
+  chatUserId,
+  activeChatUser,
+  isChat,
+  teamId,
+  channelId,
+}) => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
-  const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
-  const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
+  const [addMessageToChat, { isLoading: isAddingMessage }] =
+    useAddMessageToChatMutation();
+  const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] =
+    useAddMessageToChannelMutation();
   const toast = useToast();
-  const [updateLatestChats, { isLoading: isUpdatingLatestChats }] = useUpdateUserLatestChatsMutation();
-  const {data: team} = useGetTeamByIdQuery(teamId) || null;
+  const [updateLatestChats, { isLoading: isUpdatingLatestChats }] =
+    useUpdateUserLatestChatsMutation();
+  const { data: team } = useGetTeamByIdQuery(teamId) || null;
 
-  const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
+  const { recording, handleStart, handleSendAudio } = useVoiceMessages(
+    currUser,
+    user,
+    chatUserId,
+    isChat,
+    teamId,
+    channelId,
+    addMessageToChat,
+    addMessageToChannel,
+    toast
+  );
 
   const handleSend = () => {
     if (message.trim().length > 0 && currUser && user) {
       const userIds = [chatUserId, user.username];
       userIds.sort();
       const chatId = userIds.join("-");
-  
+
       const newMessage = {
         uid: uuidv4(),
         user: currUser.uid,
         content: message,
         date: new Date().toISOString(),
       };
-  
+
       if (isChat) {
-        updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId} });
-        updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: {...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username} });
+        updateLatestChats({
+          userUid: currUser.uid,
+          chatUid: chatId,
+          message: {
+            ...newMessage,
+            isChat: isChat,
+            userChatting: activeChatUser.uid,
+            userChattingUsername: chatUserId,
+          },
+        });
+        updateLatestChats({
+          userUid: activeChatUser.uid,
+          chatUid: chatId,
+          message: {
+            ...newMessage,
+            isChat: isChat,
+            userChatting: currUser.uid,
+            userChattingUsername: user.username,
+          },
+        });
         addMessageToChat({ chatId: chatId, message: newMessage });
       } else {
-        updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
-        Object.entries(team.participants).map(([userUid, isMember]) =>{
-          updateLatestChats({ userUid: userUid, chatUid: channelId, message: {...newMessage, isChat: isChat, teamId: teamId, channelId: channelId} });
-        })
-        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
+        updateLatestChats({
+          userUid: currUser.uid,
+          chatUid: channelId,
+          message: {
+            ...newMessage,
+            isChat: isChat,
+            teamId: teamId,
+            channelId: channelId,
+          },
+        });
+        Object.entries(team.participants).map(([userUid, isMember]) => {
+          updateLatestChats({
+            userUid: userUid,
+            chatUid: channelId,
+            message: {
+              ...newMessage,
+              isChat: isChat,
+              teamId: teamId,
+              channelId: channelId,
+            },
+          });
+        });
+        addMessageToChannel({
+          teamId: teamId,
+          channelId: channelId,
+          message: newMessage,
+        });
       }
-  
+
       setMessage("");
     }
   };
   return (
     <HStack width="100%" spacing={4}>
-      <Emojis
-        message={message}
-        setMessage={setMessage}
-        emojiPickerState={emojiPickerState}
-        setEmojiPickerState={SetEmojiPickerState}
-      />
-      <Input
-        placeholder="Type a message..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={(e) => {
-          if (e.key === "Enter") {
-            handleSend();
-          }
-        }}
-        flexGrow={1}
-      />
-      {message ? (
-        <Button
-          onClick={handleSend}
-          isLoading={isAddingMessage || isAddingMessageToChannel}
-          colorScheme="teal"
-        >
-          Send
-        </Button>
-      ) : (
-        !recording ? (
+      {!recording ? (
+        <>
+          <Emojis
+            message={message}
+            setMessage={setMessage}
+            emojiPickerState={emojiPickerState}
+            setEmojiPickerState={SetEmojiPickerState}
+          />
+          <Input
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
+              }
+            }}
+            flexGrow={1}
+          />
           <Button
-            onClick={handleStart}
+            onClick={handleSend}
+            isLoading={isAddingMessage || isAddingMessageToChannel}
             colorScheme="teal"
           >
-            Record
+            <Icon
+              as={BsFillSendFill}
+              boxSize={6}
+              style={{ fontSize: "24px" }}
+            />
           </Button>
-        ) : (
-          <>
-            <Button
-              onClick={handleSendAudio}
-              colorScheme="blue"
-            >
-              Send Audio
-            </Button>
-          </>
-        )
+        </>
+      ) : (
+        <>
+          <Emojis
+            message={message}
+            setMessage={setMessage}
+            emojiPickerState={emojiPickerState}
+            setEmojiPickerState={SetEmojiPickerState}
+          />
+          <Input
+            placeholder="Type a message..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === "Enter") {
+                handleSend();
+              }
+            }}
+            flexGrow={1}
+          />
+          <Button onClick={handleSendAudio} colorScheme="blue">
+            Send Recording
+          </Button>
+        </>
       )}
+      <Button onClick={handleStart} colorScheme="teal">
+        <Icon as={FaMicrophone} boxSize={6} style={{ fontSize: "24px" }} />
+      </Button>
     </HStack>
-  )
-}
-
+  );
+};
 export default ChatInput;
