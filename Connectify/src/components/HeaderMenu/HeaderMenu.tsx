@@ -19,7 +19,9 @@ import {
   DrawerCloseButton,
   Button,
   Divider,
+  Box
 } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
 import { AiOutlineTeam } from "react-icons/ai";
 import { GrStatusGoodSmall } from "react-icons/gr";
@@ -34,9 +36,11 @@ import { ref as refDB, onValue } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { auth } from "../../config/firebaseConfig";
 import ProfileStatus from "../ProfileStatus";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import CalendarApp from "../Calendar/Calendar";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
+import { useColorMode } from "@chakra-ui/react";
 export const Header: React.FC = ({
   onViewChange,
   onChatClick,
@@ -44,6 +48,7 @@ export const Header: React.FC = ({
   setUserListOpen,
   setTeamListOpen,
 }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [status, setStatus] = useState("available");
   const auth = getAuth();
   const currUser = auth.currentUser;
@@ -99,12 +104,12 @@ export const Header: React.FC = ({
 
   return (
     <Flex
-      bg="#f0f2f5"
+      bg={useColorModeValue("#f0f2f5", "gray.800")}
       justify="space-between"
       py="2"
       px="4"
       borderRight="1px solid #f2f2f2"
-      color="#54656f"
+      color={useColorModeValue("#54656f", "white")}
     >
       <Menu>
         <Tooltip label={status} placement="right-end">
@@ -126,19 +131,20 @@ export const Header: React.FC = ({
         <IconButton
           variant="ghost"
           onClick={handleChatClick}
-          icon={<BsFillChatLeftTextFill />}
+          icon={<Box color={useColorModeValue('black', 'white')} as={BsFillChatLeftTextFill} />}
         />
         <IconButton
           variant="ghost"
           onClick={handleTeamsClick}
-          icon={<AiOutlineTeam />}
+          icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineTeam} />}
         />
         <CalendarApp />
         <Menu>
-          <MenuButton
-            as={IconButton}
+          <IconButton
             variant="ghost"
-            icon={<GiHamburgerMenu />}
+            aria-label="Toggle color mode"
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            onClick={toggleColorMode}
           />
           <MenuList>
             <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
