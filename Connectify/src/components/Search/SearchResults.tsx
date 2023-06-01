@@ -44,7 +44,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ results, searchQue
       spacing="0"
       pr="1"
       divider={<StackDivider w="100%" alignSelf="flex-end" />}
-      backgroundColor="pink.100"
     >
       {Object.values(results)
         .filter(

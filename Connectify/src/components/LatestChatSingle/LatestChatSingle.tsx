@@ -2,6 +2,7 @@ import { HStack, VStack, Text, Box, Spacer } from "@chakra-ui/layout";
 import { useGetUserByIdQuery, useGetChannelByIdQuery, useGetTeamByIdQuery, User, Team, Channel, Chat } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
+import { useColorModeValue } from "@chakra-ui/react";
 
 interface LatestChatSingleProps {
     chat: Chat;
@@ -10,6 +11,7 @@ interface LatestChatSingleProps {
 }
 
 const LatestChatSingle: FC<LatestChatSingleProps> = ({ chat, handleChatClick, handleChannelClick }) => {
+    const hoverBgColor = useColorModeValue('gray.100', 'gray.800'); 
     const authorResult = useGetUserByIdQuery(chat.user);
     const userChattingWithResult = useGetUserByIdQuery(chat.userChatting);
     const channelResult = useGetChannelByIdQuery({ teamId: chat.teamId, channelId: chat.channelId });
@@ -55,7 +57,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({ chat, handleChatClick, ha
     const currUserUid = getAuth().currentUser?.uid;
 
     return chat.isChat ?
-        <Box _hover={{ backgroundColor: "gray.100" }} cursor="pointer" onClick={() => handleChatClick(userChattingWith)}>
+        <Box _hover={{ backgroundColor: hoverBgColor }} cursor="pointer" onClick={() => handleChatClick(userChattingWith)}>
             <HStack ml={2} mb={2}>
                 <Avatar name={`${userChattingWith?.firstName} ${userChattingWith?.lastName}`} src={userChattingWith?.photoURL}>
                     <AvatarBadge boxSize="1.25em" bg={getStatusColor(userChattingWith?.status)} />
@@ -73,7 +75,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({ chat, handleChatClick, ha
             </HStack>
         </Box>
         :
-        <Box _hover={{ backgroundColor: "gray.100" }} cursor="pointer" onClick={() => handleChannelClick(team.uid, channel.uid)}>
+        <Box _hover={{ backgroundColor: hoverBgColor }} cursor="pointer" onClick={() => handleChannelClick(team.uid, channel.uid)}>
             <HStack ml={2} mb={2}>
                 <Avatar name={team?.name} src={team?.photoUrl} borderRadius="6" />
                 <VStack align="start" spacing={1}>

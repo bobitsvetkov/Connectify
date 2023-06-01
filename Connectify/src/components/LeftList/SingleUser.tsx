@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { useColorModeValue } from "@chakra-ui/react";
 interface SingleUserProps {
   userUid: string;
 }
 
 const SingleUser: React.FC<SingleUserProps> = ({ userUid }) => {
+  const hoverBgColor = useColorModeValue('gray.100', 'gray.800');
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { data: user, isLoading: isUserLoading, isError: isError } = useGetUserByIdQuery(userUid);
@@ -28,7 +30,7 @@ const SingleUser: React.FC<SingleUserProps> = ({ userUid }) => {
       p={1}
       mb={1}
       _hover={{
-        backgroundColor: "#f5f6f6",
+        backgroundColor: hoverBgColor,
         cursor: "pointer",
       }}
       onClick={() => onUserClick(user)}
