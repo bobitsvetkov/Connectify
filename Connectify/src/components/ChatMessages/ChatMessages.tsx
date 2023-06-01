@@ -24,7 +24,13 @@ const ChatMessages = ({
   };
 
   return (
-    <Box flexGrow={1} overflowY="auto" width="100%" marginBottom={20}>
+    <Box
+      flexGrow={1}
+      overflowY="auto"
+      width="100%"
+      marginBottom={20}
+      overflowX="hidden"
+    >
       {chatData?.messages &&
         Object.values(chatData.messages)
           .sort((a, b) => new Date(a.date) - new Date(b.date))
