@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   AbsoluteCenter,
@@ -18,12 +18,7 @@ export function RightPanel({ children }) {
   );
 
   return (
-    <Center
-      bg="#f0f2f5"
-      borderBottom="6px solid #43c960"
-      position="relative"
-      w="70%"
-    >
+    <Center bg="#f0f2f5" position="relative" w="70%">
       {activeChatUser ? (
         <>{children}</>
       ) : (
