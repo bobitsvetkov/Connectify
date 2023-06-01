@@ -17,10 +17,11 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({ chat, handleChatClick, ha
 
     let author, userChattingWith, team, channel;
 
+    if (!authorResult.isLoading && !authorResult.isError) {
+        author = authorResult.data;
+    }
+
     if (chat.isChat) {
-        if (!authorResult.isLoading && !authorResult.isError) {
-            author = authorResult.data;
-        }
         if (!userChattingWithResult.isLoading && !userChattingWithResult.isError) {
             userChattingWith = userChattingWithResult.data;
         }
