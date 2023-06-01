@@ -7,6 +7,7 @@ import { useGetUserSearchByUsernameQuery, useGetUsersQuery } from "../../api/dat
 const SearchInput: React.FC<SearchInputProps> = ({
   size,
   onSearch,
+  bg,
   ...props
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,8 +51,8 @@ const SearchInput: React.FC<SearchInputProps> = ({
             fontSize: "15px",
           }}
           h="36px"
-          _hover={{ bg: "#f0f2f5" }}
-          bg="#f0f2f5"
+          _hover={{ bg }} 
+          bg={bg}  
           variant="filled"
           placeholder="Search or start new chat"
           value={searchQuery}
