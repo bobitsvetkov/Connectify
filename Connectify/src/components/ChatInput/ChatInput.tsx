@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { Input, Button, HStack, useToast } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, User } from "../../api/databaseApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation, User } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { useLazyGenerateConversationQuery } from "../../api/openAiApi";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 interface ChatInputProps {
   currUser: object,

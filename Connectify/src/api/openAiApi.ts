@@ -19,7 +19,7 @@ export const openaiApi = createApi({
                     model: 'gpt-3.5-turbo',
                     messages: messages,
                     temperature: 0.7,
-                    max_tokens: 150,
+                    max_tokens: 200,
                     top_p: 1,
                     frequency_penalty: 0.0,
                     presence_penalty: 0.6,

@@ -46,13 +46,6 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
   
   const dispatch = useDispatch();
  
-
-
-  if(chatUserId === 'mimir') {
-    activeChatUser = {username: "mimir", firstName: "Mimir", lastName:"", uid: "mimir"};
-  }
-
-
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
       setShowMembers(false);
@@ -137,9 +130,9 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
                 : (chatData && chatData.name) || "Loading..."}
             </Box>
           </Box>
-          <Flex direction="row" justify="flex-end">
+          {isBot || <Flex direction="row" justify="flex-end">
             <CreateRoom />
-          </Flex>
+          </Flex>}
           {isChat || (
             <>
               <Spacer />
