@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Input,
   Button,
@@ -11,45 +11,58 @@ import {
   PopoverCloseButton,
   PopoverBody,
   PopoverHeader,
-} from "@chakra-ui/react";
-import { ImImages } from "react-icons/im";
+  InputGroup,
+  InputRightElement,
+} from '@chakra-ui/react';
+import { ImImages } from 'react-icons/im';
+import { CloseIcon } from '@chakra-ui/icons'; // import close icon from Chakra UI
 
 type GiphyDropdownProps = {
   onGifSelect: (gifUrl: string) => void;
 };
 
-
 const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
   const [gifs, setGifs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const GIPHY_API_KEY = "OvghlS9FP4Hqqyo8t5kKp2LeLufHyPct";
+  const GIPHY_API_KEY = 'OvghlS9FP4Hqqyo8t5kKp2LeLufHyPct';
 
-  useEffect(() => {
-    fetch(
-      `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=10`
-    )
+  const fetchTrendingGifs = () => {
+    fetch(`https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=12`)
       .then((res) => res.json())
       .then((data) => setGifs(data.data))
       .catch((err) => console.error(err));
+  };
+
+  const fetchSearchGifs = () => {
+    fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${searchTerm}&limit=12`)
+      .then((res) => res.json())
+      .then((data) => setGifs(data.data))
+      .catch((err) => console.error(err));
+  };
+
+  // Initial fetch
+  useEffect(() => {
+    fetchTrendingGifs();
   }, []);
 
-  const searchGifs = (e) => {
-    e.preventDefault();
-    if (!searchTerm) return;
-    fetch(
-      `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${searchTerm}&limit=10`
-    )
-      .then((res) => res.json())
-      .then((data) => setGifs(data.data))
-      .catch((err) => console.error(err));
+  // Search as user types
+  useEffect(() => {
+    if (searchTerm) {
+      fetchSearchGifs();
+    } else {
+      fetchTrendingGifs();
+    }
+  }, [searchTerm]);
+
+  const handleReset = () => {
+    setSearchTerm(''); // clear the search term
   };
 
   const handleGifClick = (gifUrl: string) => {
-    console.log("GIF clicked: ", gifUrl);
+    console.log('GIF clicked: ', gifUrl);
     onGifSelect(gifUrl);
   };
-  
 
   return (
     <Popover>
@@ -63,13 +76,18 @@ const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
         <PopoverCloseButton />
         <PopoverHeader>Search GIFs</PopoverHeader>
         <PopoverBody>
-          <Input
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search GIFs"
-            mb={4}
-          />
-          <Button onClick={searchGifs}>Search</Button>
+          <InputGroup size="md" mb={4}>
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search GIFs"
+            />
+            <InputRightElement width="4.5rem">
+              <Button size="sm" onClick={handleReset}>
+                <CloseIcon />
+              </Button>
+            </InputRightElement>
+          </InputGroup>
           <SimpleGrid columns={3} spacing={4} mt={4}>
             {gifs.map((gif) => (
               <Image
