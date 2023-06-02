@@ -19,7 +19,7 @@ import {
   DrawerCloseButton,
   Button,
   Divider,
-  Box
+  Box,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
@@ -108,7 +108,7 @@ export const Header: React.FC = ({
       justify="space-between"
       py="2"
       px="4"
-      borderRight="1px solid #f2f2f2"
+      // borderRight="1px solid #f2f2f2"
       color={useColorModeValue("#54656f", "white")}
     >
       <Menu>
@@ -125,19 +125,44 @@ export const Header: React.FC = ({
           <ProfileInfo />
           <MenuDivider />
           <ProfileStatus />
+          <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
+          <Drawer
+            placement="left"
+            onClose={onSettingsClose}
+            isOpen={isSettingsOpen}
+          >
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerHeader borderBottomWidth="1px">
+                <UserSetting />
+              </DrawerHeader>
+            </DrawerContent>
+          </Drawer>
+          <MenuDivider />
+          <MenuItem onClick={handleLogOut}>Log out</MenuItem>
         </MenuList>
       </Menu>
       <HStack spacing="3">
         <IconButton
           variant="ghost"
           onClick={handleChatClick}
-          icon={<Box color={useColorModeValue('black', 'white')} as={BsFillChatLeftTextFill} />}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={BsFillChatLeftTextFill}
+            />
+          }
         />
 
         <IconButton
           variant="ghost"
           onClick={handleTeamsClick}
-          icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineTeam} />}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={AiOutlineTeam}
+            />
+          }
         />
 
         <CalendarApp />
@@ -145,35 +170,9 @@ export const Header: React.FC = ({
         <IconButton
           variant="ghost"
           aria-label="Toggle color mode"
-          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
           onClick={toggleColorMode}
         />
-
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            variant="ghost"
-            icon={<GiHamburgerMenu />}
-          />
-          <MenuList>
-            <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
-            <Drawer
-              placement="left"
-              onClose={onSettingsClose}
-              isOpen={isSettingsOpen}
-            >
-              <DrawerOverlay />
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth="1px">
-                  <UserSetting />
-                </DrawerHeader>
-              </DrawerContent>
-            </Drawer>
-            <MenuItem>New Window</MenuItem>
-            <MenuDivider />
-            <MenuItem onClick={handleLogOut}>Log out</MenuItem>
-          </MenuList>
-        </Menu>
       </HStack>
     </Flex>
   );
