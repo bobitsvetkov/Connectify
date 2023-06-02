@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { useGenerateMessageQuery } from "../../api/openaiApi"; 
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -42,6 +43,13 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === "individual" ? true : false;
   const dispatch = useDispatch();
+ 
+
+
+  if(chatUserId === 'mimir') {
+    activeChatUser = {username: "mimir", firstName: "Mimir", lastName:"", uid: "mimir"};
+  }
+
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {

@@ -74,7 +74,7 @@ export const LeftPanel: React.FC = () => {
               {selectedTeam && <ChannelList team={selectedTeam}/>}
             </Flex>
           }
-          {view === "assistant" && <BotConversationsList />}
+          {view === "assistant" && isAiListListOpen && <BotConversationsList />}
         </Flex>
       )}
     </Flex>

@@ -101,7 +101,7 @@ export const Header: React.FC = ({
 
   const handleAiAssistantClick = () => {
     onAiAssistantClick();
-    onViewChange("aiassistant");
+    onViewChange("assistant");
   };
 
   const navigate = useNavigate();
