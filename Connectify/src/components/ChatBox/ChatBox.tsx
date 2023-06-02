@@ -42,6 +42,8 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
   const { teamId, channelId, chatUserId } = useParams();
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === "individual" ? true : false;
+  const isBot = chatUserId === 'mimir' ? true : false;
+  
   const dispatch = useDispatch();
  
 
@@ -169,6 +171,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({ chatType }) =>
           isChat={isChat}
           teamId={teamId}
           channelId={channelId}
+          isBot={isBot}
         />
       </VStack>
       {showMembers && (

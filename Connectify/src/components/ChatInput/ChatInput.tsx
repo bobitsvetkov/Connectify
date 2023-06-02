@@ -4,61 +4,26 @@ import { v4 as uuidv4 } from "uuid";
 import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { useGenerateConversationQuery } from "../../api/openAiApi";
+import { useLazyGenerateConversationQuery } from "../../api/openAiApi";
 
-const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId }) => {
+const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId, isBot }) => {
   const [message, setMessage] = useState<string>("");
-  const [fullMessage, setFullMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
-  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{"role": "system", "content": "You are a helpful assistant."}]);
+  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{ "role": "system", "content": "You are a helpful assistant." }]);
 
   const [addMessageToChat, { isLoading: isAddingMessage }] = useAddMessageToChatMutation();
   const [addMessageToChannel, { isLoading: isAddingMessageToChannel }] = useAddMessageToChannelMutation();
   const toast = useToast();
   const [updateLatestChats, { isLoading: isUpdatingLatestChats }] = useUpdateUserLatestChatsMutation();
   const { data: team } = useGetTeamByIdQuery(teamId) || null;
-
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
-
-  const triggerGeneration = message.trim().length > 0;
-
-  const { data: generatedMessage, error } = useGenerateConversationQuery(messagesForAI, { skip: !triggerGeneration });
-
-  console.log("Generated Message: ", generatedMessage);
-
+  const [executeGenerateConversation, { data: generatedMessage, error }] = useLazyGenerateConversationQuery();
+  console.log(generatedMessage);
   const userIds = [chatUserId, user.username];
   userIds.sort();
   const chatId = userIds.join("-");
 
-  useEffect(() => {
-    if (generatedMessage && !error) {
-      const aiMessage = {
-        uid: uuidv4(),
-        user: currUser.uid,
-        content: generatedMessage.choices[0].message.content,  // Extract the generated message content
-        date: new Date().toISOString(),
-        isGenerated: true,  // Additional field to indicate that this message was generated
-      };
-
-      console.log(aiMessage)
-
-      addMessageToChat({ chatId: chatId, message: aiMessage });
-      setMessage(""); // Clear message input after sending AI message
-    } else if (error) {
-      // Optional: handle the case where the generated message was not successfully retrieved
-      console.error(error);
-    }
-  }, [generatedMessage, error]);
-
-
-  const handleSend = () => {
-
-    setMessagesForAI(prev => [
-      ...prev,
-      { role: 'user', content: message }
-    ]);
-
-
+  const handleSend = async () => {
     const newMessage = {
       uid: uuidv4(),
       user: currUser.uid,
@@ -81,23 +46,31 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
 
       setMessage("");
     }
-    // if (generatedMessage && !error) {
-    //   const aiMessage = {
-    //     uid: uuidv4(),
-    //     user: currUser.uid,
-    //     content: generatedMessage.choices[0].text,  // Extract the generated message text
-    //     date: new Date().toISOString(),
-    //     isGenerated: true,  // Additional field to indicate that this message was generated
-    //   };
 
-    //   console.log(aiMessage)
+    if (isBot) {
+      setMessagesForAI(prev => [
+        ...prev,
+        { role: 'user', content: message }
+      ]);
 
-    //   addMessageToChat({ chatId: chatId, message: aiMessage });
-    //   setMessage(""); // Clear message input after sending AI message
-    // } else {
-    //   // Optional: handle the case where the generated message was not successfully retrieved
-    //   console.error(error);
-    // }
+      try {
+        const generatedMessage = await executeGenerateConversation(messagesForAI);
+
+        if (generatedMessage.data) {
+          const aiMessage = {
+            uid: uuidv4(),
+            user: chatUserId,
+            content: generatedMessage.data.choices[0].message.content,
+            date: new Date().toISOString(),
+            isGenerated: true,
+          };
+    
+          addMessageToChat({ chatId: chatId, message: aiMessage });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (

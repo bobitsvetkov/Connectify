@@ -29,5 +29,5 @@ export const openaiApi = createApi({
     }),
 });
 
-export const { useGenerateConversationQuery } = openaiApi;
+export const { useLazyGenerateConversationQuery } = openaiApi;
 
