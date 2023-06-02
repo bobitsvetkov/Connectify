@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Avatar, AvatarBadge } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
+import { onValue, ref as refDB } from "firebase/database";
+import { database } from "../../config/firebaseConfig";
 
 interface AvatarButtonProps {
   onClick?: () => void;
@@ -13,6 +15,17 @@ const AvatarButton: React.FC<AvatarButtonProps> = ({ onClick, status }) => {
   const currUser = auth.currentUser;
   const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
 
+  const [photoUrl, setPhotoUrl] = useState("");
+
+  useEffect(() => {
+    if (currUser) {
+      const userRef = refDB(database, `users/${currUser.uid}`);
+      onValue(userRef, (snapshot) => {
+        const data = snapshot.val();
+        setPhotoUrl(data.photoURL);
+      });
+    }
+  }, [currUser]);
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Available":
@@ -36,7 +49,7 @@ const AvatarButton: React.FC<AvatarButtonProps> = ({ onClick, status }) => {
         <Avatar
           size="sm"
           name={`${user.firstName} ${user.lastName}`}
-          src={user.photoURL || auth.currentUser?.photoURL}
+          src={photoUrl}
           onClick={onClick}
         >
           <AvatarBadge
