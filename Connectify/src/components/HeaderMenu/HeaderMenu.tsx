@@ -41,6 +41,8 @@ import CalendarApp from "../Calendar/Calendar";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import { useColorMode } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { selectUser } from "../../features/ActiveUserSlice";
 
 export const Header: React.FC = ({
   onViewChange,
@@ -53,12 +55,13 @@ export const Header: React.FC = ({
   const [status, setStatus] = useState("available");
   const auth = getAuth();
   const currUser = auth.currentUser;
+  const dispatch = useDispatch();
   const {
     data: user,
     isLoading: isUserLoading,
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
-
+  const { data: mimir} = useGetUserByIdQuery('mimir');
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const {
     isOpen: isAvatarOpen,
@@ -98,6 +101,11 @@ export const Header: React.FC = ({
     setCalendarOpen(!isCalendarOpen);
   };
 
+  const handleChatBotClick = () => {
+    dispatch(selectUser(mimir));
+    navigate("/chat/mimir")
+  }
+
   const navigate = useNavigate();
   const handleLogOut = () => {
     navigate("/");
@@ -132,7 +140,7 @@ export const Header: React.FC = ({
 
         <IconButton
           variant="ghost"
-          onClick={() => navigate("/chat/mimir")}
+          onClick={handleChatBotClick}
           icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineRobot} />}
         />
         <IconButton

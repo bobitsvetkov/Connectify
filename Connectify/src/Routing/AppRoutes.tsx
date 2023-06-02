@@ -32,16 +32,6 @@ const routes = [
       </Layout>
     ),
   },
-  // {
-  //   name: "Chat",
-  //   // path: "/chat/:botConversationId",
-  //   path: "/chat/mimir",
-  //   element: (
-  //     <Layout>
-  //       <ChatBox chatType="bot" />
-  //     </Layout>
-  //   ),
-  // },
 ];
 
 
