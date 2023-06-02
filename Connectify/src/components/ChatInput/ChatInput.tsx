@@ -30,7 +30,7 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
       content: message,
       date: new Date().toISOString(),
     };
-
+  
     if (message.trim().length > 0 && currUser && user) {
       if (isChat) {
         updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
@@ -43,19 +43,21 @@ const ChatInput = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId,
         })
         addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
       }
-
+  
       setMessage("");
     }
-
+  
     if (isBot) {
-      setMessagesForAI(prev => [
-        ...prev,
+      const updatedMessagesForAI = [
+        ...messagesForAI,
         { role: 'user', content: message }
-      ]);
-
+      ];
+  
+      setMessagesForAI(updatedMessagesForAI);
+  
       try {
-        const generatedMessage = await executeGenerateConversation(messagesForAI);
-
+        const generatedMessage = await executeGenerateConversation(updatedMessagesForAI);
+  
         if (generatedMessage.data) {
           const aiMessage = {
             uid: uuidv4(),
