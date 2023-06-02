@@ -1,9 +1,7 @@
-import { Box } from "@chakra-ui/react";
-import { Avatar } from "@chakra-ui/react";
+import { Box, Image } from "@chakra-ui/react";
 import Message from "../ChatBox/Single Message/Message";
 import { useState } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
-import { AvatarBadge } from "@chakra-ui/react";
 
 const ChatMessages = ({
   chatData,
@@ -16,12 +14,6 @@ const ChatMessages = ({
   teamId,
   channelId,
 }) => {
-  const [replyTo, setReplyTo] = useState(null);
-  const [replyContent, setReplyContent] = useState("");
-
-  const handleReply = (messageId) => {
-    setReplyTo(messageId);
-  };
 
   return (
     <Box
@@ -46,13 +38,14 @@ const ChatMessages = ({
             >
               {message.type === "audio" ? (
                 <VoiceMessage url={message.content} />
+              ) : message.type === "gif" ? (
+                <Image src={message.content} alt="GIF" />
               ) : (
                 <Message
                   key={message.uid}
                   message={message}
                   messageId={message.uid}
                   chatId={activeChatId}
-                  setReplyTo={setReplyTo}
                   getStatusColor={getStatusColor}
                   isChat={isChat}
                   teamId={teamId}

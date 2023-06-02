@@ -11,6 +11,7 @@ import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
 import { FaMicrophone } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
+import GiphyDropdown from "../Gifs/Gifs";
 
 const ChatInput = ({
   currUser,
@@ -44,6 +45,10 @@ const ChatInput = ({
     toast
   );
 
+  const handleGifSelect = (gifUrl) => {
+    setMessage(gifUrl);
+  };
+
   const handleSend = () => {
     if (message.trim().length > 0 && currUser && user) {
       const userIds = [chatUserId, user.username];
@@ -53,6 +58,7 @@ const ChatInput = ({
       const newMessage = {
         uid: uuidv4(),
         user: currUser.uid,
+        type: message.includes('giphy.com') ? 'gif' : 'text',
         content: message,
         date: new Date().toISOString(),
       };
@@ -122,6 +128,7 @@ const ChatInput = ({
             emojiPickerState={emojiPickerState}
             setEmojiPickerState={SetEmojiPickerState}
           />
+          <GiphyDropdown onGifSelect={handleGifSelect} />
           <Input
             placeholder="Type a message..."
             value={message}
