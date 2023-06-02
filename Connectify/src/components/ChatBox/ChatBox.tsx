@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { useGenerateMessageQuery } from "../../api/openaiApi"; 
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -46,8 +47,10 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   const { teamId, channelId, chatUserId } = useParams();
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === "individual" ? true : false;
+  const isBot = chatUserId === 'mimir' ? true : false;
+  
   const dispatch = useDispatch();
-
+ 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
       setShowMembers(false);
@@ -135,14 +138,10 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
               )}
             </Box>
           </Box>
-          {isChat ? (
-            <>
-              <Spacer />
-              <Flex direction="row">
-                <CreateRoom />
-              </Flex>
-            </>
-          ) : (
+          {isBot || <Flex direction="row" justify="flex-end">
+            <CreateRoom />
+          </Flex>}
+          {isChat || (
             <>
               <Spacer />
               <Flex direction="row" alignItems="center">
@@ -178,6 +177,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
           isChat={isChat}
           teamId={teamId}
           channelId={channelId}
+          isBot={isBot}
         />
       </VStack>
       {showMembers && (

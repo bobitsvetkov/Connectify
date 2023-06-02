@@ -8,6 +8,7 @@ import LeftList from "./LeftList/LeftList";
 import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
+import BotConversationsList from "./BotConvrsationsList/BotConversationsList";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");

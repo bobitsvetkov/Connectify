@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
-import { AiOutlineTeam } from "react-icons/ai";
+import { AiOutlineTeam, AiOutlineRobot } from "react-icons/ai";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
@@ -41,6 +41,9 @@ import CalendarApp from "../Calendar/Calendar";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import { useColorMode } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { selectUser } from "../../features/ActiveUserSlice";
+
 export const Header: React.FC = ({
   onViewChange,
   onChatClick,
@@ -52,12 +55,13 @@ export const Header: React.FC = ({
   const [status, setStatus] = useState("available");
   const auth = getAuth();
   const currUser = auth.currentUser;
+  const dispatch = useDispatch();
   const {
     data: user,
     isLoading: isUserLoading,
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
-
+  const { data: mimir} = useGetUserByIdQuery('mimir');
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const {
     isOpen: isAvatarOpen,
@@ -96,6 +100,11 @@ export const Header: React.FC = ({
   const handleCalendarClick = () => {
     setCalendarOpen(!isCalendarOpen);
   };
+
+  const handleChatBotClick = () => {
+    dispatch(selectUser(mimir));
+    navigate("/chat/mimir")
+  }
 
   const navigate = useNavigate();
   const handleLogOut = () => {
@@ -143,6 +152,12 @@ export const Header: React.FC = ({
         </MenuList>
       </Menu>
       <HStack spacing="3">
+
+        <IconButton
+          variant="ghost"
+          onClick={handleChatBotClick}
+          icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineRobot} />}
+        />
         <IconButton
           variant="ghost"
           onClick={handleChatClick}
