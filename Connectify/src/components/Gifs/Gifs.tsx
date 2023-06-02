@@ -15,7 +15,7 @@ import {
   InputRightElement,
 } from '@chakra-ui/react';
 import { ImImages } from 'react-icons/im';
-import { CloseIcon } from '@chakra-ui/icons'; // import close icon from Chakra UI
+import { CloseIcon } from '@chakra-ui/icons'; 
 
 type GiphyDropdownProps = {
   onGifSelect: (gifUrl: string) => void;
@@ -41,12 +41,10 @@ const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
       .catch((err) => console.error(err));
   };
 
-  // Initial fetch
   useEffect(() => {
     fetchTrendingGifs();
   }, []);
 
-  // Search as user types
   useEffect(() => {
     if (searchTerm) {
       fetchSearchGifs();
@@ -56,7 +54,7 @@ const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
   }, [searchTerm]);
 
   const handleReset = () => {
-    setSearchTerm(''); // clear the search term
+    setSearchTerm(''); 
   };
 
   const handleGifClick = (gifUrl: string) => {
