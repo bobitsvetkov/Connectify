@@ -48,7 +48,6 @@ export const Header: React.FC = ({
   onTeamsClick,
   setUserListOpen,
   setTeamListOpen,
-  onAiAssistantClick,
 }) => {
   const { colorMode, toggleColorMode } = useColorMode();
   const [status, setStatus] = useState("available");
@@ -99,11 +98,6 @@ export const Header: React.FC = ({
     setCalendarOpen(!isCalendarOpen);
   };
 
-  const handleAiAssistantClick = () => {
-    onAiAssistantClick();
-    onViewChange("assistant");
-  };
-
   const navigate = useNavigate();
   const handleLogOut = () => {
     navigate("/");
@@ -138,7 +132,7 @@ export const Header: React.FC = ({
 
         <IconButton
           variant="ghost"
-          onClick={handleAiAssistantClick}
+          onClick={() => navigate("/chat/mimir")}
           icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineRobot} />}
         />
         <IconButton

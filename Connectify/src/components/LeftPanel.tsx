@@ -17,7 +17,6 @@ export const LeftPanel: React.FC = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isTeamListOpen, setTeamListOpen] = useState(false);
-  const [isAiListListOpen, setAiListListOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
 
   const handleSearch = (data) => {
@@ -29,22 +28,13 @@ export const LeftPanel: React.FC = () => {
     setView(newView);
   };
 
-  const handleAssistantClick = () => {
-    setAiListListOpen(true);
-    setUserListOpen(false);
-    setTeamListOpen(false);
-    setSelectedTeam(null);
-  };
-
   const handleChatClick = () => {
     setUserListOpen(true);
-    setAiListListOpen(false);
     setTeamListOpen(false);
     setSelectedTeam(null);
   };
 
   const handleTeamsClick = () => {
-    setAiListListOpen(false);
     setTeamListOpen(true);
     setUserListOpen(false);
     setSelectedTeam(null);
@@ -57,7 +47,6 @@ export const LeftPanel: React.FC = () => {
           onViewChange={handleViewChange}
           onChatClick={handleChatClick}
           onTeamsClick={handleTeamsClick}
-          onAiAssistantClick={handleAssistantClick}
           setUserListOpen={setUserListOpen}
           setTeamListOpen={setTeamListOpen} 
         />
@@ -74,7 +63,6 @@ export const LeftPanel: React.FC = () => {
               {selectedTeam && <ChannelList team={selectedTeam}/>}
             </Flex>
           }
-          {view === "assistant" && isAiListListOpen && <BotConversationsList />}
         </Flex>
       )}
     </Flex>
