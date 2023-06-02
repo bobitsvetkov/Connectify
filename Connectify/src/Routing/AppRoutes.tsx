@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "../pages/LandingPage";
 import Layout from "../pages/Layout";
@@ -32,7 +31,17 @@ const routes = [
         <ChatBox chatType="team" />
       </Layout>
     ),
-  }
+  },
+  // {
+  //   name: "Chat",
+  //   // path: "/chat/:botConversationId",
+  //   path: "/chat/mimir",
+  //   element: (
+  //     <Layout>
+  //       <ChatBox chatType="bot" />
+  //     </Layout>
+  //   ),
+  // },
 ];
 
 
