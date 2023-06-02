@@ -19,13 +19,13 @@ interface ChatInputProps {
 const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId, isBot }) => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
-  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{ "role": "system", "content": "You are a helpful assistant." }]);
+  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{ "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." }]);
 
   const [addMessageToChat] = useAddMessageToChatMutation();
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
   const [updateLatestChats] = useUpdateUserLatestChatsMutation();
-  const { data: } = useGetTeamByIdQuery(teamId) || null;
+  const { data: team } = useGetTeamByIdQuery(teamId) || null;
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast);
   const [executeGenerateConversation] = useLazyGenerateConversationQuery();
 
@@ -47,7 +47,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
         updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
         addMessageToChat({ chatId: chatId, message: newMessage });
       } else {
-        
+
         updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
         Object.entries(team.participants).map(([userUid, isMember]) => {
           updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
@@ -61,9 +61,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     if (isBot) {
       const updatedMessagesForAI = [
         ...messagesForAI,
+        { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
         { role: 'user', content: message }
       ];
-
+    
       setMessagesForAI(updatedMessagesForAI);
 
       try {
