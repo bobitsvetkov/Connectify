@@ -2,7 +2,10 @@ import { Input, InputGroup, InputLeftElement, HStack } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { SearchInputProps } from "../../types/interfaces";
 import { useState } from "react";
-import { useGetUserSearchByUsernameQuery, useGetUsersQuery } from "../../api/databaseApi";
+import {
+  useGetUserSearchByUsernameQuery,
+  useGetUsersQuery,
+} from "../../api/databaseApi";
 
 const SearchInput: React.FC<SearchInputProps> = ({
   size,
@@ -42,8 +45,12 @@ const SearchInput: React.FC<SearchInputProps> = ({
       {...props}
     >
       <InputGroup>
-        <InputLeftElement pointerEvents="none" children={<SearchIcon />} />
+        <InputLeftElement
+          pointerEvents="none"
+          children={<SearchIcon mt={"3px"} />}
+        />
         <Input
+          borderRadius={"20px"}
           _placeholder={{
             opacity: 0.6,
             color: "#3b4a54",
@@ -51,12 +58,14 @@ const SearchInput: React.FC<SearchInputProps> = ({
             fontSize: "15px",
           }}
           h="36px"
-          _hover={{ bg }} 
-          bg={bg}  
+          _hover={{ bg }}
+          bg={bg}
           variant="filled"
           placeholder="Search or start new chat"
           value={searchQuery}
           onChange={handleInputChange}
+          mt={"5px"}
+          mb={"5px"}
         />
       </InputGroup>
       {isLoading && <div>Loading...</div>}

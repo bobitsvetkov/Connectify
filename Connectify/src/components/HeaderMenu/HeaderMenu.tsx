@@ -61,7 +61,7 @@ export const Header: React.FC = ({
     isLoading: isUserLoading,
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
-  const { data: mimir} = useGetUserByIdQuery('mimir');
+  const { data: mimir } = useGetUserByIdQuery("mimir");
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const {
     isOpen: isAvatarOpen,
@@ -103,8 +103,8 @@ export const Header: React.FC = ({
 
   const handleChatBotClick = () => {
     dispatch(selectUser(mimir));
-    navigate("/chat/mimir")
-  }
+    navigate("/chat/mimir");
+  };
 
   const navigate = useNavigate();
   const handleLogOut = () => {
@@ -113,11 +113,11 @@ export const Header: React.FC = ({
 
   return (
     <Flex
-      bg={useColorModeValue("#f0f2f5", "gray.800")}
+      bg={useColorModeValue("#f57c73", "gray.800")}
       justify="space-between"
       py="2"
       px="4"
-      color={useColorModeValue("#54656f", "white")}
+      color={useColorModeValue("#f57c73", "#f57c73")}
     >
       <Menu>
         <Tooltip label={status} placement="right-end">
@@ -140,7 +140,7 @@ export const Header: React.FC = ({
             isOpen={isSettingsOpen}
           >
             <DrawerOverlay />
-            <DrawerContent>
+            <DrawerContent bg={useColorModeValue("#f57c73", "#f57c73")}>
               <DrawerHeader borderBottomWidth="1px">
                 <UserSetting />
               </DrawerHeader>
@@ -151,11 +151,15 @@ export const Header: React.FC = ({
         </MenuList>
       </Menu>
       <HStack spacing="3">
-
         <IconButton
           variant="ghost"
           onClick={handleChatBotClick}
-          icon={<Box color={useColorModeValue('black', 'white')} as={AiOutlineRobot} />}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={AiOutlineRobot}
+            />
+          }
         />
         <IconButton
           variant="ghost"

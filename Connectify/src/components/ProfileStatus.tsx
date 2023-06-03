@@ -38,6 +38,7 @@ const ProfileStatus: React.FC = () => {
         <MenuButton
           as={Button}
           variant={"ghost"}
+          color={"#57c73"}
           rightIcon={<ChevronRightIcon />}
         >
           Status: {status}
