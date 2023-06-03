@@ -1,4 +1,4 @@
-import { Box, Image } from "@chakra-ui/react";
+import { Box, Image, Modal, ModalOverlay, ModalContent, ModalBody, useDisclosure } from "@chakra-ui/react";
 import Message from "../ChatBox/Single Message/Message";
 import { useState } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
@@ -15,12 +15,19 @@ const ChatMessages = ({
   channelId,
 }) => {
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedImage, setSelectedImage] = useState("");
+
+  const handleImageClick = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    onOpen();
+  };
+
   return (
     <Box
       flexGrow={1}
       overflowY="auto"
       width="100%"
-      // marginBottom={20}
       overflowX="hidden"
     >
       {chatData?.messages &&
@@ -40,6 +47,14 @@ const ChatMessages = ({
                 <VoiceMessage url={message.content} />
               ) : message.type === "gif" ? (
                 <Image src={message.content} alt="GIF" />
+              ) : message.type === "image" ? (
+                <Image
+                  src={message.content}
+                  alt="Uploaded content"
+                  maxW="300px"
+                  cursor="pointer"
+                  onClick={() => handleImageClick(message.content)}
+                />
               ) : (
                 <Message
                   key={message.uid}
@@ -54,6 +69,14 @@ const ChatMessages = ({
               )}
             </Box>
           ))}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl" isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalBody>
+            <Image src={selectedImage} alt="Selected content" />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
