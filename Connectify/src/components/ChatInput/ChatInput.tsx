@@ -39,10 +39,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     toast
   );
 
-  const handleGifSelect = (gifUrl) => {
-    setMessage(gifUrl);
-  };
-
   const handleSend = useHandleSend({
     currUser, 
     user, 
@@ -59,6 +55,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     addMessageToChat,
     addMessageToChannel
   });
+
+  const handleGifSelect = (gifUrl) => {
+    handleSend(gifUrl);
+  };
 
 
   return (
