@@ -128,7 +128,7 @@ const useSignUp = () => {
 
     const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("handleNext function called."); 
+        console.log("handleNext function called.");
         setFormSubmitted(true);
 
         setTouchedFields({
@@ -146,18 +146,22 @@ const useSignUp = () => {
             confirmPassword: signupData.confirmPassword,
         });
 
-        console.log("Signup data:", signupData); 
-        console.log("Validation error messages:", errorMessages); 
+        console.log("Signup data:", signupData);
+        console.log("Validation error messages:", errorMessages);
 
         if (signupData.password !== signupData.confirmPassword) {
             const mismatchError = "Passwords do not match";
             errorMessages.push(mismatchError);
-            setPasswordError(mismatchError); 
-            setConfirmPasswordError(mismatchError); 
+            setPasswordError(mismatchError);
+            setConfirmPasswordError(mismatchError);
+        }
+
+        if (!(isLengthValid && isUpperAndLowerCaseValid && isNumberValid && isSpecialCharValid)) {
+            errorMessages.push("Weak password");
         }
 
         if (errorMessages.length > 0) {
-            console.log("Errors found, not proceeding to next step."); 
+            console.log("Errors found, not proceeding to next step.");
             setErrorMessage(errorMessages.join(' '));
             return;
         }
@@ -166,10 +170,9 @@ const useSignUp = () => {
         setErrorMessage(null);
 
         // If no errors, move to the next step
-        console.log("No errors found, proceeding to next step."); 
+        console.log("No errors found, proceeding to next step.");
         setStep(step + 1);
     };
-
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
