@@ -50,11 +50,8 @@ const EventComponent: React.FC<EventComponentProps> = ({ event, onDelete }) => {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="red" onClick={handleDelete}>
+            <Button variant="ghost" onClick={handleDelete}>
               Delete
-            </Button>
-            <Button variant="ghost" onClick={toggleModal}>
-              Close
             </Button>
           </ModalFooter>
         </ModalContent>
