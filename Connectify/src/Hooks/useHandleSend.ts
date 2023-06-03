@@ -49,14 +49,20 @@ export const useHandleSend = ({
     userIds.sort();
     const chatId = userIds.join("-");
 
-    const handleSend = async (msg?: string) => {
+    const handleSend = async (msg?: string, isImage?: boolean) => {
         const messageToSend = msg || message;
+        const type = isImage
+            ? 'image'
+            : messageToSend.includes('giphy.com')
+                ? 'gif'
+                : 'text';
+
         const newMessage = {
             uid: uuidv4(),
             user: currUser.uid,
             content: messageToSend,
             date: new Date().toISOString(),
-            type: messageToSend.includes('giphy.com') ? 'gif' : 'text',
+            type: type,
         };
 
         if (messageToSend.trim().length > 0 && currUser && user) {
@@ -76,7 +82,7 @@ export const useHandleSend = ({
             setMessage("");
         }
 
-        if (isBot) {
+        if (isBot && !isImage) {
             const updatedMessagesForAI = [
                 ...messagesForAI,
                 { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
@@ -110,6 +116,7 @@ export const useHandleSend = ({
             }
         }
     };
+
 
     return handleSend;
 };

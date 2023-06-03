@@ -3,10 +3,12 @@ import { Input, Button, HStack, useToast, Icon } from "@chakra-ui/react";
 import { useAddMessageToChatMutation, useAddMessageToChannelMutation, User } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { FaMicrophone } from "react-icons/fa";
+import { FaMicrophone, FaImage } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
+import uploadImage from "../Upload Files/Upload Image/UploadImage";
+
 interface ChatInputProps {
   currUser: object,
   user: User,
@@ -26,7 +28,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
 
-
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(
     currUser,
     user,
@@ -40,14 +41,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
   );
 
   const handleSend = useHandleSend({
-    currUser, 
-    user, 
-    chatUserId, 
-    activeChatUser, 
-    isChat, 
-    teamId, 
-    channelId, 
-    isBot, 
+    currUser,
+    user,
+    chatUserId,
+    activeChatUser,
+    isChat,
+    teamId,
+    channelId,
+    isBot,
     message,
     messagesForAI,
     setMessagesForAI,
@@ -60,6 +61,12 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     handleSend(gifUrl);
   };
 
+  const handleImageUpload = async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const url = await uploadImage(e.target.files[0]);
+      handleSend(url, true);
+    }
+  };
 
   return (
     <HStack width="100%" spacing={4}>
@@ -93,6 +100,25 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
               style={{ fontSize: "24px" }}
             />
           </Button>
+          <Button
+            as="label"
+            htmlFor="image-upload"
+            colorScheme="teal"
+            cursor="pointer"
+          >
+            <Icon
+              as={FaImage}
+              boxSize={6}
+              style={{ fontSize: "24px" }}
+            />
+          </Button>
+          <input
+            id="image-upload"
+            type="file"
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleImageUpload}
+          />
         </>
       ) : (
         <>
