@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SignUpData } from '../../../types/interfaces';
 import useToastHandler from '../../../components/Toast/toastHandler';
-import useValidationHandler from '../Validate Input/useValidation';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 import usePasswordValidation from '../../Password Hook/usePassValid';
 import useFieldValidation from '../Validate Input/useValidation';
@@ -11,6 +10,9 @@ import { useEffect } from 'react';
 const useSignUp = () => {
     const [step, setStep] = useState(1);
     const [formSubmitted, setFormSubmitted] = useState(false); 
+    const [usernameExists, setUsernameExists] = useState<boolean>(false);
+    const [emailExists, setEmailExists] = useState<boolean>(false);
+    const [phoneNumberExists, setPhoneNumberExists] = useState<boolean>(false);
     const [signupData, setSignupData] = useState<SignUpData>({
         firstName: '',
         lastName: '',
@@ -38,7 +40,7 @@ const useSignUp = () => {
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const { checkUsernameExists, createUser } = useFirebaseHandler();
+    const { checkUsernameExists, createUser, checkPhoneNumberExists } = useFirebaseHandler();
     const showToast = useToastHandler();
 
     const {
@@ -116,7 +118,7 @@ const useSignUp = () => {
                 setUsernameError(null);
             }
         }
-
+        console.log('handleSignupDataChange:', name, value);
         // Password validation
         if (name === 'password' || name === 'confirmPassword') {
             validatePassword(value);
@@ -126,10 +128,9 @@ const useSignUp = () => {
 
     const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("handleNext function called.");  // Log here
+        console.log("handleNext function called."); 
         setFormSubmitted(true);
 
-        // Set only the first step's fields to touched
         setTouchedFields({
             ...touchedFields,
             firstName: true,
@@ -145,18 +146,18 @@ const useSignUp = () => {
             confirmPassword: signupData.confirmPassword,
         });
 
-        console.log("Signup data:", signupData); // Log signupData here
-        console.log("Validation error messages:", errorMessages); // Log validation errors here
+        console.log("Signup data:", signupData); 
+        console.log("Validation error messages:", errorMessages); 
 
         if (signupData.password !== signupData.confirmPassword) {
             const mismatchError = "Passwords do not match";
             errorMessages.push(mismatchError);
-            setPasswordError(mismatchError); // set error for password
-            setConfirmPasswordError(mismatchError); // and for confirmPassword
+            setPasswordError(mismatchError); 
+            setConfirmPasswordError(mismatchError); 
         }
 
         if (errorMessages.length > 0) {
-            console.log("Errors found, not proceeding to next step."); // Log here
+            console.log("Errors found, not proceeding to next step."); 
             setErrorMessage(errorMessages.join(' '));
             return;
         }
@@ -165,7 +166,7 @@ const useSignUp = () => {
         setErrorMessage(null);
 
         // If no errors, move to the next step
-        console.log("No errors found, proceeding to next step."); // Log here
+        console.log("No errors found, proceeding to next step."); 
         setStep(step + 1);
     };
 
@@ -199,20 +200,36 @@ const useSignUp = () => {
         }
 
         const usernameExists = await checkUsernameExists(signupData.username);
+        console.log('usernameExists:', usernameExists);  
+        setUsernameExists(usernameExists);
         if (usernameExists) {
             setErrorMessage('This username is already taken.');
             return;
         }
 
+        const phoneNumberExists = await checkPhoneNumberExists(signupData.phoneNumber);
+        console.log('phoneNumberExists:', phoneNumberExists);  
+        setPhoneNumberExists(phoneNumberExists);
+        if (phoneNumberExists) {
+            setErrorMessage('This phone number is already in use.');
+            return;
+        }
+        
         try {
             await createUser(signupData);
             setErrorMessage(null); // clear error message
             navigate('/home');
             showToast("Account created.", "You've successfully signed up!", "success");
         } catch (error) {
-            if (error instanceof Error) {
+            console.log(error.code);
+            if (error.code === 'auth/email-already-in-use') {
+                setEmailExists(true);
+                setErrorMessage('This email is already in use.');
+            } else if (error instanceof Error) {
+                setEmailExists(false);
                 setErrorMessage(error.message);
             } else {
+                setEmailExists(false);
                 setErrorMessage("An unknown error occurred.");
             }
         }
@@ -224,6 +241,9 @@ const useSignUp = () => {
         handleSignupDataChange,
         handleSignUp,
         handleNext,
+        usernameExists,
+        phoneNumberExists,
+        emailExists,
         step,
         setStep,
         formSubmitted,
