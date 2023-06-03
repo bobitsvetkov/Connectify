@@ -117,7 +117,6 @@ export const Header: React.FC = ({
       justify="space-between"
       py="2"
       px="4"
-      // borderRight="1px solid #f2f2f2"
       color={useColorModeValue("#54656f", "white")}
     >
       <Menu>
@@ -179,9 +178,7 @@ export const Header: React.FC = ({
             />
           }
         />
-
         <CalendarApp />
-
         <IconButton
           variant="ghost"
           aria-label="Toggle color mode"

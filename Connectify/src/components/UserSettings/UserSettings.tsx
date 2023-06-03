@@ -185,13 +185,7 @@ export const UserSetting: React.FC = ({ avatar }) => {
                     onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
                   />
                 </FormControl>
-                <Button
-                  width="120px"
-                  ml={2}
-                  variant="unstyled"
-                  _hover={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-                  onClick={handleUpdateEmail}
-                >
+                <Button variant="ghost" onClick={handleUpdateEmail}>
                   Update Email
                 </Button>
               </VStack>
@@ -233,20 +227,11 @@ export const UserSetting: React.FC = ({ avatar }) => {
                   isLoading={updatingPassword}
                   loadingText="Updating..."
                   onClick={handleUpdatePassword}
-                  width="120px"
-                  ml={2}
-                  variant="unstyled"
-                  _hover={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
+                  variant="ghost"
                 >
                   Update Password
                 </Button>
-                <Button
-                  width="120px"
-                  ml={2}
-                  variant="unstyled"
-                  _hover={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-                  onClick={handleResetPassword}
-                >
+                <Button variant="ghost" onClick={handleResetPassword}>
                   Reset Password
                 </Button>
               </VStack>

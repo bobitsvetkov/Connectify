@@ -95,13 +95,7 @@ export const PhotoUploader: React.FC = () => {
       )}
       <Box display="flex" alignItems="center">
         <input type="file" onChange={handleFileInputChange} />
-        <Button
-          onClick={handleFileUpload}
-          width="120px"
-          ml={2}
-          variant="unstyled"
-          _hover={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
-        >
+        <Button onClick={handleFileUpload} variant="ghost">
           Upload
         </Button>
       </Box>

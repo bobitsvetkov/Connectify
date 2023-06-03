@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-import { useGetUserByIdQuery } from "../api/databaseApi";
-import { getAuth } from "@firebase/auth";
 import {
   Avatar,
   Box,
@@ -18,36 +16,30 @@ import { FaCamera } from "react-icons/fa";
 import { PhotoUploader } from "./UserPhotoUploader/UsersPhotoUploader";
 import { onValue, ref as refDB } from "firebase/database";
 import { database } from "../config/firebaseConfig";
+import { useCurrentUser } from "../AuthUtils";
 
-const ProfileInfo: React.FC = ({ status }) => {
-  const auth = getAuth();
-  const currUser = auth.currentUser;
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
-
+const ProfileInfo: React.FC = () => {
+  const { user, isUserLoading } = useCurrentUser();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
   const [isHovering, setIsHovering] = useState(false);
 
-  const handleAvatarClick = () => {
-    setIsUploadOpen(true);
+  const handleCloseModal = () => {
+    setIsUploadOpen(false);
   };
 
   useEffect(() => {
-    if (currUser) {
-      const userRef = refDB(database, `users/${currUser.uid}`);
+    if (user) {
+      const userRef = refDB(database, `users/${user.uid}`);
       onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         setPhotoUrl(data.photoURL);
       });
     }
-  }, [currUser]);
+  }, [user]);
 
-  const handleCloseModal = () => {
-    setIsUploadOpen(false);
+  const handleAvatarClick = () => {
+    setIsUploadOpen(true);
   };
 
   return (
