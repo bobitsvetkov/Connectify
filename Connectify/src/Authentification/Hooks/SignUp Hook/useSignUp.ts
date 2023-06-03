@@ -174,6 +174,13 @@ const useSignUp = () => {
         setStep(step + 1);
     };
 
+    const handleBack = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault();
+        if (step > 1) {
+            setStep(step - 1);
+        }
+    };
+
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setFormSubmitted(true);
@@ -244,6 +251,7 @@ const useSignUp = () => {
         handleSignupDataChange,
         handleSignUp,
         handleNext,
+        handleBack,
         usernameExists,
         phoneNumberExists,
         emailExists,
