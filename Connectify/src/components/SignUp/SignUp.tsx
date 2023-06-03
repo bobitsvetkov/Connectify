@@ -3,7 +3,8 @@ import {
   Stack,
   IconButton,
   Box,
-  Flex
+  Flex,
+  Divider
 } from "@chakra-ui/react";
 import useSignUp from "../../Authentification/Hooks/SignUp Hook/useSignUp";
 import { SignUpStepOneForm } from "./Step One Form/StepOneForm";
@@ -89,6 +90,7 @@ export function SignUpForm() {
                             >
                                 {step === 1 ? "Next" : "Sign Up"}
                             </Button>
+                            <Divider my={6} /> {/* Add Divider component here */}
                         </Stack>
                     </form>
                 </Box>
