@@ -18,6 +18,9 @@ export function SignUpForm() {
         validationErrors,
         touchedFields,
         handleNext,
+        usernameExists,
+        phoneNumberExists,
+        emailExists
     } = useSignUp();
 
     const passwordValidationStates = usePasswordValidation();
@@ -57,6 +60,9 @@ export function SignUpForm() {
                         validationErrors={validationErrors}
                         touchedFields={touchedFields}
                         passwordValidationStates={passwordValidationStates}
+                        usernameExists={usernameExists}
+                        phoneNumberExists={phoneNumberExists}
+                        emailExists={emailExists}
                     />
                 )}
                 <Button
