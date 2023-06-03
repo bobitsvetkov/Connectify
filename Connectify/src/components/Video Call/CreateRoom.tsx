@@ -1,24 +1,38 @@
 import {useState} from 'react';
 import AgoraUIKit from 'agora-react-uikit';
+import { Button } from '@chakra-ui/react';
+import { FaVideo } from 'react-icons/fa';
 
 const CreateRoom = () => {
   const [videoCall, setVideoCall] = useState(true);
+  const [showVideo, setShowVideo] = useState(false);
+
   const rtcProps = {
     appId: '1d9b4d5e8c224e6895d2904de8db2e39', 
-    channel: 'test', // your agora channel
-    token: null // use null or skip if using app in testing mode
+    channel: 'test',
+    token: null 
   };
   const callbacks = {
-    EndCall: () => setVideoCall(false),
+    EndCall: () => {
+      setVideoCall(false);
+      setShowVideo(false); 
+    },
   };
 
-  
-  return videoCall ? (
-    <div style={{display: 'flex', width: '100vw', height: '100vh'}}>
-      <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
-    </div>
-  ) : (
-    <h3 onClick={() => setVideoCall(true)}>Start Call</h3>
+  const createVideoCall = () => {
+    setShowVideo(true);
+    setVideoCall(true) 
+  }
+  return (
+    <>
+      <Button leftIcon={<FaVideo />} onClick={createVideoCall} />
+
+      {showVideo && videoCall && (
+        <div style={{display: 'flex', width: '100vw', height: '100vh'}}>
+            <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
+        </div>
+      )}
+    </>
   );
 };
 
