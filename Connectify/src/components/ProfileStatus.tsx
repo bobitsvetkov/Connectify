@@ -35,7 +35,11 @@ const ProfileStatus: React.FC = () => {
   return (
     <Box>
       <Menu placement="left">
-        <MenuButton as={Button} rightIcon={<ChevronRightIcon />}>
+        <MenuButton
+          as={Button}
+          variant={"ghost"}
+          rightIcon={<ChevronRightIcon />}
+        >
           Status: {status}
         </MenuButton>
         <MenuList>
