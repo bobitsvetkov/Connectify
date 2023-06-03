@@ -23,8 +23,8 @@ const LandingPage: React.FC<LandingPageProps> = ({
   detailsText,
 }) => {
   const bgImage = useColorModeValue(
-    "https://images.unsplash.com/photo-1527181152855-fc03fc7949c8",
-    "https://images.unsplash.com/photo-1572072393749-3ca9c8ea0831"
+    "https://images.unsplash.com/photo-1486078695445-0497c2f58cfe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80",
+    "https://images.unsplash.com/photo-1590418606746-018840f9cd0f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
   );
 
   const [formComponent, setFormComponent] = useState("signin");
