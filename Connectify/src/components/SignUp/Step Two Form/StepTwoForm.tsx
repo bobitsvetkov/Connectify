@@ -28,9 +28,21 @@ interface SignUpStepTwoFormProps {
     signupData: SignUpData;
     validationErrors: ValidationErrors;
     touchedFields: TouchedFields;
+    usernameExists: boolean;  
+    phoneNumberExists: boolean;  
+    emailExists: boolean;
 }
 
-export const SignUpStepTwoForm: React.FC<SignUpStepTwoFormProps> = ({ handleChange, signupData, validationErrors, touchedFields }) => {
+export const SignUpStepTwoForm: React.FC<SignUpStepTwoFormProps> = ({
+    handleChange,
+    signupData,
+    validationErrors,
+    touchedFields,
+    usernameExists,  
+    phoneNumberExists,
+    emailExists  
+}) => {
+    console.log('usernameExists in SignUpStepTwoForm:', usernameExists);
     return (
         <>
             <FormField
@@ -40,8 +52,8 @@ export const SignUpStepTwoForm: React.FC<SignUpStepTwoFormProps> = ({ handleChan
                 name="username"
                 value={signupData.username}
                 onChange={handleChange}
-                isInvalid={touchedFields.username && !!validationErrors.usernameError}
-                errorMessage={validationErrors.usernameError}
+                isInvalid={touchedFields.username && (!!validationErrors.usernameError || usernameExists)}
+                errorMessage={usernameExists ? 'This username is already taken.' : validationErrors.usernameError}
             />
             <FormField
                 label="Phone Number"
@@ -50,8 +62,8 @@ export const SignUpStepTwoForm: React.FC<SignUpStepTwoFormProps> = ({ handleChan
                 name="phoneNumber"
                 value={signupData.phoneNumber}
                 onChange={handleChange}
-                isInvalid={touchedFields.phoneNumber && !!validationErrors.phoneNumberError}
-                errorMessage={validationErrors.phoneNumberError}
+                isInvalid={touchedFields.phoneNumber && (!!validationErrors.phoneNumberError || phoneNumberExists)}  
+                errorMessage={phoneNumberExists ? 'This phone number is already in use.' : validationErrors.phoneNumberError}  
             />
             <FormField
                 label="Email"
@@ -61,8 +73,8 @@ export const SignUpStepTwoForm: React.FC<SignUpStepTwoFormProps> = ({ handleChan
                 value={signupData.email}
                 onChange={handleChange}
                 isRequired
-                isInvalid={touchedFields.email && !!validationErrors.emailError}
-                errorMessage={validationErrors.emailError}
+                isInvalid={touchedFields.email && (!!validationErrors.emailError || emailExists)}
+                errorMessage={emailExists ? 'This email is already in use.' : validationErrors.emailError}
             />
         </>
     );
