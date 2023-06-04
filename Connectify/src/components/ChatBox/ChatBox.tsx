@@ -38,6 +38,7 @@ import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
+import { FaVideo } from 'react-icons/fa';
 const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   chatType,
 }) => {
@@ -149,8 +150,8 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
           </Box>
           {isBot ||
             <Flex direction="row" justify="flex-end">
-              <Button onClick={onOpen}>Create Room</Button>
-              <Modal isOpen={isOpen} onClose={onClose} size="xl">
+              <Button leftIcon={<FaVideo />} onClick={onOpen}/>
+              <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                 <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>Create Room</ModalHeader>
@@ -166,8 +167,8 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
             <>
               <Spacer />
               <Flex direction="row" alignItems="center">
-                <Button onClick={onOpen}>Create Room</Button>
-                <Modal isOpen={isOpen} onClose={onClose} size="xl">
+              <Button leftIcon={<FaVideo />} onClick={onOpen}/>
+                <Modal isOpen={isOpen} onClose={onClose} size="6xl" >
                   <ModalOverlay />
                   <ModalContent>
                     <ModalHeader>Create Room</ModalHeader>
