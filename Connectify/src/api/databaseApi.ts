@@ -17,6 +17,7 @@ export interface Message {
   uid: string;
   user: string;
   content: string;
+  type?: "text" | "gif" | "image" | "audio";  
   replies?: { [key: string]: Message };
   reactions?: Reaction[];
   date?: string;
