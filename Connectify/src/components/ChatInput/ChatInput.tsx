@@ -85,7 +85,8 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={(e) => {
               if (e.key === "Enter") {
-                handleSend();
+                e.preventDefault();
+                handleSend(message);
               }
             }}
             flexGrow={1}
