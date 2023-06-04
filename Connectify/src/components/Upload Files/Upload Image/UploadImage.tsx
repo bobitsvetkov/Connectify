@@ -21,7 +21,7 @@ async function uploadImage(file) {
         const snapshot = await uploadTask; 
         const downloadURL = await getDownloadURL(snapshot.ref);
         console.log('File available at', downloadURL);
-        return downloadURL; 
+        return { downloadURL, fileName: file.name };
     } catch (error) {
         console.error("Image upload failed", error);
         throw error; 
