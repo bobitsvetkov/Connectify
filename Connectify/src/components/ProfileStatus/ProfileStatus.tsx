@@ -2,8 +2,8 @@ import { Box, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
 import { useDispatch } from "react-redux";
 import { getAuth } from "@firebase/auth";
-import { useUpdateUserStatusMutation } from "../api/databaseApi";
-import { setStatus as updateStatus } from "../features/UsersSlice";
+import { useUpdateUserStatusMutation } from "../../api/databaseApi";
+import { setStatus as updateStatus } from "../../features/UsersSlice";
 import { Button } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 
