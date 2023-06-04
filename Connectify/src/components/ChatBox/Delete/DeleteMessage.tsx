@@ -12,6 +12,12 @@ import {
     ModalCloseButton,
 } from "@chakra-ui/react";
 
+type RemoveMessageParams = {
+    chatId: string;
+    messageId: string;
+    teamId?: string;
+};
+
 type DeleteMessageProps = {
     chatId: string;
     messageId: string;
@@ -24,7 +30,8 @@ function DeleteMessage({ chatId, messageId, teamId, isDeleting, setIsDeleting }:
     const [removeMessage] = useRemoveMessageFromChatMutation();
 
     const handleRemoveMessage = () => {
-        removeMessage({ chatId, messageId, teamId })
+        const params: RemoveMessageParams = { chatId, messageId, teamId };
+        removeMessage(params)
             .unwrap()
             .then(() => setIsDeleting(false))
             .catch((error) => {
@@ -34,7 +41,6 @@ function DeleteMessage({ chatId, messageId, teamId, isDeleting, setIsDeleting }:
 
     return (
         <>
-            
             <Modal isOpen={isDeleting} onClose={() => setIsDeleting(false)}>
                 <ModalOverlay />
                 <ModalContent>
