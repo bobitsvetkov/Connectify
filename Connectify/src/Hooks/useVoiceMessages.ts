@@ -3,13 +3,52 @@ import { ref, uploadBytesResumable } from 'firebase/storage';
 import { getDownloadURL } from 'firebase/storage';
 import { storage } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
+import { User } from '../types/interfaces';
 
-const useVoiceMessages = (currUser, user, chatUserId, isChat, teamId, channelId, addMessageToChat, addMessageToChannel, toast) => {
+export interface VoiceMessage {
+    uid: string,
+    user: string,
+    content: string,
+    type: 'audio' | 'image',  
+    date: string,
+    fileName?: string,  
+}
+
+interface AddMessageToChat {
+    chatId: string,
+    message: VoiceMessage
+}
+
+interface AddMessageToChannel {
+    teamId: string,
+    channelId: string,
+    message: VoiceMessage
+}
+
+type ToastOptions = {
+    title: string,
+    description: string,
+    status: "info" | "error",
+    duration: number,
+    isClosable: boolean
+};
+
+const useVoiceMessages = (
+    currUser: User,
+    user: User,
+    chatUserId: string,
+    isChat: boolean,
+    teamId: string,
+    channelId: string,
+    addMessageToChat: (data: AddMessageToChat) => void,
+    addMessageToChannel: (data: AddMessageToChannel) => void,
+    toast: (options: ToastOptions) => void
+) => {
     const [recording, setRecording] = useState(false);
-    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
     const handleStart = () => {
-        let chunks = [];
+        let chunks: Blob[] = [];
 
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -23,13 +62,13 @@ const useVoiceMessages = (currUser, user, chatUserId, isChat, teamId, channelId,
                         chunks.push(e.data);
                     }
                 };
-
                 mediaRecorder.onstop = () => {
                     // Create blob from chunks
                     const blob = new Blob(chunks, { type: 'audio/webm' });
 
                     // Upload to Firebase
-                    const audioRef = ref(storage, `audio/${Date.now()}.webm`);
+                    const timestamp = Date.now();
+                    const audioRef = ref(storage, `audio/${timestamp}.webm`);
                     const uploadTask = uploadBytesResumable(audioRef, blob);
 
                     uploadTask.on('state_changed', (snapshot) => {
@@ -55,12 +94,13 @@ const useVoiceMessages = (currUser, user, chatUserId, isChat, teamId, channelId,
                             userIds.sort();
                             const chatId = userIds.join("-");
 
-                            const newMessage = {
+                            const newMessage: VoiceMessage = {
                                 uid: uuidv4(),
                                 user: currUser.uid,
                                 content: downloadURL,
                                 type: 'audio',
                                 date: new Date().toISOString(),
+                                fileName: `${timestamp}.webm`, 
                             };
 
                             if (isChat) {

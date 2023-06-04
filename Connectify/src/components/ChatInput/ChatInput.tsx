@@ -91,7 +91,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             flexGrow={1}
           />
           <Button
-            onClick={handleSend}
+            onClick={() => handleSend(message)}
             colorScheme="teal"
           >
             <Icon

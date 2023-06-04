@@ -49,29 +49,35 @@ export const useHandleSend = ({
     userIds.sort();
     const chatId = userIds.join("-");
 
-    const handleSend = async (msg?: string, isImage?: boolean) => {
-        const messageToSend = msg || message;
-        const type = isImage
-            ? 'image'
-            : messageToSend.includes('giphy.com')
-                ? 'gif'
-                : 'text';
+    const handleSend = async (msg?: string | { downloadURL: string, fileName: string }, isImage?: boolean) => {
+        console.log(msg)
+        let content, type;
+        if (typeof msg === 'string') {
+            content = msg;
+            type = content.includes('giphy.com') ? 'gif' : 'text';
+        } else if (typeof msg === 'object' && msg.downloadURL && msg.fileName) {
+            content = msg.downloadURL;
+            type = 'image';
+        } else {
+            console.error('Invalid message:', msg);
+            return;
+        }
 
         const newMessage = {
             uid: uuidv4(),
             user: currUser.uid,
-            content: messageToSend,
+            content: content,
+            fileName: msg.fileName || null, 
             date: new Date().toISOString(),
             type: type,
         };
 
-        if (messageToSend.trim().length > 0 && currUser && user) {
+        if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
                 updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
                 updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                 addMessageToChat({ chatId: chatId, message: newMessage });
             } else {
-
                 updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
                 Object.entries(team.participants).map(([userUid, isMember]) => {
                     updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
@@ -86,7 +92,7 @@ export const useHandleSend = ({
             const updatedMessagesForAI = [
                 ...messagesForAI,
                 { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
-                { role: 'user', content: messageToSend }
+                { role: 'user', content: content } 
             ];
 
             setMessagesForAI(updatedMessagesForAI);
@@ -116,7 +122,6 @@ export const useHandleSend = ({
             }
         }
     };
-
 
     return handleSend;
 };
