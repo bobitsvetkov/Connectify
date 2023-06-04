@@ -5,23 +5,24 @@ import { storage } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../types/interfaces';
 
-interface Message {
+export interface VoiceMessage {
     uid: string,
     user: string,
     content: string,
-    type: 'audio',
-    date: string
+    type: 'audio' | 'image',  
+    date: string,
+    fileName?: string,  
 }
 
 interface AddMessageToChat {
     chatId: string,
-    message: Message
+    message: VoiceMessage
 }
 
 interface AddMessageToChannel {
     teamId: string,
     channelId: string,
-    message: Message
+    message: VoiceMessage
 }
 
 type ToastOptions = {
@@ -66,7 +67,8 @@ const useVoiceMessages = (
                     const blob = new Blob(chunks, { type: 'audio/webm' });
 
                     // Upload to Firebase
-                    const audioRef = ref(storage, `audio/${Date.now()}.webm`);
+                    const timestamp = Date.now();
+                    const audioRef = ref(storage, `audio/${timestamp}.webm`);
                     const uploadTask = uploadBytesResumable(audioRef, blob);
 
                     uploadTask.on('state_changed', (snapshot) => {
@@ -92,12 +94,13 @@ const useVoiceMessages = (
                             userIds.sort();
                             const chatId = userIds.join("-");
 
-                            const newMessage: Message = {
+                            const newMessage: VoiceMessage = {
                                 uid: uuidv4(),
                                 user: currUser.uid,
                                 content: downloadURL,
                                 type: 'audio',
                                 date: new Date().toISOString(),
+                                fileName: `${timestamp}.webm`, 
                             };
 
                             if (isChat) {
