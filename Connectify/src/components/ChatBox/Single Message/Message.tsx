@@ -28,7 +28,7 @@ import { getAuth } from "@firebase/auth";
 import { Spacer } from "@chakra-ui/react";
 import { AvatarBadge } from "@chakra-ui/react";
 import { useAddReactionToTeamMessageMutation } from "../../../api/databaseApi";
-
+import { Message } from "../../../api/databaseApi";
 function Message({
   message,
   messageId,
@@ -38,6 +38,15 @@ function Message({
   isChat,
   teamId,
   channelId,
+}: {
+  message: Message;
+  messageId: string;
+  chatId: string;
+  setReplyTo: (replyTo: Message | null) => void; 
+  getStatusColor: (status: string) => string; 
+  isChat: boolean;
+  teamId: string;
+  channelId: string;
 }) {
   const [addReplyToMessage] = useAddReplyToMessageMutation();
   const currUser = useSelector((state: RootState) => state.activeUser.user);
@@ -59,7 +68,7 @@ function Message({
     return <div>Loading...</div>;
   }
 
-  const addReaction = (emoji) => {
+  const addReaction = (emoji: string) => {
     if (!currUser) {
       console.log("Current user is not defined");
       return;
@@ -82,12 +91,12 @@ function Message({
       user: currUser.uid,
       content: `Reply: ${replyContent}`,
       date: new Date().toISOString(),
-      reactions: {}, // New reactions field for each reply
+      reactions: [], 
     };
 
-    console.log("chatId", chatId); // Add this
-    console.log("messageId", messageId); // Add this
-    console.log("reply", reply); // Add this
+    console.log("chatId", chatId); 
+    console.log("messageId", messageId); 
+    console.log("reply", reply); 
 
     addReplyToMessage({ chatId, messageId, reply });
     setReplyContent("");
@@ -107,7 +116,7 @@ function Message({
           >
             <AvatarBadge
               boxSize="1.25em"
-              bg={getStatusColor(user?.status)}
+              bg={getStatusColor(user?.status || '')}
               border="2px"
               borderColor="white"
             />
@@ -132,22 +141,24 @@ function Message({
             top={2}
             right={2}
           >
-            <Menu>
-              <MenuButton
-                as={IconButton}
-                icon={<HamburgerIcon />}
-                variant="unstyled"
-                size="xs"
-              />
-              <MenuList>
-                <MenuItem onClick={() => setIsDeleting(true)}>
-                  Delete Message
-                </MenuItem>
-                <MenuItem onClick={() => setIsEditing(true)}>
-                  Edit Message
-                </MenuItem>
-              </MenuList>
-            </Menu>
+            {currUserUid === message.user && ( // Check if current user is the author of the message
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<HamburgerIcon />}
+                  variant="unstyled"
+                  size="xs"
+                />
+                <MenuList>
+                  <MenuItem onClick={() => setIsDeleting(true)}>
+                    Delete Message
+                  </MenuItem>
+                  <MenuItem onClick={() => setIsEditing(true)}>
+                    Edit Message
+                  </MenuItem>
+                </MenuList>
+              </Menu>
+            )}
           </Flex>
           <Flex
             direction="row"
@@ -173,7 +184,7 @@ function Message({
           />
           <Text>{message.content}</Text>
           <Text fontSize="sm" mt={2}>
-            {new Date(message.date).toLocaleTimeString(undefined, {
+            {message.date && new Date(message.date).toLocaleTimeString(undefined, {
               hour: "numeric",
               minute: "numeric",
             })}
@@ -181,9 +192,11 @@ function Message({
         </Box>
       </Flex>
       {message.reactions && (
-        <Flex spacing={2}>
+        <Flex>
           {Object.values(message.reactions).map((reaction) => (
-            <span key={reaction.uid}>{reaction.emoji}</span>
+            <span key={reaction.uid} style={{ marginRight: '0.5rem' }}>
+              {reaction.emoji}
+            </span>
           ))}
         </Flex>
       )}
