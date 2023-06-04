@@ -13,6 +13,14 @@ import {
     Input,
 } from "@chakra-ui/react";
 
+
+type UpdateMessageParams = {
+    chatId: string;
+    messageId: string;
+    newMessageContent: string;
+    teamId?: string;
+};
+
 type EditMessageProps = {
     chatId: string;
     messageId: string;
@@ -37,7 +45,8 @@ function EditMessage({
     );
 
     const handleUpdateMessage = () => {
-        updateMessage({ chatId, messageId, newMessageContent, teamId })
+        const params: UpdateMessageParams = { chatId, messageId, newMessageContent, teamId };
+        updateMessage(params)
             .unwrap()
             .then(() => setIsEditing(false))
             .catch((error) => {
