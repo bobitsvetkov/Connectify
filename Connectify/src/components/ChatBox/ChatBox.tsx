@@ -13,12 +13,20 @@ import {
   Text,
   Avatar,
   AvatarBadge,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
-import { useGenerateMessageQuery } from "../../api/openaiApi"; 
+import { useGenerateMessageQuery } from "../../api/openaiApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -48,9 +56,10 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   const bg = useColorModeValue("gray.200", "gray.700");
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
-  
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const dispatch = useDispatch();
- 
+
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
       setShowMembers(false);
@@ -138,14 +147,36 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
               )}
             </Box>
           </Box>
-          {isBot || <Flex direction="row" justify="flex-end">
-            <CreateRoom />
-          </Flex>}
+          {isBot ||
+            <Flex direction="row" justify="flex-end">
+              <Button onClick={onOpen}>Create Room</Button>
+              <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Create Room</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <CreateRoom />
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+            </Flex>
+          }
           {isChat || (
             <>
               <Spacer />
               <Flex direction="row" alignItems="center">
-                <CreateRoom />
+                <Button onClick={onOpen}>Create Room</Button>
+                <Modal isOpen={isOpen} onClose={onClose} size="xl">
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Create Room</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      <CreateRoom />
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
                 <Button
                   onClick={() => setShowMembers(!showMembers)}
                   style={{ fontSize: "24px", marginLeft: "8px" }}

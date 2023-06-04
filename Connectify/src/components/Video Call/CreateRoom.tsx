@@ -10,8 +10,8 @@ const CreateRoom = () => {
 
   const rtcProps = {
     appId: '1d9b4d5e8c224e6895d2904de8db2e39',
-    channel: 'test',
-    token: null
+    channel: 'null',
+    token: "007eJxTYLBR/19S6qh26fWlc0obBCfYL/i0OiD+/54pyUuivHabFDcrMBimWCaZpJimWiQbGZmkmllYmqYYWRqYpKRapCQZpRpbBv6uSWkIZGQw25DLxMgAgSA+C0NeaU4OAwMAnmEgiA=="
   };
   const callbacks = {
     EndCall: () => {
@@ -29,7 +29,7 @@ const CreateRoom = () => {
       <Button leftIcon={<FaVideo />} onClick={createVideoCall} />
 
       {showVideo && videoCall && (
-        <div style={{ display: 'flex', width: '80vw', height: '80vh', alignSelf: 'left', justifyContent: 'center'}}>
+        <div style={{ display: 'flex',  width: '1000px', height: '600px', alignSelf: 'center', justifyContent: 'center'}}>
           <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
         </div>
       )}
