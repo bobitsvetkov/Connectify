@@ -13,10 +13,10 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { FaCamera } from "react-icons/fa";
-import { PhotoUploader } from "./UserPhotoUploader/UsersPhotoUploader";
+import { PhotoUploader } from "../UserPhotoUploader/UsersPhotoUploader";
 import { onValue, ref as refDB } from "firebase/database";
-import { database } from "../config/firebaseConfig";
-import { useCurrentUser } from "../AuthUtils";
+import { database } from "../../config/firebaseConfig";
+import { useCurrentUser } from "../../AuthUtils";
 
 const ProfileInfo: React.FC = () => {
   const { user, isUserLoading } = useCurrentUser();
