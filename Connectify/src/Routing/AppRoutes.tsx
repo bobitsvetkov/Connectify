@@ -1,6 +1,5 @@
-import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LandingPage from "../pages/LandingPage";
+import LandingPage from "../components/LandingPage/LandingPage";
 import Layout from "../pages/Layout";
 import HomePage from "../pages/HomePage";
 import ChatBox from "../components/ChatBox/ChatBox";
@@ -32,9 +31,8 @@ const routes = [
         <ChatBox chatType="team" />
       </Layout>
     ),
-  }
+  },
 ];
-
 
 const AppRoutes = () => {
   return (

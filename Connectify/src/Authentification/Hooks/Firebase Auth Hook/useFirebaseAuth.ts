@@ -8,7 +8,22 @@ const useFirebaseHandler = () => {
     const checkUsernameExists = async (username: string) => {
         const usernameRef = ref(database, `usernames/${username}`);
         const usernameSnap = await get(usernameRef);
-        return usernameSnap.exists();
+        const exists = usernameSnap.exists();
+
+        console.log(`Checking if username "${username}" exists: ${exists}`);
+
+        return exists;
+    };
+
+
+    const checkPhoneNumberExists = async (phoneNumber: string) => {
+        const phoneNumberRef = ref(database, `phoneNumbers/${phoneNumber}`);
+        const phoneNumberSnap = await get(phoneNumberRef);
+        const exists = phoneNumberSnap.exists();
+
+        console.log(`Checking if phone number "${phoneNumber}" exists: ${exists}`);
+
+        return exists;
     };
 
     const createUser = async (signupData: SignUpData) => {
@@ -16,8 +31,10 @@ const useFirebaseHandler = () => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await set(ref(database, `users/${userCredential.user.uid}`), { username, email, phoneNumber, photoURL, firstName, lastName });
         await set(ref(database, `usernames/${username}`), { exists: true });
+        await set(ref(database, `phoneNumbers/${phoneNumber}`), { exists: true });
         return userCredential.user.uid;
     };
+    
 
     const getUserData = async (uid: string): Promise<User | null> => {
         const userRef = ref(database, `users/${uid}`);
@@ -38,7 +55,7 @@ const useFirebaseHandler = () => {
         return null;
     };
 
-    return { checkUsernameExists, createUser, getUserData };
+    return { checkUsernameExists, createUser, getUserData, checkPhoneNumberExists };
 };
 
 export default useFirebaseHandler;

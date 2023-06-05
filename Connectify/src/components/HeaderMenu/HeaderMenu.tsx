@@ -19,24 +19,31 @@ import {
   DrawerCloseButton,
   Button,
   Divider,
+  Box,
 } from "@chakra-ui/react";
+import { useColorModeValue } from "@chakra-ui/react";
 import { IoIosPeople } from "react-icons/io";
-import { AiOutlineTeam } from "react-icons/ai";
+import { AiOutlineTeam, AiOutlineRobot } from "react-icons/ai";
 import { GrStatusGoodSmall } from "react-icons/gr";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { FiCalendar } from "react-icons/fi";
 import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
-import ProfileInfo from "../ProfileInfo";
+import ProfileInfo from "../ProfileInfo/ProfileInfo";
 import { useNavigate } from "react-router-dom";
 import { ref as refDB, onValue } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { auth } from "../../config/firebaseConfig";
-import ProfileStatus from "../ProfileStatus";
+import ProfileStatus from "../ProfileStatus/ProfileStatus";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import CalendarApp from "../Calendar/Calendar";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
+import { useColorMode } from "@chakra-ui/react";
+import { useDispatch } from "react-redux";
+import { selectUser } from "../../features/ActiveUserSlice";
+
 export const Header: React.FC = ({
   onViewChange,
   onChatClick,
@@ -44,15 +51,17 @@ export const Header: React.FC = ({
   setUserListOpen,
   setTeamListOpen,
 }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [status, setStatus] = useState("available");
   const auth = getAuth();
   const currUser = auth.currentUser;
+  const dispatch = useDispatch();
   const {
     data: user,
     isLoading: isUserLoading,
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
-
+  const { data: mimir } = useGetUserByIdQuery("mimir");
   const [isCalendarOpen, setCalendarOpen] = useState(false);
   const {
     isOpen: isAvatarOpen,
@@ -92,6 +101,11 @@ export const Header: React.FC = ({
     setCalendarOpen(!isCalendarOpen);
   };
 
+  const handleChatBotClick = () => {
+    dispatch(selectUser(mimir));
+    navigate("/chat/mimir");
+  };
+
   const navigate = useNavigate();
   const handleLogOut = () => {
     navigate("/");
@@ -99,12 +113,11 @@ export const Header: React.FC = ({
 
   return (
     <Flex
-      bg="#f0f2f5"
+      bg={useColorModeValue("#f57c73", "gray.800")}
       justify="space-between"
       py="2"
       px="4"
-      borderRight="1px solid #f2f2f2"
-      color="#54656f"
+      color={useColorModeValue("#f57c73", "#f57c73")}
     >
       <Menu>
         <Tooltip label={status} placement="right-end">
@@ -120,45 +133,62 @@ export const Header: React.FC = ({
           <ProfileInfo />
           <MenuDivider />
           <ProfileStatus />
+          <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
+          <Drawer
+            placement="left"
+            onClose={onSettingsClose}
+            isOpen={isSettingsOpen}
+          >
+            <DrawerOverlay />
+            <DrawerContent bg={useColorModeValue("#f57c73", "#f57c73")}>
+              <DrawerHeader borderBottomWidth="1px">
+                <UserSetting />
+              </DrawerHeader>
+            </DrawerContent>
+          </Drawer>
+          <MenuDivider />
+          <MenuItem onClick={handleLogOut}>Log out</MenuItem>
         </MenuList>
       </Menu>
       <HStack spacing="3">
         <IconButton
           variant="ghost"
-          onClick={handleChatClick}
-          icon={<BsFillChatLeftTextFill />}
+          onClick={handleChatBotClick}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={AiOutlineRobot}
+            />
+          }
         />
         <IconButton
           variant="ghost"
+          onClick={handleChatClick}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={BsFillChatLeftTextFill}
+            />
+          }
+        />
+
+        <IconButton
+          variant="ghost"
           onClick={handleTeamsClick}
-          icon={<AiOutlineTeam />}
+          icon={
+            <Box
+              color={useColorModeValue("black", "white")}
+              as={AiOutlineTeam}
+            />
+          }
         />
         <CalendarApp />
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            variant="ghost"
-            icon={<GiHamburgerMenu />}
-          />
-          <MenuList>
-            <MenuItem onClick={onSettingsOpen}>Settings</MenuItem>
-            <Drawer
-              placement="left"
-              onClose={onSettingsClose}
-              isOpen={isSettingsOpen}
-            >
-              <DrawerOverlay />
-              <DrawerContent>
-                <DrawerHeader borderBottomWidth="1px">
-                  <UserSetting />
-                </DrawerHeader>
-              </DrawerContent>
-            </Drawer>
-            <MenuItem>New Window</MenuItem>
-            <MenuDivider />
-            <MenuItem onClick={handleLogOut}>Log out</MenuItem>
-          </MenuList>
-        </Menu>
+        <IconButton
+          variant="ghost"
+          aria-label="Toggle color mode"
+          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+          onClick={toggleColorMode}
+        />
       </HStack>
     </Flex>
   );

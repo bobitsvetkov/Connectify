@@ -8,6 +8,8 @@ import LeftList from "./LeftList/LeftList";
 import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
+import BotConversationsList from "./BotConvrsationsList/BotConversationsList";
+import { useColorModeValue } from "@chakra-ui/react";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
@@ -47,21 +49,31 @@ export const LeftPanel: React.FC = () => {
           onChatClick={handleChatClick}
           onTeamsClick={handleTeamsClick}
           setUserListOpen={setUserListOpen}
-          setTeamListOpen={setTeamListOpen} 
+          setTeamListOpen={setTeamListOpen}
         />
         <SearchInput size="sm" onSearch={handleSearch} />
       </Box>
       {isSearching ? (
         <SearchResults results={searchResults} searchQuery={searchQuery} />
       ) : (
-        <Flex direction="row">
-          {view === "chat" && isUserListOpen && <LatestChatsList setUserListOpen={setUserListOpen} />}
-          {view === "teams" && isTeamListOpen && 
-            <Flex direction="row" w="100%">
-              <TeamsList setTeamListOpen={setTeamListOpen} setSelectedTeam={setSelectedTeam} selectedTeam={selectedTeam}/>
-              {selectedTeam && <ChannelList team={selectedTeam}/>}
+        <Flex direction="row" bg={useColorModeValue("#EDF3F5", "	#3C4256")}>
+          {view === "chat" && isUserListOpen && (
+            <LatestChatsList setUserListOpen={setUserListOpen} />
+          )}
+          {view === "teams" && isTeamListOpen && (
+            <Flex
+              direction="row"
+              w="100%"
+              bg={useColorModeValue("#EDF3F5", "	#3C4256")}
+            >
+              <TeamsList
+                setTeamListOpen={setTeamListOpen}
+                setSelectedTeam={setSelectedTeam}
+                selectedTeam={selectedTeam}
+              />
+              {selectedTeam && <ChannelList team={selectedTeam} />}
             </Flex>
-          }
+          )}
         </Flex>
       )}
     </Flex>

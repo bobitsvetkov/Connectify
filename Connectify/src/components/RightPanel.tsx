@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   AbsoluteCenter,
@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Text,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { RootState } from "../store";
 import ChatBox from "./ChatBox/ChatBox";
@@ -17,20 +18,20 @@ export function RightPanel({ children }) {
     (state: RootState) => state.activeUser.user
   );
 
+  
+  const bgColor = useColorModeValue("gray.200", "gray.700");
+  const textColor = useColorModeValue("#41525d", "#f0f2f5"); 
+  const subTextColor = useColorModeValue("#8696a0", "#a0aec0");
+
   return (
-    <Center
-      bg="#f0f2f5"
-      borderBottom="6px solid #43c960"
-      position="relative"
-      w="70%"
-    >
+    <Center bg={bgColor} position="relative" w="70%">
       {activeChatUser ? (
         <>{children}</>
       ) : (
         <Flex
           direction="column"
           textAlign="center"
-          color="#41525d"
+          color={textColor}
           align="center"
         >
           <Box pt="8">
@@ -41,7 +42,7 @@ export function RightPanel({ children }) {
             </Text>
           </Box>
           <AbsoluteCenter axis="horizontal" bottom="10" flex="1" mt="10">
-            <HStack justifyItems="baseline" color="#8696a0">
+            <HStack justifyItems="baseline" color={subTextColor}>
               <Text fontSize="sm" fontWeight="medium">
                 Supported by Connectify Team
               </Text>

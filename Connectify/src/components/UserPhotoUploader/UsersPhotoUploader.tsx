@@ -6,7 +6,7 @@ import { auth } from "../../config/firebaseConfig";
 import { update, ref as refDB } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { User } from "firebase/auth";
-import { Button } from "@chakra-ui/react";
+import { Button, Box, Flex, Text } from "@chakra-ui/react";
 
 export const PhotoUploader: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -86,25 +86,22 @@ export const PhotoUploader: React.FC = () => {
   };
 
   return (
-    <div>
-      <input type="file" onChange={handleFileInputChange} />
-      <Button
-        onClick={handleFileUpload}
-        width="200px"
-        colorScheme="blue"
-        mt={4}
-      >
-        Upload
-      </Button>
+    <Box mt={4}>
+      {user && user.photoURL && (
+        <Box alignContent={"center"} mb={5}>
+          <Text mb={5}>Current profile photo:</Text>
+          <img src={user.photoURL} alt="Profile" width="100" height="100" />
+        </Box>
+      )}
+      <Box display="flex" alignItems="center">
+        <input type="file" onChange={handleFileInputChange} />
+        <Button onClick={handleFileUpload} variant="ghost">
+          Upload
+        </Button>
+      </Box>
       {uploadProgress > 0 && (
         <p>Upload progress: {uploadProgress.toFixed(2)}%</p>
       )}
-      {user && user.photoURL && (
-        <div>
-          <p>Current profile photo:</p>
-          <img src={user.photoURL} alt="Profile" width="100" height="100" />
-        </div>
-      )}
-    </div>
+    </Box>
   );
 };

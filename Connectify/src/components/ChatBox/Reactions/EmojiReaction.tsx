@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-  Button,
   Popover,
   PopoverTrigger,
   PopoverContent,
@@ -28,27 +27,28 @@ const EmojiReactions = ({ messageId, addReaction }) => {
   return (
     <Popover placement="bottom" closeOnBlur={false}>
       <PopoverTrigger>
-        <Button onClick={handleIsOpen}>
-          <BsEmojiSmile size="20px" />
-        </Button>
+        <span onClick={handleIsOpen}>
+          <BsEmojiSmile size="10px" />
+        </span>
       </PopoverTrigger>
       <PopoverContent
         sx={{
-          maxWidth: "200px",
+          maxWidth: "115px",
           padding: "0",
           boxShadow: "none",
+          background: "white",
         }}
       >
         <PopoverBody>
           {defaultReactions.map((emoji) => (
-            <Button
+            <span
               key={emoji}
               onClick={() => addReaction(emoji)}
               onClose={handleClose}
-              size="sm"
+              style={{ cursor: "pointer" }}
             >
               {emoji}
-            </Button>
+            </span>
           ))}
         </PopoverBody>
       </PopoverContent>

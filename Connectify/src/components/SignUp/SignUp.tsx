@@ -1,12 +1,16 @@
 import {
   Button,
   Stack,
+  IconButton,
+  Box,
+  Flex,
+  Divider
 } from "@chakra-ui/react";
 import useSignUp from "../../Authentification/Hooks/SignUp Hook/useSignUp";
 import { SignUpStepOneForm } from "./Step One Form/StepOneForm";
 import { SignUpStepTwoForm } from "./Step Two Form/StepTwoForm";
 import usePasswordValidation from "../../Authentification/Password Hook/usePassValid";
-import useFieldValidation from "../../Authentification/Hooks/Validate Input/useValidation";
+import { ArrowBackIcon } from "@chakra-ui/icons";
 
 export function SignUpForm() {
     const {
@@ -15,9 +19,13 @@ export function SignUpForm() {
         handleSignUp,
         step,
         setStep,
+        handleBack,
         validationErrors,
         touchedFields,
         handleNext,
+        usernameExists,
+        phoneNumberExists,
+        emailExists
     } = useSignUp();
 
     const passwordValidationStates = usePasswordValidation();
@@ -40,34 +48,53 @@ export function SignUpForm() {
     };
 
     return (
-        <form noValidate>
-            <Stack spacing="6">
-                {step === 1 ? (
-                    <SignUpStepOneForm
-                        handleChange={handleChange}
-                        signupData={signupData}
-                        validationErrors={validationErrors}
-                        touchedFields={touchedFields}
-                        passwordValidationStates={passwordValidationStates}
-                    />
-                ) : (
-                    <SignUpStepTwoForm
-                        handleChange={handleChange}
-                        signupData={signupData}
-                        validationErrors={validationErrors}
-                        touchedFields={touchedFields}
-                        passwordValidationStates={passwordValidationStates}
-                    />
-                )}
-                <Button
-                    type="button" 
-                    width="full"
-                    mt={4}
-                    onClick={step === 1 ? handleNextClick : handleSubmitClick}
-                >
-                    {step === 1 ? "Next" : "Sign Up"}
-                </Button>
-            </Stack>
-        </form>
+        <>
+            {step > 1 && (
+                <IconButton
+                    icon={<ArrowBackIcon />}
+                    aria-label="Back to previous step"
+                    alignSelf="flex-start"
+                    onClick={handleBack}
+                    mb={4}
+                />
+            )}
+            <Flex direction="column" alignItems="stretch">
+                <Box w="full">
+                    <form noValidate>
+                        <Stack spacing="6">
+                            {step === 1 ? (
+                                <SignUpStepOneForm
+                                    handleChange={handleChange}
+                                    signupData={signupData}
+                                    validationErrors={validationErrors}
+                                    touchedFields={touchedFields}
+                                    passwordValidationStates={passwordValidationStates}
+                                />
+                            ) : (
+                                <SignUpStepTwoForm
+                                    handleChange={handleChange}
+                                    signupData={signupData}
+                                    validationErrors={validationErrors}
+                                    touchedFields={touchedFields}
+                                    passwordValidationStates={passwordValidationStates}
+                                    usernameExists={usernameExists}
+                                    phoneNumberExists={phoneNumberExists}
+                                    emailExists={emailExists}
+                                />
+                            )}
+                            <Button
+                                type="button"
+                                width="full"
+                                mt={4}
+                                onClick={step === 1 ? handleNextClick : handleSubmitClick}
+                            >
+                                {step === 1 ? "Next" : "Sign Up"}
+                            </Button>
+                            <Divider my={6} /> {/* Add Divider component here */}
+                        </Stack>
+                    </form>
+                </Box>
+            </Flex>
+        </>
     );
 }

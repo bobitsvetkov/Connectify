@@ -1,7 +1,22 @@
 import { User } from "../../types/interfaces";
 import SingleUser from "../LeftList/SingleUser";
-import { Stack, StackDivider, Button, HStack, Spacer, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import { useGetTeamsQuery, useGetUserByIdQuery, useAddUserToTeamMutation } from "../../api/databaseApi";
+import {
+  Stack,
+  StackDivider,
+  Button,
+  HStack,
+  Spacer,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import {
+  useGetTeamsQuery,
+  useGetUserByIdQuery,
+  useAddUserToTeamMutation,
+} from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import { onValue, ref, off } from "firebase/database";
 import { useEffect, useState } from "react";
@@ -12,12 +27,20 @@ interface SearchResultsProps {
   searchQuery: string;
 }
 
-export const SearchResults: React.FC<SearchResultsProps> = ({ results, searchQuery }) => {
+export const SearchResults: React.FC<SearchResultsProps> = ({
+  results,
+  searchQuery,
+}) => {
   // const { data: teams, isLoading: areTeamsLoading, isError: isError } = useGetTeamsQuery();
-  const [addUserToTeam, { isLoading: isAddingUser }] = useAddUserToTeamMutation();
+  const [addUserToTeam, { isLoading: isAddingUser }] =
+    useAddUserToTeamMutation();
   const auth = getAuth();
   const curr = auth.currentUser;
-  const { data: currUser, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(curr && curr.uid);
+  const {
+    data: currUser,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetUserByIdQuery(curr && curr.uid);
   const [teams, setTeams] = useState({});
 
   useEffect(() => {
@@ -44,7 +67,8 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ results, searchQue
       spacing="0"
       pr="1"
       divider={<StackDivider w="100%" alignSelf="flex-end" />}
-      backgroundColor="pink.100"
+      overflowY="auto"
+      bg={useColorModeValue("#EDF3F5", "	#3C4256")}
     >
       {Object.values(results)
         .filter(
@@ -58,13 +82,20 @@ export const SearchResults: React.FC<SearchResultsProps> = ({ results, searchQue
             <SingleUser userUid={user.uid} />
             <Spacer />
             <Menu>
-              <MenuButton as={Button}>
+              <MenuButton variant="ghost" as={Button}>
                 Add
               </MenuButton>
               <MenuList>
-                {teams && Object.values(teams).filter(team => team.owner === currUser?.uid).map((team) => (
-                  <MenuItem onClick={() => handleAddToTeam(user.uid, team.uid)}>{team.name}</MenuItem>
-                ))}
+                {teams &&
+                  Object.values(teams)
+                    .filter((team) => team.owner === currUser?.uid)
+                    .map((team) => (
+                      <MenuItem
+                        onClick={() => handleAddToTeam(user.uid, team.uid)}
+                      >
+                        {team.name}
+                      </MenuItem>
+                    ))}
               </MenuList>
             </Menu>
           </HStack>
