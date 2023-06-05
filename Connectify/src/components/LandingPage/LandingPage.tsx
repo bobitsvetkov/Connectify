@@ -7,6 +7,7 @@ import {
   VStack,
   Button,
   Image,
+  IconButton
 } from "@chakra-ui/react";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { LandingPageProps } from "../../types/interfaces";
@@ -19,10 +20,13 @@ import LandingHeader from "./LandingHeader";
 import AppInfo from "./AppInfo";
 import { motion } from "framer-motion";
 import { useColorMode } from "@chakra-ui/react";
+import Testimonials from "./Testimonials";
+import { ArrowUpIcon } from "@chakra-ui/icons";
 const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const appInfoRef = useRef<HTMLDivElement>(null);
   const { colorMode } = useColorMode();
+  const [showScroll, setShowScroll] = useState(false);
 
   const scrollToFeatures = () => {
     featuresRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,6 +34,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
   const scrollToAppInfo = () => {
     appInfoRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const checkScrollTop = () => {
+    if (!showScroll && window.pageYOffset > 400) {
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 400) {
+      setShowScroll(false);
+    }
+  };
+
+  window.addEventListener('scroll', checkScrollTop);
+
 
   const [formComponent, setFormComponent] = useState("signin");
 
@@ -115,7 +134,17 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
         </Flex>
         <Features ref={featuresRef} />
         <AppInfo ref={appInfoRef} />
+        <Testimonials />
         <ActiveUsers />
+        {showScroll && <IconButton
+          position='fixed'
+          icon={<ArrowUpIcon />}
+          bottom='40px'
+          right='30px'
+          onClick={scrollToTop}
+        >
+          Scroll to top
+        </IconButton>}
       </Flex>
     </>
   );
