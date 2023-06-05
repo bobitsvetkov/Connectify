@@ -13,12 +13,20 @@ import {
   Text,
   Avatar,
   AvatarBadge,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery } from "../../api/databaseApi";
-import { useGenerateMessageQuery } from "../../api/openaiApi"; 
+import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery } from "../../api/databaseApi";
+import { useGenerateMessageQuery } from "../../api/openaiApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -30,10 +38,12 @@ import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
+import { FaVideo } from 'react-icons/fa';
 const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   chatType,
 }) => {
   const [showMembers, setShowMembers] = useState(false);
+  const [isInCall, setIsInCall] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
   const [isStatusLoading, setIsStatusLoading] = useState(true);
   const auth = getAuth();
@@ -45,12 +55,16 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
+  const { data: isMeetingActive } = useGetTeamCallStatusQuery(teamId);
   const bg = useColorModeValue("gray.200", "gray.700");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
-  
+
+
   const dispatch = useDispatch();
- 
+
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
       setShowMembers(false);
@@ -106,6 +120,18 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
     }
   };
 
+  const handleVideoChatClick = () => {
+    onOpen();
+    if (isMeetingActive) {
+      // If a meeting is already active, don't start a new one
+      return;
+    }
+    console.log(teamId);
+    
+    setIsInCall(true);
+    isChat || addCallStatusToTeam({ teamId, callStatus: true });
+  }
+
   return (
     <Flex height="100%" width="100%" borderWidth={1} bg={bg} boxShadow="xl">
       <VStack flex="1" padding={5}>
@@ -138,14 +164,36 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
               )}
             </Box>
           </Box>
-          {isBot || <Flex direction="row" justify="flex-end">
-            <CreateRoom />
-          </Flex>}
+          {isBot ||
+            <Flex direction="row" justify="flex-end">
+              {}
+              <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
+              <Modal isOpen={isOpen} onClose={onClose} size="5xl">
+                <ModalOverlay />
+                <ModalContent>
+                  {/* <ModalCloseButton /> */}
+                  <ModalBody>
+                    <CreateRoom onClose={onClose} />
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+            </Flex>
+          }
           {isChat || (
             <>
               <Spacer />
               <Flex direction="row" alignItems="center">
-                <CreateRoom />
+                <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
+                <Modal isOpen={isOpen} onClose={onClose} size="6xl" >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>Create Room</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                      <CreateRoom onClose={onClose} />
+                    </ModalBody>
+                  </ModalContent>
+                </Modal>
                 <Button
                   onClick={() => setShowMembers(!showMembers)}
                   style={{ fontSize: "24px", marginLeft: "8px" }}
