@@ -22,19 +22,14 @@ import {
   Box,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
-import { IoIosPeople } from "react-icons/io";
-import { AiOutlineTeam, AiOutlineRobot } from "react-icons/ai";
-import { GrStatusGoodSmall } from "react-icons/gr";
+import { AiOutlineTeam, AiOutlineRobot, AiOutlineBell } from "react-icons/ai";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { FiCalendar } from "react-icons/fi";
 import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
 import ProfileInfo from "../ProfileInfo/ProfileInfo";
 import { useNavigate } from "react-router-dom";
 import { ref as refDB, onValue } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
-import { auth } from "../../config/firebaseConfig";
 import ProfileStatus from "../ProfileStatus/ProfileStatus";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import CalendarApp from "../Calendar/Calendar";
@@ -110,7 +105,7 @@ export const Header: React.FC = ({
   const handleLogOut = () => {
     navigate("/");
   };
-
+  const notifications = ["Notification 1", "Notification 2", "Notification 3"];
   return (
     <Flex
       bg={useColorModeValue("#f57c73", "gray.800")}
@@ -151,6 +146,25 @@ export const Header: React.FC = ({
         </MenuList>
       </Menu>
       <HStack spacing="3">
+      <Menu>
+          <Tooltip label="Notifications" placement="right-end">
+            <MenuButton>
+              <IconButton
+                variant="ghost"
+                icon={
+                  <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
+                }
+              />
+            </MenuButton>
+          </Tooltip>
+          <MenuList>
+            {notifications.map((notification, index) => (
+              <MenuItem key={index}>{notification}</MenuItem>
+            ))}
+            <MenuDivider />
+            <MenuItem>See all notifications</MenuItem>
+          </MenuList>
+        </Menu>
         <IconButton
           variant="ghost"
           onClick={handleChatBotClick}
