@@ -7,22 +7,12 @@ import {
   Heading,
   Text,
   Container,
+  Link,
 } from "@chakra-ui/react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import Slider from "react-slick";
 import { Image } from "@chakra-ui/react";
-
-const settings = {
-  dots: true,
-  arrows: false,
-  fade: true,
-  infinite: true,
-  autoplay: true,
-  speed: 500,
-  autoplaySpeed: 5000,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-};
+import { BsLinkedin } from "react-icons/bs";
 
 export default function TeamCarousel() {
   const [slider, setSlider] = React.useState(null);
@@ -32,23 +22,39 @@ export default function TeamCarousel() {
   const cards = [
     {
       title: "Radina Georgieva",
-      text: "Junior JacaScript Front End Developer /Telerik Academy Student/",
+      text: "Junior JavaScript Front End Developer /Telerik Academy Student/",
+      additionalInfo: "Specializes in React and Node.js, and has contributed to several open source projects.",
+      linkedIn: "https://www.linkedin.com/in/radina-georgieva-953687278/",
       image: "https://i.ibb.co/2FRLZfk/radi-3.jpg",
     },
     {
       title: "Viktor Lomliev",
-      text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/ ",
+      text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
+      additionalInfo: "Experienced in building and optimizing complex web applications. Passionate about learning new technologies.",
+      linkedIn: "https://www.linkedin.com/in/borislav-tsvetkov-818397198/",
       image: "https://i.ibb.co/1GJsYRF/DSC-0984.jpg",
     },
     {
       title: "Borislav Tsvetkov",
       text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
+      additionalInfo: "Keen interest in cloud technologies and microservices. Proactive in learning and implementing best practices.",
+      linkedIn: "https://www.linkedin.com/in/borislav-tsvetkov-818397198/",
       image: "https://i.ibb.co/XjGfVbk/1661515068516-1.jpg",
     },
   ];
+
   const settings = {
     dots: false,
+    arrows: false,
+    fade: true,
+    infinite: true,
+    autoplay: true,
+    speed: 500,
+    autoplaySpeed: 5000,
+    slidesToShow: 1,
+    slidesToScroll: 1,
   };
+
   return (
     <Box position={"relative"} height={"600px"} width={"full"}>
       <Heading
@@ -121,8 +127,11 @@ export default function TeamCarousel() {
                   {card.text}
                 </Text>
                 <Text fontSize={{ base: "md", lg: "lg" }} color="GrayText">
-                  {card.additionalText}
+                  {card.additionalInfo}
                 </Text>
+                <Link isExternal href={card.linkedIn} color="blue.500">
+                  <BsLinkedin /> Connect on LinkedIn
+                </Link>
               </Stack>
             </Container>
           </Box>
