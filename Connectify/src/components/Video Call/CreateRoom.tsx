@@ -6,8 +6,8 @@ const CreateRoom = ({onClose}) => {
 
   const rtcProps = {
     appId: '1d9b4d5e8c224e6895d2904de8db2e39',
-    channel: 'nulll',
-    token: '007eJxTYDA5sHDGSvuOlU+PPv5w5/u3f39Zdnv8DllW8XGZl5WKRcUXBYaUxORE45Q0M9PUtDSTJHPjxMRUIzMzw0RDy+TUVCPz1Gzu2pSGQEaG1r+XWRgZIBDEZ2XIK83JyWFgAAAd2CWB',
+    channel: 'test',
+    token: '007eJxTYKjwS5qofMr9iGrLxgWfLtqbbzuTJvHgzrstm+PKviaFvBBRYEhJTE40TkkzM01NSzNJMjdOTEw1MjMzTDS0TE5NNTJPjW2oTWkIZGRIy0pkZGSAQBCfhaEktbiEgQEABckh6w==',
   };
 
   const callbacks = {
