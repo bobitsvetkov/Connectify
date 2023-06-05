@@ -1,14 +1,11 @@
 import { Box, Flex, VStack } from "@chakra-ui/react";
 import { Header } from "./HeaderMenu/HeaderMenu";
-import UserList from "./UserList";
 import SearchInput from "./Search/SearchInput";
 import { useState } from "react";
 import { SearchResults } from "./Search/SearchResults";
-import LeftList from "./LeftList/LeftList";
 import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
-import BotConversationsList from "./BotConvrsationsList/BotConversationsList";
 import { useColorModeValue } from "@chakra-ui/react";
 
 export const LeftPanel: React.FC = () => {
