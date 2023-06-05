@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import AgoraUIKit from 'agora-react-uikit';
 
-const CreateRoom = ({onClose}) => {
+const CreateRoom = ({onClose, teamId, isChat}) => {
   const [videoCall, setVideoCall] = useState(true);
 
   const rtcProps = {
@@ -16,6 +16,8 @@ const CreateRoom = ({onClose}) => {
       onClose()
     },
   };
+
+  
 
   return (
     <>
