@@ -154,10 +154,9 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader>Create Room</ModalHeader>
-                  <ModalCloseButton />
+                  {/* <ModalCloseButton /> */}
                   <ModalBody>
-                    <CreateRoom />
+                    <CreateRoom onClose={onClose}/>
                   </ModalBody>
                 </ModalContent>
               </Modal>
@@ -174,7 +173,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
                     <ModalHeader>Create Room</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                      <CreateRoom />
+                      <CreateRoom onClose={onClose} />
                     </ModalBody>
                   </ModalContent>
                 </Modal>
