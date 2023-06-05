@@ -235,6 +235,9 @@ export const usersApi = baseApi.injectEndpoints({
     getLatestChatsById: builder.query<object, string>({
       query: (uid) => ({ url: `users/${uid}/latestChats`, method: "get" }),
     }),
+    getNotificationsById: builder.query<object, string>({
+      query: (uid) => ({ url: `users/${uid}/notifications`, method: "get" }),
+    }),
     getUserSearchByUsername: builder.query<User[], string>({
       query: (username) => ({
         url: "users",
@@ -291,5 +294,6 @@ export const {
   useUpdateUserStatusMutation,
   useUpdateUserLatestChatsMutation,
   useGetLatestChatsByIdQuery,
-  useUpdateUserNotificationsMutation
+  useUpdateUserNotificationsMutation,
+  useGetNotificationsByIdQuery
 } = usersApi;
