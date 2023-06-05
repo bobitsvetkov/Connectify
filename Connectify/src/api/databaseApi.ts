@@ -45,6 +45,9 @@ export interface User {
   phoneNumber: string;
   photoURL: string;
   status: string;
+  latestChats:object;
+  events: object;
+  notifications: object;
 }
 
 export const baseApi = createApi({
@@ -256,6 +259,14 @@ export const usersApi = baseApi.injectEndpoints({
         body: message,
       }),
     }),
+    updateUserNotifications: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    
   }),
 });
 export const {
@@ -279,5 +290,6 @@ export const {
   useGetUserSearchByUsernameQuery,
   useUpdateUserStatusMutation,
   useUpdateUserLatestChatsMutation,
-  useGetLatestChatsByIdQuery
+  useGetLatestChatsByIdQuery,
+  useUpdateUserNotificationsMutation
 } = usersApi;
