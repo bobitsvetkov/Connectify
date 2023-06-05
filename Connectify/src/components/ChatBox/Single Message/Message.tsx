@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAddReplyToMessageMutation } from "../../../api/databaseApi";
 import { useAddReactionToMessageMutation } from "../../../api/databaseApi";
 import { useSelector } from "react-redux";
@@ -18,6 +18,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
 import DeleteMessage from "../Delete/DeleteMessage";
@@ -52,6 +53,7 @@ function Message({
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();
   const [addReactionToTeamMessage] = useAddReactionToTeamMessageMutation();
+  const [reactionCount, setReactionCount] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -70,6 +72,17 @@ function Message({
   if (!messageId) {
     return <div>Loading...</div>;
   }
+
+  const updateReactionCount = (newCount) => {
+    setReactionCount(newCount);
+  };
+
+  useEffect(() => {
+    if (message.reactions) {
+      const count = Object.keys(message.reactions).length;
+      setReactionCount(count);
+    }
+  }, [message.reactions]);
 
   const handleDelete = () => {
     // Check if the message type is audio, gif, or image
@@ -143,7 +156,7 @@ function Message({
             top={2}
             right={2}
           >
-            {currUserUid === message.user && ( // Check if current user is the author of the message
+            {currUserUid === message.user && (
               <Menu>
                 <MenuButton
                   as={IconButton}
@@ -196,13 +209,27 @@ function Message({
         </Box>
       </Flex>
       {message.reactions && (
-        <Flex>
-          {Object.values(message.reactions).map((reaction) => (
-            <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
-              {reaction.emoji}
-            </span>
-          ))}
-        </Flex>
+        <Box
+          alignContent={"center"}
+          position="relative"
+          alignSelf="flex-start"
+          mt="-1.5rem"
+          zIndex={1}
+        >
+          <Flex
+            border={"1px"}
+            borderRadius={"20px"}
+            bg={useColorModeValue("gray.300", "gray.700")}
+            p={0.5}
+          >
+            {Object.values(message.reactions).map((reaction) => (
+              <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
+                {reaction.emoji}
+              </span>
+            ))}
+            <Text fontSize={"13"}>{`${reactionCount}`}</Text>
+          </Flex>
+        </Box>
       )}
     </VStack>
   );

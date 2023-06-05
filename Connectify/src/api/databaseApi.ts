@@ -203,13 +203,14 @@ export const teamsApi = baseApi.injectEndpoints({
         body: { [userId]: true },
       }),
     }),
-    addReactionToTeamMessage: builder.mutation<void, { teamId: string; channelId: string; messageId: string; reaction: { uid: string, emoji: string, user: string } }>({
+    addReactionToTeamMessage: builder.mutation<void, { teamId: string; channelId: string; messageId: string;     reaction: { uid: string; emoji: string; user: string }; }>({
       query: ({ teamId, channelId, messageId, reaction }) => ({
-          url: `teams/${teamId}/channels/${channelId}/messages/${messageId}/reactions/${reaction.user}`,
-          method: 'patch',
-          body: reaction,
+        url: `teams/${teamId}/channels/${channelId}/messages/${messageId}/reactions/${reaction.uid}`,
+        method: 'update',
+        body: reaction,
       }),
-  }),
+    }),
+
   
     addCallStatusToTeam: builder.mutation<void, { teamId: string; callStatus: boolean }>({
       query: ({ teamId, callStatus }) => ({
