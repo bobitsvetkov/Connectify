@@ -38,6 +38,7 @@ import { getAuth } from "firebase/auth";
 import { useColorMode } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
+import NotificationList from "../NotificationsList/NotificationsList";
 
 export const Header: React.FC = ({
   onViewChange,
@@ -146,25 +147,7 @@ export const Header: React.FC = ({
         </MenuList>
       </Menu>
       <HStack spacing="3">
-      <Menu>
-          <Tooltip label="Notifications" placement="right-end">
-            <MenuButton>
-              <IconButton
-                variant="ghost"
-                icon={
-                  <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
-                }
-              />
-            </MenuButton>
-          </Tooltip>
-          <MenuList>
-            {notifications.map((notification, index) => (
-              <MenuItem key={index}>{notification}</MenuItem>
-            ))}
-            <MenuDivider />
-            <MenuItem>See all notifications</MenuItem>
-          </MenuList>
-        </Menu>
+        <NotificationList />
         <IconButton
           variant="ghost"
           onClick={handleChatBotClick}
