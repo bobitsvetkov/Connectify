@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text } from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from 'react';
@@ -43,9 +43,13 @@ const NotificationList = () => {
         </MenuButton>
       </Tooltip>
       <MenuList>
-        {notifications.map((notification, index) => (
-          <NotificationSingle key={index} notification={notification} handleClick={handleClick} />
-        ))}
+        {notifications.length > 0 ? (
+          notifications.map((notification, index) => (
+            <NotificationSingle key={index} notification={notification} />
+          ))
+        ) : (
+          <Text px={4} py={2}>No notifications</Text>
+        )}
         <MenuDivider />
         <MenuItem onClick={() => deleteNotifications({ userUid: currUserUid })}>Delete all notifications</MenuItem>
       </MenuList>

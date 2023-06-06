@@ -1,10 +1,10 @@
 import { HStack, VStack, Text, Box, Avatar } from "@chakra-ui/react";
-import { useGetUserByIdQuery, useUpdateNotificationSeenStatusMutation, useDeleteUserNotificationsMutation } from "../../api/databaseApi";
+import { useGetUserByIdQuery, useUpdateNotificationSeenStatusMutation } from "../../api/databaseApi";
 import { useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
-
+import { getAuth } from "firebase/auth";
 interface NotificationSingleProps {
   notification: any;
 }
@@ -14,6 +14,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
   const { data: user, isLoading, isError } = useGetUserByIdQuery(notification.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const currUserUid = getAuth().currentUser?.uid;
 
   const [updateNotificationSeenStatus] = useUpdateNotificationSeenStatusMutation();
  
@@ -29,7 +30,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
 
   const handleChatClick = () => {
     dispatch(selectUser(user));
-    navigate(`/chat/${notification.user}`);
+    navigate(`/chat/${user?.username}`);
   }
 
   const handleChannelClick = () => {
@@ -37,7 +38,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
   }
 
   const handleClick = () => {
-    updateNotificationSeenStatus({ userUid: notification.user, notificationUid: notification.uid, notification: { ...notification, isSeen: true } });
+    updateNotificationSeenStatus({ userUid: currUserUid, notificationUid: notification.uid, notification: { ...notification, isSeen: true } });
     if(notification.isChat){
       handleChatClick();
     }else{
