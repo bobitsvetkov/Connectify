@@ -7,12 +7,10 @@ import {
   Heading,
   Text,
   Container,
-  Link,
 } from "@chakra-ui/react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import Slider from "react-slick";
 import { Image } from "@chakra-ui/react";
-import { BsLinkedin } from "react-icons/bs";
 
 export default function TeamCarousel() {
   const [slider, setSlider] = useState(null);
