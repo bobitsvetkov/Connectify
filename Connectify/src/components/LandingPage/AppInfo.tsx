@@ -1,11 +1,9 @@
-import React from "react";
-import { Flex, Box, Text, Heading } from "@chakra-ui/react";
-import ActiveUsers from "../ActiveUsers/ActiveUsers";
+import * as React from 'react';
+import { Flex, Box, Heading } from "@chakra-ui/react";
 import TeamCarousel from "./TeamCarousel";
 import ContactForm from "./ContactForm";
-// import ContactForm from "./ContactForm";
 import { useColorModeValue } from "@chakra-ui/react";
-export const AppInfo = React.forwardRef((props, ref) => {
+export const AppInfo = React.forwardRef<HTMLDivElement>((_, ref) => {
   return (
     <Flex
       direction={"column"}
@@ -17,7 +15,7 @@ export const AppInfo = React.forwardRef((props, ref) => {
       ref={ref}
     >
       <Box maxWidth={"1600px"} mt={"50px"} width={"100%"}>
-        <Heading fontWeight={"bold"} fontSize={"32px"} align={"center"}>
+        <Heading fontWeight={"bold"} fontSize={"32px"} textAlign={"center"}>
           Connectify Info
         </Heading>
         <Flex direction={{ base: "column", md: "row" }} pb={"5%"} width="100%">
@@ -27,17 +25,18 @@ export const AppInfo = React.forwardRef((props, ref) => {
             display="flex"
             flexDirection="column"
             alignItems="center"
-            mb={{ base: "5px", md: "10px" }}
+            mb={{ base: "200px", md: "0" }}
           >
             <TeamCarousel />
           </Box>
           <Box
-            width={"50%"}
+            width={{ base: "100%", md: "50%" }}
             padding={"25px"}
             display={"flex"}
             flexDirection={"column"}
             alignItems={"center"}
-            mb={"10px"}
+            mb={{ base: "20", md: "10px" }}
+            ml={{ md: "10px" }}
           >
             <ContactForm />
           </Box>

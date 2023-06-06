@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import {
   Box,
   Text,
@@ -9,9 +9,7 @@ import {
   Image,
   IconButton
 } from "@chakra-ui/react";
-import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { LandingPageProps } from "../../types/interfaces";
-import { Link } from "react-router-dom";
 import { useState } from "react";
 import ActiveUsers from "../ActiveUsers/ActiveUsers";
 import { Features } from "./Features";
@@ -22,6 +20,7 @@ import { motion } from "framer-motion";
 import { useColorMode } from "@chakra-ui/react";
 import Testimonials from "./Testimonials";
 import { ArrowUpIcon } from "@chakra-ui/icons";
+
 const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
   const featuresRef = useRef<HTMLDivElement>(null);
   const appInfoRef = useRef<HTMLDivElement>(null);
@@ -50,7 +49,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
   window.addEventListener('scroll', checkScrollTop);
 
 
-  const [formComponent, setFormComponent] = useState("signin");
 
   const MotionBox = motion(Box);
 
@@ -65,7 +63,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
         background={"#black"}
         width={"100%"}
       >
-        <Flex align="center" justifyContent="center" mr={8}>
+        <Flex align="center" justifyContent="center" mr={8} flexDirection={{ base: "column", md: "row" }}>
           <VStack
             p={8}
             maxWidth="500px"
@@ -82,10 +80,10 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
               transition={{ duration: 0.9, ease: [0.04, 0.62, 0.23, 0.98] }}
               color={useColorModeValue("#f57c73", "#f57c73")}
             >
-              <Text fontSize="2xl" fontWeight="bold">
+              <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
                 {welcomeText}
               </Text>
-              <Text mb={10} fontSize={20} fontStyle="Italic">
+              <Text mb={10} fontSize={{ base: "md", md: "20" }} fontStyle="Italic">
                 Introducing Connectify, a user-friendly chat messenger that
                 makes communication effortless. Stay connected with friends,
                 family, and colleagues through chats, video calls, and voice
@@ -119,7 +117,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
               </Button>
             </MotionBox>
           </VStack>
-          <Box width={"100%"} ml={"2rem"} height={"100%"}>
+          <Box width={{ base: "100%", md: "50%" }} ml={{ base: "0", md: "2rem" }} height={"100%"}>
             <Image
               src={
                 colorMode === "light"
@@ -127,7 +125,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
                   : "https://i.ibb.co/y4ZLK9m/2206-w037-n003-433b-p1-433-removebg-preview-1.png"
               }
               width={"100%"}
-              height={"400px"}
+              height={{ base: "200px", md: "400px" }}
               objectFit="cover"
             />
           </Box>
@@ -137,6 +135,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
         <Testimonials />
         <ActiveUsers />
         {showScroll && <IconButton
+          aria-label="Scroll to top"
           position='fixed'
           icon={<ArrowUpIcon />}
           bottom='40px'
