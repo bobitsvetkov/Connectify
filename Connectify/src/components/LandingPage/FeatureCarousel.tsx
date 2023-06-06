@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from 'react';
 import {
   Box,
   IconButton,
@@ -117,7 +117,7 @@ export default function CaptionCarousel() {
               size="container.lg"
               height="auto"
               position="relative"
-              align={"center"}
+              textAlign={"center"}
             >
               <Image
                 w={{ base: "350px", md: "500px", lg: "800px" }} 
@@ -139,9 +139,6 @@ export default function CaptionCarousel() {
                   {card.title}
                 </Heading>
                 <Text fontSize={{ base: "md", lg: "lg" }}>{card.text}</Text>
-                <Text fontSize={{ base: "md", lg: "lg" }}>
-                  {card.additionalText}
-                </Text>
               </Stack>
             </Container>
           </Box>

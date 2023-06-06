@@ -13,7 +13,17 @@ import {
 import { SignInForm } from "../SignIn/SignIn";
 import { SignUpForm } from "../SignUp/SignUp";
 
-const AuthModal = ({
+
+interface AuthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  formComponent: string;
+  setFormComponent: (formComponent: string) => void;
+  welcomeText: string;
+  detailsText: string;
+}
+
+const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   formComponent,
@@ -27,7 +37,7 @@ const AuthModal = ({
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay zIndex={"3"} />
       <ModalContent borderRadius={"20px"}>
-        <ModalHeader align="center">{modalHeader}</ModalHeader>
+        <ModalHeader textAlign="center">{modalHeader}</ModalHeader>
         <VStack p={8} width="full" spacing={6} boxShadow="lg" rounded="lg">
           <Box textAlign="center">
             <Text fontSize="2xl" fontWeight="bold">

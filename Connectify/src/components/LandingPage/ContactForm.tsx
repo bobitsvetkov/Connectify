@@ -5,42 +5,38 @@ import {
   FormControl,
   FormLabel,
   Heading,
-  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
   Stack,
   Textarea,
-  Tooltip,
-  useClipboard,
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
-import { BsGithub, BsLinkedin, BsPerson, BsTwitter } from "react-icons/bs";
-import { MdEmail, MdOutlineEmail } from "react-icons/md";
-import emailjs, { EmailJSResponseStatus } from "emailjs-com";
+import  { useRef } from "react";
+import { BsPerson, } from "react-icons/bs";
+import { MdOutlineEmail } from "react-icons/md";
+import emailjs from "emailjs-com";
 
 const ContactForm = () => {
-  const { hasCopied, onCopy } = useClipboard("example@example.com");
-  const form = useRef();
-  const sendEmail = (e) => {
+  const form = useRef<HTMLFormElement>(null);
+  const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
     emailjs
       .sendForm(
         "service_awez2l8",
         "template_dbkcyco",
-        form.current,
+        form.current!,
         "G4ygDkR19cJOVq4OR"
       )
       .then(
-        (result) => {
+        (_) => {
           alert("Email sent successfully");
-          form.current.reset();
+          form.current!.reset();
         },
         (error) => {
-          alert("Error sending email");
+          console.error("Error sending email:", error);
+          alert(`Error sending email: ${error.message}`);
         }
       );
   };

@@ -1,8 +1,8 @@
-import React from "react";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import * as React from 'react';
+import { Flex } from "@chakra-ui/react";
 import CaptionCarousel from "./FeatureCarousel";
 
-export const Features = React.forwardRef((props, ref) => {
+export const Features = React.forwardRef<HTMLDivElement, {}>((_, ref) => {
   return (
     <>
       <Flex

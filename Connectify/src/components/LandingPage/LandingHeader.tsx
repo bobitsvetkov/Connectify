@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -14,8 +14,13 @@ import {
 import AuthModal from "./AuthModal";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 
-export default function LandingHeader({ welcomeText, detailsText }) {
-  const { isOpen, onToggle } = useDisclosure();
+interface LandingHeaderProps {
+  welcomeText: string;
+  detailsText: string;
+}
+
+export default function LandingHeader({ welcomeText, detailsText }: LandingHeaderProps) {
+  const { isOpen} = useDisclosure();
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const handleSignInClick = () => {
