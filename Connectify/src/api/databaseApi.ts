@@ -269,7 +269,13 @@ export const usersApi = baseApi.injectEndpoints({
         body: notification,
       }),
     }),
-    
+    updateNotificationSeenStatus: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
   }),
 });
 export const {
@@ -295,5 +301,6 @@ export const {
   useUpdateUserLatestChatsMutation,
   useGetLatestChatsByIdQuery,
   useUpdateUserNotificationsMutation,
-  useGetNotificationsByIdQuery
+  useGetNotificationsByIdQuery,
+  useUpdateNotificationSeenStatusMutation
 } = usersApi;

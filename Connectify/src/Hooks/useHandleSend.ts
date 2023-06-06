@@ -74,7 +74,7 @@ export const useHandleSend = ({
 
         if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
-                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: uuidv4(), notification: { ...newMessage, isSeen: false, isChat: isChat } });
+                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, isChat: isChat, uid: notificationUid } });
                 updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
                 updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                 addMessageToChat({ chatId: chatId, message: newMessage });
@@ -83,7 +83,7 @@ export const useHandleSend = ({
                 Object.entries(team.participants).map(([userUid, isMember]) => {
                     updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
                     if (userUid !== currUser.uid) {
-                        updateUserNotifications({ userUid: userUid, notificationUid: uuidv4(), notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                        updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
                     }
 
                 })
