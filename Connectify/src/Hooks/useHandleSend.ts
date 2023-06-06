@@ -1,6 +1,5 @@
-
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, User } from "../api/databaseApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, User, useUpdateUserNotificationsMutation } from "../api/databaseApi";
 import { useLazyGenerateConversationQuery } from "../api/openAiApi";
 import { useToast } from "@chakra-ui/react";
 
@@ -42,6 +41,7 @@ export const useHandleSend = ({
 }: HandleSendProps) => {
     const toast = useToast();
     const [updateLatestChats] = useUpdateUserLatestChatsMutation();
+    const [updateUserNotifications] = useUpdateUserNotificationsMutation();
     const { data: team } = useGetTeamByIdQuery(teamId) || null;
     const [executeGenerateConversation] = useLazyGenerateConversationQuery();
 
@@ -67,20 +67,25 @@ export const useHandleSend = ({
             uid: uuidv4(),
             user: currUser.uid,
             content: content,
-            fileName: msg.fileName || null, 
+            fileName: msg.fileName || null,
             date: new Date().toISOString(),
             type: type,
         };
 
         if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
+                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, isChat: isChat } });
                 updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
                 updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                 addMessageToChat({ chatId: chatId, message: newMessage });
             } else {
-                updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                // updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
                 Object.entries(team.participants).map(([userUid, isMember]) => {
                     updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                    if (userUid !== currUser.uid) {
+                        updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                    }
+
                 })
                 addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
             }
@@ -92,7 +97,7 @@ export const useHandleSend = ({
             const updatedMessagesForAI = [
                 ...messagesForAI,
                 { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
-                { role: 'user', content: content } 
+                { role: 'user', content: content }
             ];
 
             setMessagesForAI(updatedMessagesForAI);

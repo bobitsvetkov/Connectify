@@ -45,6 +45,9 @@ export interface User {
   phoneNumber: string;
   photoURL: string;
   status: string;
+  latestChats:object;
+  events: object;
+  notifications: object;
 }
 
 export const baseApi = createApi({
@@ -234,6 +237,9 @@ export const usersApi = baseApi.injectEndpoints({
     getLatestChatsById: builder.query<object, string>({
       query: (uid) => ({ url: `users/${uid}/latestChats`, method: "get" }),
     }),
+    getNotificationsById: builder.query<object, string>({
+      query: (uid) => ({ url: `users/${uid}/notifications`, method: "get" }),
+    }),
     getUserSearchByUsername: builder.query<User[], string>({
       query: (username) => ({
         url: "users",
@@ -256,6 +262,27 @@ export const usersApi = baseApi.injectEndpoints({
         url: `users/${userUid}/latestChats/${chatUid}`,
         method: "set",
         body: message,
+      }),
+    }),
+    updateUserNotifications: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    updateNotificationSeenStatus: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    deleteUserNotifications: builder.mutation<void, { userUid: string }>({
+      query: ({ userUid }) => ({
+        url: `users/${userUid}/notifications`,
+        method: "set",
+        body: null,
       }),
     }),
   }),
@@ -281,5 +308,9 @@ export const {
   useGetUserSearchByUsernameQuery,
   useUpdateUserStatusMutation,
   useUpdateUserLatestChatsMutation,
-  useGetLatestChatsByIdQuery
+  useGetLatestChatsByIdQuery,
+  useUpdateUserNotificationsMutation,
+  useGetNotificationsByIdQuery,
+  useUpdateNotificationSeenStatusMutation,
+  useDeleteUserNotificationsMutation
 } = usersApi;
