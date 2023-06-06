@@ -47,7 +47,7 @@ const NotificationList = () => {
           <NotificationSingle key={index} notification={notification} handleClick={handleClick} />
         ))}
         <MenuDivider />
-        <MenuItem onClick={() => deleteNotifications(currUserUid)}>Delete all notifications</MenuItem>
+        <MenuItem onClick={() => deleteNotifications({ userUid: currUserUid })}>Delete all notifications</MenuItem>
       </MenuList>
     </Menu>
   );

@@ -279,7 +279,7 @@ export const usersApi = baseApi.injectEndpoints({
     deleteUserNotifications: builder.mutation<void, { userUid: string }>({
       query: ({ userUid }) => ({
         url: `users/${userUid}/notifications`,
-        method: "update",
+        method: "set",
         body: null,
       }),
     }),
