@@ -1,21 +1,32 @@
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue } from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
-import { useColorModeValue } from "@chakra-ui/react";
-import { useGetNotificationsByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
+import { useEffect, useState } from 'react';
 import NotificationSingle from "../NotificationSingle/NotificationSingle";
+import { database } from "../../config/firebaseConfig";
+import { ref, onValue, off } from "firebase/database";
 
 const NotificationList = () => {
   const currUserUid = getAuth().currentUser?.uid;
-  const { data: notifications, isLoading: areNotificationsLoading, isError: isError } = useGetNotificationsByIdQuery(currUserUid);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const teamsRef = ref(database, `users/${currUserUid}/notifications`);
+    const handleValueChange = (snapshot) => {
+      const notificationsArray = Object.values(snapshot.val() || {});
+      notificationsArray.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setNotifications(notificationsArray);
+    };
+    onValue(teamsRef, handleValueChange);
+    return () => {
+      off(teamsRef, handleValueChange);
+    };
+  }, []);
 
   const handleClick = (notificationId) => {
     console.log(`Notification ${notificationId} clicked!`);
   };
 
-  const sortedNotifications = !areNotificationsLoading && !isError 
-    ? Object.values(notifications).sort((a, b) => new Date(b.date) - new Date(a.date))
-    : [];
 
   return (
     <Menu>
@@ -30,9 +41,7 @@ const NotificationList = () => {
         </MenuButton>
       </Tooltip>
       <MenuList>
-        {areNotificationsLoading && <div>Loading...</div>}
-        {isError && <div>Error occurred.</div>}
-        {!areNotificationsLoading && !isError && sortedNotifications.map((notification, index) => (
+        {notifications.map((notification, index) => (
           <NotificationSingle key={index} notification={notification} handleClick={handleClick} />
         ))}
         <MenuDivider />
