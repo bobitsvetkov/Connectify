@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import {
   Box,
   IconButton,
@@ -15,7 +15,7 @@ import { Image } from "@chakra-ui/react";
 import { BsLinkedin } from "react-icons/bs";
 
 export default function TeamCarousel() {
-  const [slider, setSlider] = React.useState(null);
+  const [slider, setSlider] = useState(null);
   const top = useBreakpointValue({ base: "90%", md: "50%" });
   const side = useBreakpointValue({ base: "30px", md: "40px" });
 
@@ -24,21 +24,18 @@ export default function TeamCarousel() {
       title: "Radina Georgieva",
       text: "Junior JavaScript Front End Developer /Telerik Academy Student/",
       additionalInfo: "Specializes in React and Node.js, and has contributed to several open source projects.",
-      linkedIn: "https://www.linkedin.com/in/radina-georgieva-953687278/",
       image: "https://i.ibb.co/2FRLZfk/radi-3.jpg",
     },
     {
       title: "Viktor Lomliev",
       text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
       additionalInfo: "Experienced in building and optimizing complex web applications. Passionate about learning new technologies.",
-      linkedIn: "https://www.linkedin.com/in/borislav-tsvetkov-818397198/",
       image: "https://i.ibb.co/1GJsYRF/DSC-0984.jpg",
     },
     {
       title: "Borislav Tsvetkov",
       text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
       additionalInfo: "Keen interest in cloud technologies and microservices. Proactive in learning and implementing best practices.",
-      linkedIn: "https://www.linkedin.com/in/borislav-tsvetkov-818397198/",
       image: "https://i.ibb.co/XjGfVbk/1661515068516-1.jpg",
     },
   ];
@@ -62,7 +59,7 @@ export default function TeamCarousel() {
           base: "xl",
           md: "2xl",
         }}
-        align={"center"}
+        textAlign={"center"}
       >
         Connectify Team
       </Heading>
@@ -109,7 +106,7 @@ export default function TeamCarousel() {
               size="container.lg"
               height="auto"
               position="relative"
-              align={"center"}
+              textAlign={"center"}
             >
               <Image
                 borderRadius={"20px"}
@@ -129,9 +126,6 @@ export default function TeamCarousel() {
                 <Text fontSize={{ base: "md", lg: "lg" }} color="GrayText">
                   {card.additionalInfo}
                 </Text>
-                <Link isExternal href={card.linkedIn} color="blue.500">
-                  <BsLinkedin /> Connect on LinkedIn
-                </Link>
               </Stack>
             </Container>
           </Box>
