@@ -106,7 +106,7 @@ export const Header: React.FC = ({
   const handleLogOut = () => {
     navigate("/");
   };
-  const notifications = ["Notification 1", "Notification 2", "Notification 3"];
+
   return (
     <Flex
       bg={useColorModeValue("#f57c73", "gray.800")}

@@ -1,5 +1,5 @@
 import { HStack, VStack, Text, Box, Avatar } from "@chakra-ui/react";
-import { useGetUserByIdQuery, useUpdateNotificationSeenStatusMutation } from "../../api/databaseApi";
+import { useGetUserByIdQuery, useUpdateNotificationSeenStatusMutation, useDeleteUserNotificationsMutation } from "../../api/databaseApi";
 import { useColorModeValue } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -16,6 +16,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
   const dispatch = useDispatch();
 
   const [updateNotificationSeenStatus] = useUpdateNotificationSeenStatusMutation();
+ 
 
   const formatDate = (dateString: string) => {
     const options = { year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit" };

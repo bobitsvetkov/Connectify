@@ -5,10 +5,12 @@ import { useEffect, useState } from 'react';
 import NotificationSingle from "../NotificationSingle/NotificationSingle";
 import { database } from "../../config/firebaseConfig";
 import { ref, onValue, off } from "firebase/database";
+import { useDeleteUserNotificationsMutation } from "../../api/databaseApi";
 
 const NotificationList = () => {
   const currUserUid = getAuth().currentUser?.uid;
   const [notifications, setNotifications] = useState([]);
+  const [deleteNotifications] = useDeleteUserNotificationsMutation();
 
   useEffect(() => {
     const teamsRef = ref(database, `users/${currUserUid}/notifications`);
@@ -45,7 +47,7 @@ const NotificationList = () => {
           <NotificationSingle key={index} notification={notification} handleClick={handleClick} />
         ))}
         <MenuDivider />
-        <MenuItem>See all notifications</MenuItem>
+        <MenuItem onClick={() => deleteNotifications(currUserUid)}>Delete all notifications</MenuItem>
       </MenuList>
     </Menu>
   );
