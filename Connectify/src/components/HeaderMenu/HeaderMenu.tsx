@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import{ ReactNode, useEffect, useState } from "react";
 import {
   Avatar,
   Flex,
@@ -28,7 +28,7 @@ import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
 import ProfileInfo from "../ProfileInfo/ProfileInfo";
 import { useNavigate } from "react-router-dom";
-import { ref as refDB, onValue } from "firebase/database";
+import { ref as refDB, onValue, off } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import ProfileStatus from "../ProfileStatus/ProfileStatus";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
@@ -40,7 +40,6 @@ import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
 import NotificationList from "../NotificationsList/NotificationsList";
 import { Toast, toastId } from "@chakra-ui/react";
-import { database } from "../../config/firebaseConfig";
 
 export const Header: React.FC = ({
   onViewChange,
