@@ -39,6 +39,8 @@ import { useColorMode } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
 import NotificationList from "../NotificationsList/NotificationsList";
+import { Toast, toastId } from "@chakra-ui/react";
+import { database } from "../../config/firebaseConfig";
 
 export const Header: React.FC = ({
   onViewChange,
@@ -80,6 +82,31 @@ export const Header: React.FC = ({
     });
     return userStatusListener;
   }, [user]);
+
+  let toastId;
+
+  useEffect(() => {
+    const notificationsRef = refDB(database, `users/${currUser?.uid}/notifications`);
+    const handleNewNotification = (snapshot) => {
+      const notificationsArray = Object.values(snapshot.val() || {});
+      const newNotifications = notificationsArray.filter(notification => !notification.isSeen);
+
+      newNotifications.forEach(notification => {
+        if (!toast.isActive(toastId)) {
+          toastId = toast({
+            title: "New Notification",
+            description: notification.content,
+            status: "info",
+            duration: 4000,
+            isClosable: true,
+          });
+        }
+      });
+    };
+
+    onValue(notificationsRef, handleNewNotification);
+    return () => off(notificationsRef, handleNewNotification);
+  }, []);
 
   const handleChatClick = () => {
     onChatClick();
