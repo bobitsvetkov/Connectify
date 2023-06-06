@@ -1,10 +1,8 @@
 import {
-    Box,
     Flex,
     Heading,
     Text,
     Stack,
-    Container,
     Avatar,
     useColorModeValue,
 } from '@chakra-ui/react';
@@ -48,7 +46,7 @@ export default function Testimonials() {
                 <Heading color={useColorModeValue('gray.700', 'gray.200')}>Our Clients Speak</Heading>
                 <Text color={useColorModeValue('gray.600', 'gray.300')}>We have been working with clients around the world</Text>
             </Stack>
-            <Flex
+            <Stack
                 direction={{ base: 'column', md: 'row' }}
                 justify="space-between"
                 align="stretch"
@@ -56,7 +54,7 @@ export default function Testimonials() {
                 wrap="wrap"
             >
                 {testimonialData.map((testimonial, index) => (
-                    <Flex
+                    <Stack
                         key={index}
                         direction="column"
                         align="center"
@@ -85,9 +83,9 @@ export default function Testimonials() {
                                 </Text>
                             </Stack>
                         </Flex>
-                    </Flex>
+                    </Stack>
                 ))}
-            </Flex>
+            </Stack>
         </Flex>
     );
 }
