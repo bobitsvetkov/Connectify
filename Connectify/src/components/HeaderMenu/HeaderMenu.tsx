@@ -40,6 +40,9 @@ import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
 import NotificationList from "../NotificationsList/NotificationsList";
 import { Toast, toastId } from "@chakra-ui/react";
+import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody } from "@chakra-ui/react";
+import NotificationSingle from "../NotificationSingle/NotificationSingle";
+
 
 export const Header: React.FC = ({
   onViewChange,
@@ -60,6 +63,8 @@ export const Header: React.FC = ({
   } = useGetUserByIdQuery(currUser && currUser.uid);
   const { data: mimir } = useGetUserByIdQuery("mimir");
   const [isCalendarOpen, setCalendarOpen] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const [notificationData, setNotificationData] = useState(null);
   const {
     isOpen: isAvatarOpen,
     onOpen: onAvatarOpen,
@@ -96,15 +101,9 @@ export const Header: React.FC = ({
       );
 
       newNotifications.forEach((notification) => {
-        if (!toast.isActive(toastId)) {
-          toastId = toast({
-            title: "New Notification",
-            description: notification.content,
-            status: "info",
-            duration: 4000,
-            isClosable: true,
-          });
-        }
+        setNotificationData(notification);
+        setShowPopover(true);
+        setTimeout(() => setShowPopover(false), 4000); 
       });
     };
 
@@ -146,6 +145,20 @@ export const Header: React.FC = ({
       px="4"
       color={useColorModeValue("#f57c73", "#f57c73")}
     >
+      <Popover isOpen={showPopover} closeOnBlur={false}>
+        <PopoverTrigger>
+          <Box> 
+            {notificationData && <NotificationSingle notification={notificationData} />}
+          </Box>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverBody>
+            {notificationData && <NotificationSingle notification={notificationData} />}
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+
       <Menu>
         <Tooltip label={status} placement="right-end">
           <MenuButton

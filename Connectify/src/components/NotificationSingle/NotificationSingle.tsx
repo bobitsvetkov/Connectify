@@ -11,7 +11,7 @@ interface NotificationSingleProps {
 
 const NotificationSingle = ({ notification }: NotificationSingleProps) => {
   const hoverBgColor = useColorModeValue("gray.100", "gray.800");
-  const { data: user, isLoading, isError } = useGetUserByIdQuery(notification.user);
+  const { data: user, isLoading, isError } = useGetUserByIdQuery(notification?.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
