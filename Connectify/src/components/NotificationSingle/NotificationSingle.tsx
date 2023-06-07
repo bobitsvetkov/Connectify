@@ -37,7 +37,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
   }
 
   const handleClick = () => {
-    updateNotificationSeenStatus({ userUid: notification.user, notificationUid: notification.uid, notification: { ...notification, isSeen: true } });
+    updateNotificationSeenStatus({ userUid: notification.owner, notificationUid: notification.uid, notification: { ...notification, isSeen: true } });
     if(notification.isChat){
       handleChatClick();
     }else{
