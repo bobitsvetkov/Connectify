@@ -74,7 +74,7 @@ export const useHandleSend = ({
 
         if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
-                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, isChat: isChat, owner: activeChatUser.uid } });
+                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
                 updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
                 updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                 addMessageToChat({ chatId: chatId, message: newMessage });
