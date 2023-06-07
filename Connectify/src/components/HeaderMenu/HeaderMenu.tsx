@@ -1,4 +1,4 @@
-import{ ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import {
   Avatar,
   Flex,
@@ -49,7 +49,7 @@ export const Header: React.FC = ({
   setTeamListOpen,
 }) => {
   const { colorMode, toggleColorMode } = useColorMode();
-  const [status, setStatus] = useState("available");
+  const [status, setStatus] = useState("Available");
   const auth = getAuth();
   const currUser = auth.currentUser;
   const dispatch = useDispatch();
@@ -85,12 +85,17 @@ export const Header: React.FC = ({
   let toastId;
 
   useEffect(() => {
-    const notificationsRef = refDB(database, `users/${currUser?.uid}/notifications`);
+    const notificationsRef = refDB(
+      database,
+      `users/${currUser?.uid}/notifications`
+    );
     const handleNewNotification = (snapshot) => {
       const notificationsArray = Object.values(snapshot.val() || {});
-      const newNotifications = notificationsArray.filter(notification => !notification.isSeen);
+      const newNotifications = notificationsArray.filter(
+        (notification) => !notification.isSeen
+      );
 
-      newNotifications.forEach(notification => {
+      newNotifications.forEach((notification) => {
         if (!toast.isActive(toastId)) {
           toastId = toast({
             title: "New Notification",

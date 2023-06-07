@@ -33,7 +33,7 @@ const ProfileInfo: React.FC = () => {
       const userRef = refDB(database, `users/${user.uid}`);
       onValue(userRef, (snapshot) => {
         const data = snapshot.val();
-        setPhotoUrl(data.photoURL);
+        setPhotoUrl(user.photoURL);
       });
     }
   }, [user]);
