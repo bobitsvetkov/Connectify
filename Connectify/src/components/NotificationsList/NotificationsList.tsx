@@ -29,7 +29,6 @@ const NotificationList = () => {
     console.log(`Notification ${notificationId} clicked!`);
   };
 
-
   return (
     <Menu>
       <Tooltip label="Notifications" placement="right-end">

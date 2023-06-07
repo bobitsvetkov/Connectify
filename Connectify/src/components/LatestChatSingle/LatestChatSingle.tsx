@@ -23,6 +23,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
   handleChatClick,
   handleChannelClick,
 }) => {
+  
   const hoverBgColor = useColorModeValue("gray.100", "gray.800");
   const authorResult = useGetUserByIdQuery(chat.user);
   const userChattingWithResult = useGetUserByIdQuery(chat.userChatting);
