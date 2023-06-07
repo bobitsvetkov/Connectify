@@ -66,13 +66,6 @@ function Message({
   } = useGetUserByIdQuery(message.user);
   const currUserUid = getAuth().currentUser?.uid;
 
-  console.log("currUserUid:", currUserUid);
-  console.log("message.user:", message.user);
-
-  if (!messageId) {
-    return <div>Loading...</div>;
-  }
-
   const updateReactionCount = (newCount) => {
     setReactionCount(newCount);
   };
@@ -83,6 +76,10 @@ function Message({
       setReactionCount(count);
     }
   }, [message.reactions]);
+
+  if (!messageId) {
+    return <div>Loading...</div>;
+  }
 
   const handleDelete = () => {
     // Check if the message type is audio, gif, or image
