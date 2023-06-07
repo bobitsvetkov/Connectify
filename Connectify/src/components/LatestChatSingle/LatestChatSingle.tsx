@@ -79,6 +79,11 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
     }
   };
 
+  const formatContent = (content: string) => {
+    const maxLength = 25;
+    return content.length > maxLength ? content.substring(0, maxLength - 3) + '...' : content;
+  };
+
   const currUserUid = getAuth().currentUser?.uid;
 
   return chat.isChat ? (
@@ -101,9 +106,9 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
           <Text>{`${userChattingWith?.firstName} ${userChattingWith?.lastName}`}</Text>
           <HStack width="100%">
             {currUserUid === chat.user ? (
-              <Text>You: {chat.content}</Text>
+              <Text>You: {formatContent(chat.content)}</Text>
             ) : (
-              <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>
+              <Text>{`${formatContent(chat.content)}`}</Text>
             )}
             <Spacer />
             <Text fontSize="sm" color="gray.500">
@@ -125,9 +130,9 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
           <Text>{`${team?.name} #${channel?.name}`}</Text>
           <HStack width="100%">
             {currUserUid === chat.user ? (
-              <Text>You: {chat.content}</Text>
+              <Text>You: {formatContent(chat.content)}</Text>
             ) : (
-              <Text>{`${author?.firstName} ${author?.firstName}: ${chat.content}`}</Text>
+              <Text>{`${author?.firstName} ${author?.firstName}: ${formatContent(chat.content)}`}</Text>
             )}
             <Spacer />
             <Text fontSize="sm" color="gray.500">

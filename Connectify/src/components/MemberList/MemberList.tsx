@@ -3,19 +3,27 @@ import { CloseIcon } from "@chakra-ui/icons";
 import { useEffect, useState, useRef } from 'react';
 import { ref, onValue, off } from "firebase/database";
 import { getAuth } from "firebase/auth";
-import { useGetTeamByIdQuery, useDeleteTeamMemberMutation } from "../../api/databaseApi";
+import { useGetTeamByIdQuery, useDeleteTeamMemberMutation, Team } from "../../api/databaseApi";
 import SingleUser from "../LeftList/SingleUser";
 import { Text } from "@chakra-ui/react";
 import { database } from "../../config/firebaseConfig";
 
-function MemberList({ teamId }) {
-    const [members, setMembers] = useState([]);
-    const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery(teamId);
+interface MemberListProps {
+  teamId: string;
+}
+
+interface Members {
+  [key: string]: boolean;
+}
+
+function MemberList({ teamId }: MemberListProps) {
+    const [members, setMembers] = useState<Members>({});
+    const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery<Team>(teamId);
     const [deleteTeamMember] = useDeleteTeamMemberMutation();
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const cancelRef = useRef();
-    const [selectedMember, setSelectedMember] = useState(null);
+    const cancelRef = useRef<HTMLButtonElement | null>(null);
+    const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
     useEffect(() => {
         const membersRef = ref(database, `teams/${teamId}/participants`);
@@ -32,14 +40,16 @@ function MemberList({ teamId }) {
     const currUserUid = getAuth().currentUser?.uid;
     const isOwner = team?.owner === currUserUid;
 
-    const handleRemoveClick = (userUid) => {
+    const handleRemoveClick = (userUid: string) => {
         setSelectedMember(userUid);
         onOpen();
     }
 
     const handleRemoveConfirm = () => {
-        deleteTeamMember({ userUid: selectedMember, teamId: teamId });
-        onClose();
+        if (selectedMember) {
+          deleteTeamMember({ userUid: selectedMember, teamId: teamId });
+          onClose();
+        }
     }
 
     if (isTeamLoading) return <div>Loading...</div>;
