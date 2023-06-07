@@ -41,6 +41,7 @@ import { selectUser } from "../../features/ActiveUserSlice";
 import NotificationList from "../NotificationsList/NotificationsList";
 import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody } from "@chakra-ui/react";
 import NotificationSingle from "../NotificationSingle/NotificationSingle";
+import notificationSound from "../../assets/notification-sound.mp3"
 
 export const Header: React.FC = ({
   onViewChange,
@@ -74,7 +75,7 @@ export const Header: React.FC = ({
     onOpen: onSettingsOpen,
     onClose: onSettingsClose,
   } = useDisclosure();
-
+  
   useEffect(() => {
     const userStatusRef = refDB(database, `users/${currUser?.uid}/status`);
     const userStatusListener = onValue(userStatusRef, (snapshot) => {
@@ -86,6 +87,7 @@ export const Header: React.FC = ({
     return userStatusListener;
   }, [user]);
 
+  const notificationAudio = new Audio(notificationSound);
 
   useEffect(() => {
     const notificationsRef = refDB(
@@ -102,6 +104,7 @@ export const Header: React.FC = ({
         setNotificationData(notification);
         setShowPopover(true);
         updateUserNotifications({ userUid: currUser.uid, notificationUid: notification.uid, notification: { ...notification, wasShown: true } });
+        notificationAudio.play(); 
         setTimeout(() => setShowPopover(false), 2000);
       });
     };
