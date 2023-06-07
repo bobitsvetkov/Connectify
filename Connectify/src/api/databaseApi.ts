@@ -213,8 +213,13 @@ export const teamsApi = baseApi.injectEndpoints({
         body: reaction,
       }),
     }),
-
-  
+    deleteTeamMember: builder.mutation<void, { userUid: string, teamId: string }>({
+      query: ({ userUid, teamId }) => ({
+        url: `teams/${teamId}/participants/${userUid}`,
+        method: "set",
+        body: null,
+      }),
+    }),
     addCallStatusToTeam: builder.mutation<void, { teamId: string; callStatus: boolean }>({
       query: ({ teamId, callStatus }) => ({
         url: `teams/${teamId}/${callStatus}`,
@@ -299,7 +304,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery
+  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery, useDeleteTeamMemberMutation
 } = teamsApi;
 
 export const {
