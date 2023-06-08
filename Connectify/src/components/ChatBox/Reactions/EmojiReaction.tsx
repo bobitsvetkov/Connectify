@@ -7,27 +7,25 @@ import {
 } from "@chakra-ui/react";
 import { BsEmojiSmile } from "react-icons/bs";
 
-const EmojiReactions = ({ messageId, addReaction }) => {
+
+interface EmojiReactionsProps {
+  messageId: string;
+  addReaction: (messageId: string, emoji: string) => void;
+}
+
+const EmojiReactions: React.FC<EmojiReactionsProps> = ({ messageId, addReaction }) => {
   const defaultReactions = ["👍", "❤️", "😂", "😮"];
   const [isOpen, setIsOpen] = useState(false);
 
-  const onEmojiClick = (event, emoji) => {
+  const onEmojiClick = (emoji: string) => {
     addReaction(messageId, emoji);
     setIsOpen(false);
   };
 
-  const handleIsOpen = () => {
-    setIsOpen(true);
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-  };
-
   return (
-    <Popover placement="bottom" closeOnBlur={false}>
+    <Popover placement="bottom" closeOnBlur={false} isOpen={isOpen} onClose={() => setIsOpen(false)}>
       <PopoverTrigger>
-        <span onClick={handleIsOpen}>
+        <span onClick={() => setIsOpen(true)}>
           <BsEmojiSmile size="10px" />
         </span>
       </PopoverTrigger>
@@ -43,8 +41,7 @@ const EmojiReactions = ({ messageId, addReaction }) => {
           {defaultReactions.map((emoji) => (
             <span
               key={emoji}
-              onClick={() => addReaction(emoji)}
-              onClose={handleClose}
+              onClick={() => onEmojiClick(emoji)}
               style={{ cursor: "pointer" }}
             >
               {emoji}
