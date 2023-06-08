@@ -70,3 +70,11 @@ export interface LandingHeaderProps {
  export interface ActiveUsersProps {
   welcomeText: string;
 }
+export interface LayoutProps {
+  children?: React.ReactNode;
+}
+
+
+export interface RightPanelProps {
+  children: React.ReactNode;
+}

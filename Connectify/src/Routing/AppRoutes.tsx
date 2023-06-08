@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "../components/LandingPage/LandingPage";
 import Layout from "../pages/Layout";
-import HomePage from "../pages/HomePage";
 import ChatBox from "../components/ChatBox/ChatBox";
 import ErrorPage from "../pages/ErrorPage";
 
@@ -9,11 +8,7 @@ const routes = [
   {
     name: "Home",
     path: "/home",
-    element: (
-      <Layout>
-        <HomePage />
-      </Layout>
-    ),
+    element: <Layout />,
   },
   {
     name: "Chat",

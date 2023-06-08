@@ -1,14 +1,15 @@
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { LeftPanel } from "../components/LeftPanel";
 import RightPanel from "../components/RightPanel";
+import { LayoutProps } from "../types/interfaces";
 
-function Layout({ children }) {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Flex h="100vh">
       <LeftPanel />
       <RightPanel>{children}</RightPanel>
     </Flex>
   );
-}
+};
 
 export default Layout;

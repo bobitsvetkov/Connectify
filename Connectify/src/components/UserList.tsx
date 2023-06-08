@@ -3,14 +3,14 @@ import { useGetUsersQuery, User } from "../api/databaseApi";
 import { selectUser } from "../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { UserListProps } from "../types/interfaces";
 
-const UserList: React.FC<UserListProps> = ({ setUserListOpen }) => {
+const UserList: React.FC<UserListProps> = () => {
   const { data: users, isLoading, isError } = useGetUsersQuery();
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(true);
-  
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
 
   const handleUserClick = (user: User) => {
     dispatch(selectUser(user));

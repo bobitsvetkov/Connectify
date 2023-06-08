@@ -1,4 +1,3 @@
-import  { useState } from "react";
 import { useSelector } from "react-redux";
 import {
   AbsoluteCenter,
@@ -8,19 +7,18 @@ import {
   Heading,
   HStack,
   Text,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { RootState } from "../store";
-import ChatBox from "./ChatBox/ChatBox";
+import { RightPanelProps } from "../types/interfaces";
 
-export function RightPanel({ children }) {
+export const RightPanel: React.FC<RightPanelProps> = ({ children }) => {
   const activeChatUser = useSelector(
     (state: RootState) => state.activeUser.user
   );
 
-  
   const bgColor = useColorModeValue("gray.200", "gray.700");
-  const textColor = useColorModeValue("#41525d", "#f0f2f5"); 
+  const textColor = useColorModeValue("#41525d", "#f0f2f5");
   const subTextColor = useColorModeValue("#8696a0", "#a0aec0");
 
   return (
@@ -52,6 +50,6 @@ export function RightPanel({ children }) {
       )}
     </Center>
   );
-}
+};
 
 export default RightPanel;
