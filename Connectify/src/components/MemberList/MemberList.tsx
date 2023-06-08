@@ -1,5 +1,5 @@
 import { Button, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, useDisclosure, IconButton, Flex, Spacer } from "@chakra-ui/react";
-import { CloseIcon } from "@chakra-ui/icons";
+import { CloseIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useEffect, useState, useRef } from 'react';
 import { ref, onValue, off } from "firebase/database";
 import { getAuth } from "firebase/auth";
@@ -21,7 +21,8 @@ function MemberList({ teamId }: MemberListProps) {
     const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery<Team>(teamId);
     const [deleteTeamMember] = useDeleteTeamMemberMutation();
 
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
+    const { isOpen: isLeaveOpen, onOpen: onLeaveOpen, onClose: onLeaveClose } = useDisclosure();
     const cancelRef = useRef<HTMLButtonElement | null>(null);
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
@@ -42,13 +43,25 @@ function MemberList({ teamId }: MemberListProps) {
 
     const handleRemoveClick = (userUid: string) => {
         setSelectedMember(userUid);
-        onOpen();
+        onRemoveOpen();
+    }
+
+    const handleLeaveClick = () => {
+        setSelectedMember(currUserUid);
+        onLeaveOpen();
     }
 
     const handleRemoveConfirm = () => {
         if (selectedMember) {
           deleteTeamMember({ userUid: selectedMember, teamId: teamId });
-          onClose();
+          onRemoveClose();
+        }
+    }
+
+    const handleLeaveConfirm = () => {
+        if (selectedMember) {
+          deleteTeamMember({ userUid: selectedMember, teamId: teamId });
+          onLeaveClose();
         }
     }
 
@@ -65,16 +78,17 @@ function MemberList({ teamId }: MemberListProps) {
                             <Flex align="center">
                                 <SingleUser userUid={userUid} />
                                 <Spacer />
-                                {isOwner && <IconButton colorScheme="red" icon={<CloseIcon />} variant="ghost" onClick={() => handleRemoveClick(userUid)} />}
+                                {isOwner && userUid !== currUserUid && <IconButton colorScheme="red" icon={<CloseIcon />} variant="ghost" onClick={() => handleRemoveClick(userUid)} />}
+                                {userUid === currUserUid && <IconButton colorScheme="orange" icon={<ArrowBackIcon />} variant="ghost" onClick={handleLeaveClick} />}
                             </Flex>
                         );
                     }
                 })
             }
             <AlertDialog
-                isOpen={isOpen}
+                isOpen={isRemoveOpen}
                 leastDestructiveRef={cancelRef}
-                onClose={onClose}
+                onClose={onRemoveClose}
             >
                 <AlertDialogOverlay>
                     <AlertDialogContent>
@@ -87,11 +101,38 @@ function MemberList({ teamId }: MemberListProps) {
                         </AlertDialogBody>
 
                         <AlertDialogFooter>
-                            <Button ref={cancelRef} onClick={onClose}>
+                            <Button ref={cancelRef} onClick={onRemoveClose}>
                                 Cancel
                             </Button>
                             <Button colorScheme="red" onClick={handleRemoveConfirm} ml={3}>
                                 Remove
+                            </Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialogOverlay>
+            </AlertDialog>
+
+            <AlertDialog
+                isOpen={isLeaveOpen}
+                leastDestructiveRef={cancelRef}
+                onClose={onLeaveClose}
+            >
+                <AlertDialogOverlay>
+                    <AlertDialogContent>
+                        <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Leave Team
+                        </AlertDialogHeader>
+
+                        <AlertDialogBody>
+                            Are you sure you want to leave this team?
+                        </AlertDialogBody>
+
+                        <AlertDialogFooter>
+                            <Button ref={cancelRef} onClick={onLeaveClose}>
+                                Cancel
+                            </Button>
+                            <Button colorScheme="orange" onClick={handleLeaveConfirm} ml={3}>
+                                Leave
                             </Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>

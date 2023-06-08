@@ -60,7 +60,7 @@ const NotificationSingle = ({ notification }: NotificationSingleProps) => {
         <VStack align="start" spacing={1}>
           {notification.isChat ?
             <Text fontWeight={notification.isSeen ? "normal" : "bold"}>{`${user.firstName} ${user.lastName}`}</Text> :
-            <Text fontWeight={notification.isSeen ? "normal" : "bold"}>{`${team.name}`}</Text>
+            <Text fontWeight={notification.isSeen ? "normal" : "bold"}>{`${team?.name}`}</Text>
           }
           <HStack width="100%">
             {notification.isChat ?
