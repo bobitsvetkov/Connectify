@@ -1,4 +1,4 @@
-import { Box, HStack, VStack, Text, Avatar } from "@chakra-ui/react";
+import { Box, HStack, Text, Avatar } from "@chakra-ui/react";
 import { Team } from '../../api/databaseApi';
 import { useColorModeValue } from "@chakra-ui/react";
 
