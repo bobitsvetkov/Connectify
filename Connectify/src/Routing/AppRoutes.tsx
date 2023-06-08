@@ -3,6 +3,7 @@ import LandingPage from "../components/LandingPage/LandingPage";
 import Layout from "../pages/Layout";
 import HomePage from "../pages/HomePage";
 import ChatBox from "../components/ChatBox/ChatBox";
+import ErrorPage from "../pages/ErrorPage";
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
       </Layout>
     ),
   },
+  {
+    name: "Error",
+    path: "*",
+    element: <ErrorPage />,
+  },
 ];
 
 const AppRoutes = () => {
@@ -48,6 +54,7 @@ const AppRoutes = () => {
           }
         />
         {generateRoutes()}
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
   );
