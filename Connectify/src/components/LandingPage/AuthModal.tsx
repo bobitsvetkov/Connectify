@@ -12,24 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { SignInForm } from "../SignIn/SignIn";
 import { SignUpForm } from "../SignUp/SignUp";
-
-
-interface AuthModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  formComponent: string;
-  setFormComponent: (formComponent: string) => void;
-  welcomeText: string;
-  detailsText: string;
-}
-
+import { AuthModalProps } from "../../types/interfaces";
 const AuthModal: React.FC<AuthModalProps> = ({
   isOpen,
   onClose,
   formComponent,
   setFormComponent,
   welcomeText,
-  detailsText,
 }) => {
   const modalHeader = formComponent === "signin" ? "Sign In" : "Sign Up";
 
@@ -43,7 +32,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <Text fontSize="2xl" fontWeight="bold">
               {welcomeText}
             </Text>
-            <Text>{detailsText}</Text>
           </Box>
           <Box w="100%">
             {formComponent === "signin" ? (

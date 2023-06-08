@@ -54,3 +54,19 @@ export interface Event {
   title: string;
   id: string | null;
 }
+
+export interface LandingHeaderProps {
+  welcomeText: string;
+}
+
+ export interface AuthModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  formComponent: string;
+  setFormComponent: (formComponent: string) => void;
+  welcomeText: string;
+}
+
+ export interface ActiveUsersProps {
+  welcomeText: string;
+}

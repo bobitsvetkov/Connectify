@@ -13,14 +13,10 @@ import {
 
 import AuthModal from "./AuthModal";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
+import { LandingHeaderProps } from "../../types/interfaces";
 
-interface LandingHeaderProps {
-  welcomeText: string;
-  detailsText: string;
-}
-
-export default function LandingHeader({ welcomeText, detailsText }: LandingHeaderProps) {
-  const { isOpen} = useDisclosure();
+const LandingHeader: React.FC<LandingHeaderProps> = ({ welcomeText }) => {
+  const { isOpen } = useDisclosure();
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const handleSignInClick = () => {
@@ -50,8 +46,8 @@ export default function LandingHeader({ welcomeText, detailsText }: LandingHeade
         py={{ base: 2 }}
         px={{ base: 4 }}
         position="sticky"
-        top="0"  
-        zIndex={1}  
+        top="0"
+        zIndex={1}
         borderBottom={1}
         borderStyle={"solid"}
         borderColor={useColorModeValue("gray.200", "gray.900")}
@@ -82,9 +78,9 @@ export default function LandingHeader({ welcomeText, detailsText }: LandingHeade
         >
           <Button
             as={"a"}
-            fontSize={"xl"} 
-            p={6} 
-            fontWeight={600} 
+            fontSize={"xl"}
+            p={6}
+            fontWeight={600}
             href={"#"}
             onClick={handleSignInClick}
             color={"grey.700"}
@@ -99,14 +95,13 @@ export default function LandingHeader({ welcomeText, detailsText }: LandingHeade
             formComponent={formComponent}
             setFormComponent={setFormComponent}
             welcomeText={welcomeText}
-            detailsText={detailsText}
           />
 
           <Button
             as={"a"}
-            fontSize={"xl"} 
-            p={6} 
-            fontWeight={600} 
+            fontSize={"xl"}
+            p={6}
+            fontWeight={600}
             color={useColorModeValue("white", "#f57c73")}
             href={"#"}
             onClick={handleSignUpClick}
@@ -126,7 +121,6 @@ export default function LandingHeader({ welcomeText, detailsText }: LandingHeade
             formComponent={formComponent}
             setFormComponent={setFormComponent}
             welcomeText={welcomeText}
-            detailsText={detailsText}
           />
         </Stack>
       </Flex>
@@ -134,4 +128,5 @@ export default function LandingHeader({ welcomeText, detailsText }: LandingHeade
       <Collapse in={isOpen} animateOpacity></Collapse>
     </Box>
   );
-}
+};
+export default LandingHeader;

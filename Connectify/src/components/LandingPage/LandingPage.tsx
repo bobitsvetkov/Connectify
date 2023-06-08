@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Box,
   Text,
@@ -7,7 +7,7 @@ import {
   VStack,
   Button,
   Image,
-  IconButton
+  IconButton,
 } from "@chakra-ui/react";
 import { LandingPageProps } from "../../types/interfaces";
 import { useState } from "react";
@@ -46,15 +46,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
     }
   };
 
-  window.addEventListener('scroll', checkScrollTop);
-
-
+  window.addEventListener("scroll", checkScrollTop);
 
   const MotionBox = motion(Box);
 
   return (
     <>
-      <LandingHeader />
+      <LandingHeader welcomeText={"Welcome to Connectify"} />
       <Flex
         direction={"column"}
         alignItems={"center"}
@@ -63,7 +61,12 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
         background={"#black"}
         width={"100%"}
       >
-        <Flex align="center" justifyContent="center" mr={8} flexDirection={{ base: "column", md: "row" }}>
+        <Flex
+          align="center"
+          justifyContent="center"
+          mr={8}
+          flexDirection={{ base: "column", md: "row" }}
+        >
           <VStack
             p={8}
             maxWidth="500px"
@@ -83,7 +86,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
               <Text fontSize={{ base: "xl", md: "2xl" }} fontWeight="bold">
                 {welcomeText}
               </Text>
-              <Text mb={10} fontSize={{ base: "md", md: "20" }} fontStyle="Italic">
+              <Text
+                mb={10}
+                fontSize={{ base: "md", md: "20" }}
+                fontStyle="Italic"
+              >
                 Introducing Connectify, a user-friendly chat messenger that
                 makes communication effortless. Stay connected with friends,
                 family, and colleagues through chats, video calls, and voice
@@ -117,7 +124,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
               </Button>
             </MotionBox>
           </VStack>
-          <Box width={{ base: "100%", md: "50%" }} ml={{ base: "0", md: "2rem" }} height={"100%"}>
+          <Box
+            width={{ base: "100%", md: "50%" }}
+            ml={{ base: "0", md: "2rem" }}
+            height={"100%"}
+          >
             <Image
               src={
                 colorMode === "light"
@@ -133,20 +144,21 @@ const LandingPage: React.FC<LandingPageProps> = ({ welcomeText }) => {
         <Features ref={featuresRef} />
         <AppInfo ref={appInfoRef} />
         <Testimonials />
-        <ActiveUsers />
-        {showScroll && <IconButton
-          aria-label="Scroll to top"
-          position='fixed'
-          icon={<ArrowUpIcon />}
-          bottom='40px'
-          right='30px'
-          onClick={scrollToTop}
-        >
-          Scroll to top
-        </IconButton>}
+        <ActiveUsers welcomeText={""} />
+        {showScroll && (
+          <IconButton
+            aria-label="Scroll to top"
+            position="fixed"
+            icon={<ArrowUpIcon />}
+            bottom="40px"
+            right="30px"
+            onClick={scrollToTop}
+          >
+            Scroll to top
+          </IconButton>
+        )}
       </Flex>
     </>
   );
 };
-
 export default LandingPage;

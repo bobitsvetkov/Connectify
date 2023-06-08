@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { database } from "../../config/firebaseConfig";
 import { ref, onValue } from "firebase/database";
 import { Box } from "@chakra-ui/layout";
-import {
-  Image,
-  Text,
-  Container,
-  Flex,
-  useColorModeValue,
-  Button,
-} from "@chakra-ui/react";
-import { BsFillArrowUpCircleFill } from "react-icons/bs";
-import { useRef } from "react";
+import { Image, Text, Container, Flex, Button } from "@chakra-ui/react";
 import AuthModal from "../LandingPage/AuthModal";
+import { ActiveUsersProps } from "../../types/interfaces";
 
-const ActiveUsers = ({ welcomeText, detailsText }) => {
+const ActiveUsers: React.FC<ActiveUsersProps> = ({ welcomeText }) => {
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const [formComponent, setFormComponent] = useState("signin");
-  const [userCount, setUserCount] = useState(null);
+  const [userCount, setUserCount] = useState<number | null>(null);
 
   useEffect(() => {
     const usersRef = ref(database, "users");
@@ -36,20 +28,21 @@ const ActiveUsers = ({ welcomeText, detailsText }) => {
   const handleCloseSignUp = () => {
     setIsSignUpOpen(false);
   };
+
   return (
     <Flex
-      direction={"column"}
-      alignItems={"center"}
-      pb={"5%"}
-      width={"100%"}
-      color={"#616161"}
+      direction="column"
+      alignItems="center"
+      pb="5%"
+      width="100%"
+      color="#616161"
       bgGradient="linear-gradient(120deg, #de6262, #ffb88c)"
     >
-      <Container width={"full"} maxW={"container.xl"}>
+      <Container width="full" maxW="container.xl">
         <Flex
-          flexWrap={"wrap"}
-          justifyContent={"center"}
-          alignItems={"center"}
+          flexWrap="wrap"
+          justifyContent="center"
+          alignItems="center"
           mt={8}
           mb={16}
         >
@@ -67,9 +60,9 @@ const ActiveUsers = ({ welcomeText, detailsText }) => {
           </Box>
           <Flex
             width={{ base: "100%", md: "50%" }}
-            alignContent={"center"}
+            alignContent="center"
             justifyContent={{ base: "center", md: "flex-end" }}
-            flexDirection={"column"}
+            flexDirection="column"
           >
             <Box
               backgroundColor="grey.700"
@@ -88,13 +81,13 @@ const ActiveUsers = ({ welcomeText, detailsText }) => {
                 colleagues.
               </Text>
               <Button
-                variant={"ghost"}
+                variant="ghost"
                 size="lg"
                 fontWeight="bold"
                 px={8}
                 py={4}
                 _hover={{ bg: "#616161" }}
-                color={"white"}
+                color="white"
                 onClick={handleSignUpClick}
               >
                 Start Chatting Today!
@@ -105,7 +98,6 @@ const ActiveUsers = ({ welcomeText, detailsText }) => {
                 formComponent={formComponent}
                 setFormComponent={setFormComponent}
                 welcomeText={welcomeText}
-                detailsText={detailsText}
               />
             </Box>
           </Flex>
