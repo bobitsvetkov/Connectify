@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAddReplyToMessageMutation } from "../../../api/databaseApi";
 import { useAddReactionToMessageMutation } from "../../../api/databaseApi";
 import { useSelector } from "react-redux";
@@ -18,6 +18,7 @@ import {
   MenuList,
   MenuItem,
   IconButton,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
 import DeleteMessage from "../Delete/DeleteMessage";
@@ -42,8 +43,8 @@ function Message({
   message: Message;
   messageId: string;
   chatId: string;
-  setReplyTo: (replyTo: Message | null) => void; 
-  getStatusColor: (status: string) => string; 
+  setReplyTo: (replyTo: Message | null) => void;
+  getStatusColor: (status: string) => string;
   isChat: boolean;
   teamId: string;
   channelId: string;
@@ -52,6 +53,7 @@ function Message({
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();
   const [addReactionToTeamMessage] = useAddReactionToTeamMessageMutation();
+  const [reactionCount, setReactionCount] = useState(0);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -64,8 +66,16 @@ function Message({
   } = useGetUserByIdQuery(message.user);
   const currUserUid = getAuth().currentUser?.uid;
 
-  console.log('currUserUid:', currUserUid);
-  console.log('message.user:', message.user);
+  const updateReactionCount = (newCount) => {
+    setReactionCount(newCount);
+  };
+
+  useEffect(() => {
+    if (message.reactions) {
+      const count = Object.keys(message.reactions).length;
+      setReactionCount(count);
+    }
+  }, [message.reactions]);
 
   if (!messageId) {
     return <div>Loading...</div>;
@@ -73,12 +83,16 @@ function Message({
 
   const handleDelete = () => {
     // Check if the message type is audio, gif, or image
-    if (message.type === "audio" || message.type === "gif" || message.type === "image") {
+    if (
+      message.type === "audio" ||
+      message.type === "gif" ||
+      message.type === "image"
+    ) {
       setIsDeleting(true);
     }
   };
 
-  const addReaction = (emoji: string) => {
+  const addReaction = async (emoji: string) => {
     if (!currUser) {
       console.log("Current user is not defined");
       return;
@@ -87,31 +101,19 @@ function Message({
     console.log(`Add reaction ${emoji} to message ${messageId}`);
 
     const reaction = {
-      uid: uuidv4(),
+      uid: currUser.uid,
       emoji: emoji,
       user: currUser.uid,
     };
 
     isChat
-      ? addReactionToMessage({ chatId, messageId, reaction })
-      : addReactionToTeamMessage({ teamId, channelId, messageId, reaction });
-
-    const reply = {
-      uid: uuidv4(),
-      user: currUser.uid,
-      content: `Reply: ${replyContent}`,
-      date: new Date().toISOString(),
-      reactions: [], 
-    };
-
-    console.log("chatId", chatId); 
-    console.log("messageId", messageId); 
-    console.log("reply", reply); 
-
-    addReplyToMessage({ chatId, messageId, reply });
-    setReplyContent("");
-    setReplyInputShown(false);
-    setReplyTo(null);
+      ? await addReactionToMessage({ chatId, messageId, reaction })
+      : await addReactionToTeamMessage({
+          teamId,
+          channelId,
+          messageId,
+          reaction,
+        });
   };
 
   return (
@@ -126,7 +128,7 @@ function Message({
           >
             <AvatarBadge
               boxSize="1.25em"
-              bg={getStatusColor(user?.status || '')}
+              bg={getStatusColor(user?.status || "")}
               border="2px"
               borderColor="white"
             />
@@ -151,7 +153,7 @@ function Message({
             top={2}
             right={2}
           >
-            {currUserUid === message.user && ( // Check if current user is the author of the message
+            {currUserUid === message.user && (
               <Menu>
                 <MenuButton
                   as={IconButton}
@@ -184,7 +186,7 @@ function Message({
             messageId={messageId}
             isDeleting={isDeleting}
             setIsDeleting={setIsDeleting}
-            message={message}  
+            message={message}
           />
           <EditMessage
             chatId={chatId}
@@ -195,21 +197,36 @@ function Message({
           />
           <Text>{message.content}</Text>
           <Text fontSize="sm" mt={2}>
-            {message.date && new Date(message.date).toLocaleTimeString(undefined, {
-              hour: "numeric",
-              minute: "numeric",
-            })}
+            {message.date &&
+              new Date(message.date).toLocaleTimeString(undefined, {
+                hour: "numeric",
+                minute: "numeric",
+              })}
           </Text>
         </Box>
       </Flex>
       {message.reactions && (
-        <Flex>
-          {Object.values(message.reactions).map((reaction) => (
-            <span key={reaction.uid} style={{ marginRight: '0.5rem' }}>
-              {reaction.emoji}
-            </span>
-          ))}
-        </Flex>
+        <Box
+          alignContent={"center"}
+          position="relative"
+          alignSelf="flex-start"
+          mt="-1.5rem"
+          zIndex={1}
+        >
+          <Flex
+            border={"1px"}
+            borderRadius={"20px"}
+            bg={useColorModeValue("gray.300", "gray.700")}
+            p={0.5}
+          >
+            {Object.values(message.reactions).map((reaction) => (
+              <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
+                {reaction.emoji}
+              </span>
+            ))}
+            <Text fontSize={"13"}>{`${reactionCount}`}</Text>
+          </Flex>
+        </Box>
       )}
     </VStack>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -14,8 +14,13 @@ import {
 import AuthModal from "./AuthModal";
 import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 
-export default function LandingHeader({ welcomeText, detailsText }) {
-  const { isOpen, onToggle } = useDisclosure();
+interface LandingHeaderProps {
+  welcomeText: string;
+  detailsText: string;
+}
+
+export default function LandingHeader({ welcomeText, detailsText }: LandingHeaderProps) {
+  const { isOpen} = useDisclosure();
   const [isSignInOpen, setIsSignInOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const handleSignInClick = () => {
@@ -44,6 +49,9 @@ export default function LandingHeader({ welcomeText, detailsText }) {
         minH={"60px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
+        position="sticky"
+        top="0"  
+        zIndex={1}  
         borderBottom={1}
         borderStyle={"solid"}
         borderColor={useColorModeValue("gray.200", "gray.900")}
@@ -74,7 +82,9 @@ export default function LandingHeader({ welcomeText, detailsText }) {
         >
           <Button
             as={"a"}
-            fontSize={"lg"}
+            fontSize={"xl"} 
+            p={6} 
+            fontWeight={600} 
             href={"#"}
             onClick={handleSignInClick}
             color={"grey.700"}
@@ -94,8 +104,9 @@ export default function LandingHeader({ welcomeText, detailsText }) {
 
           <Button
             as={"a"}
-            fontSize={"lg"}
-            fontWeight={600}
+            fontSize={"xl"} 
+            p={6} 
+            fontWeight={600} 
             color={useColorModeValue("white", "#f57c73")}
             href={"#"}
             onClick={handleSignUpClick}
@@ -103,7 +114,6 @@ export default function LandingHeader({ welcomeText, detailsText }) {
               bg: "gray.700",
             }}
             variant={"ghost"}
-            size={"xl"}
           >
             Sign Up
           </Button>

@@ -1,14 +1,11 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
+import { Box, Flex, Stack, VStack } from "@chakra-ui/react";
 import { Header } from "./HeaderMenu/HeaderMenu";
-import UserList from "./UserList";
 import SearchInput from "./Search/SearchInput";
 import { useState } from "react";
 import { SearchResults } from "./Search/SearchResults";
-import LeftList from "./LeftList/LeftList";
 import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
-import BotConversationsList from "./BotConvrsationsList/BotConversationsList";
 import { useColorModeValue } from "@chakra-ui/react";
 
 export const LeftPanel: React.FC = () => {
@@ -56,7 +53,7 @@ export const LeftPanel: React.FC = () => {
       {isSearching ? (
         <SearchResults results={searchResults} searchQuery={searchQuery} />
       ) : (
-        <Flex direction="row" bg={useColorModeValue("#EDF3F5", "	#3C4256")}>
+        <Stack overflowY="auto" bg={useColorModeValue("#EDF3F5", "	#3C4256")}>
           {view === "chat" && isUserListOpen && (
             <LatestChatsList setUserListOpen={setUserListOpen} />
           )}
@@ -74,7 +71,7 @@ export const LeftPanel: React.FC = () => {
               {selectedTeam && <ChannelList team={selectedTeam} />}
             </Flex>
           )}
-        </Flex>
+        </Stack>
       )}
     </Flex>
   );

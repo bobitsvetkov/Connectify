@@ -7,7 +7,7 @@ import { useNavigate } from "react-router";
 import { selectUser } from "../../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
 import { User, Team, Channel, Chat } from "../../api/databaseApi";
-import { string } from "prop-types";
+
 interface LatestChatsListProps {
   setUserListOpen: (open: boolean) => void;
 }

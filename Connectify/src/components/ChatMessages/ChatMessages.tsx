@@ -1,6 +1,15 @@
-import { Box, Image, Modal, ModalOverlay, ModalContent, ModalBody, useDisclosure, Button } from "@chakra-ui/react";
+import {
+  Box,
+  Image,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
 import Message from "../ChatBox/Single Message/Message";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import DeleteMessage from "../ChatBox/Delete/DeleteMessage";
 
@@ -15,23 +24,22 @@ const ChatMessages = ({
   teamId,
   channelId,
 }) => {
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImage, setSelectedImage] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const messagesEndRef = useRef(null);
+  const scrollToBottom = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(scrollToBottom, [chatData]);
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
     onOpen();
   };
 
   return (
-    <Box
-      flexGrow={1}
-      overflowY="auto"
-      width="100%"
-      overflowX="hidden"
-    >
+    <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
       {chatData?.messages &&
         Object.values(chatData.messages)
           .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -48,7 +56,9 @@ const ChatMessages = ({
               {message.type === "audio" ? (
                 <div>
                   <VoiceMessage url={message.content} />
-                  <Button onClick={() => setIsDeleting(true)}>Delete Audio</Button>
+                  <Button onClick={() => setIsDeleting(true)}>
+                    Delete Audio
+                  </Button>
                   <DeleteMessage
                     chatId={activeChatId}
                     messageId={message.uid}
@@ -61,7 +71,9 @@ const ChatMessages = ({
               ) : message.type === "gif" ? (
                 <div>
                   <Image src={message.content} alt="GIF" />
-                  <Button onClick={() => setIsDeleting(true)}>Delete GIF</Button>
+                  <Button onClick={() => setIsDeleting(true)}>
+                    Delete GIF
+                  </Button>
                   <DeleteMessage
                     chatId={activeChatId}
                     messageId={message.uid}
@@ -80,7 +92,9 @@ const ChatMessages = ({
                     cursor="pointer"
                     onClick={() => handleImageClick(message.content)}
                   />
-                  <Button onClick={() => setIsDeleting(true)}>Delete Image</Button>
+                  <Button onClick={() => setIsDeleting(true)}>
+                    Delete Image
+                  </Button>
                   <DeleteMessage
                     chatId={activeChatId}
                     messageId={message.uid}
@@ -114,6 +128,7 @@ const ChatMessages = ({
           </ModalBody>
         </ModalContent>
       </Modal>
+      <div ref={messagesEndRef} />
     </Box>
   );
 };

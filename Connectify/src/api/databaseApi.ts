@@ -45,6 +45,9 @@ export interface User {
   phoneNumber: string;
   photoURL: string;
   status: string;
+  latestChats:object;
+  events: object;
+  notifications: object;
 }
 
 export const baseApi = createApi({
@@ -120,7 +123,7 @@ export const chatsApi = baseApi.injectEndpoints({
       }
     >({
       query: ({ chatId, messageId, replyId, reaction }) => ({
-        url: `chats/${chatId}/messages/${messageId}/replies/${replyId}/reactions/${reaction.uid}`,
+        url: `chats/${chatId}/messages/${messageId}/replies/${replyId}/reactions/${reaction.uid}/user`,
         method: "update",
         body: reaction,
       }),
@@ -203,11 +206,18 @@ export const teamsApi = baseApi.injectEndpoints({
         body: { [userId]: true },
       }),
     }),
-    addReactionToTeamMessage: builder.mutation<void, { teamId: string; channelId: string; messageId: string; reaction: { uid: string, emoji: string, user: string } }>({
+    addReactionToTeamMessage: builder.mutation<void, { teamId: string; channelId: string; messageId: string;     reaction: { uid: string; emoji: string; user: string }; }>({
       query: ({ teamId, channelId, messageId, reaction }) => ({
         url: `teams/${teamId}/channels/${channelId}/messages/${messageId}/reactions/${reaction.uid}`,
         method: 'update',
         body: reaction,
+      }),
+    }),
+    deleteTeamMember: builder.mutation<void, { userUid: string, teamId: string }>({
+      query: ({ userUid, teamId }) => ({
+        url: `teams/${teamId}/participants/${userUid}`,
+        method: "set",
+        body: null,
       }),
     }),
     addCallStatusToTeam: builder.mutation<void, { teamId: string; callStatus: boolean }>({
@@ -231,6 +241,9 @@ export const usersApi = baseApi.injectEndpoints({
     }),
     getLatestChatsById: builder.query<object, string>({
       query: (uid) => ({ url: `users/${uid}/latestChats`, method: "get" }),
+    }),
+    getNotificationsById: builder.query<object, string>({
+      query: (uid) => ({ url: `users/${uid}/notifications`, method: "get" }),
     }),
     getUserSearchByUsername: builder.query<User[], string>({
       query: (username) => ({
@@ -256,6 +269,34 @@ export const usersApi = baseApi.injectEndpoints({
         body: message,
       }),
     }),
+    updateUserNotifications: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    updateNotificationSeenStatus: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    updateNotificationShownStatus: builder.mutation<void, { userUid: string, notificationUid: string, notification: object }>({
+      query: ({ userUid, notificationUid, notification }) => ({
+        url: `users/${userUid}/notifications/${notificationUid}`,
+        method: "update",
+        body: notification,
+      }),
+    }),
+    deleteUserNotifications: builder.mutation<void, { userUid: string }>({
+      query: ({ userUid }) => ({
+        url: `users/${userUid}/notifications`,
+        method: "set",
+        body: null,
+      }),
+    }),
   }),
 });
 export const {
@@ -270,7 +311,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery
+  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery, useDeleteTeamMemberMutation
 } = teamsApi;
 
 export const {
@@ -279,5 +320,10 @@ export const {
   useGetUserSearchByUsernameQuery,
   useUpdateUserStatusMutation,
   useUpdateUserLatestChatsMutation,
-  useGetLatestChatsByIdQuery
+  useGetLatestChatsByIdQuery,
+  useUpdateUserNotificationsMutation,
+  useGetNotificationsByIdQuery,
+  useUpdateNotificationSeenStatusMutation,
+  useDeleteUserNotificationsMutation,
+  useUpdateNotificationShownStatusMutation
 } = usersApi;
