@@ -10,10 +10,10 @@ import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
 
 interface ChatInputProps {
-  currUser: object,
+  currUser: User | null,
   user: User,
   chatUserId: string,
-  activeChatUser: User,
+  activeChatUser: User | null,
   isChat: boolean,
   teamId: string,
   channelId: string,
@@ -57,11 +57,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     addMessageToChannel
   });
 
-  const handleGifSelect = (gifUrl) => {
+  const handleGifSelect = (gifUrl: string) => {
     handleSend(gifUrl);
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const url = await uploadImage(e.target.files[0]);
       handleSend(url, true);

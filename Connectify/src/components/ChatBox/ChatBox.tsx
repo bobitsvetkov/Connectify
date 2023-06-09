@@ -6,10 +6,7 @@ import {
   Divider,
   HStack,
   Button,
-  Icon,
   Spacer,
-  Slide,
-  Drawer,
   Text,
   Avatar,
   AvatarBadge,
@@ -19,29 +16,30 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
 import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery } from "../../api/databaseApi";
-import { useGenerateMessageQuery } from "../../api/openaiApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import CreateRoom from "../Video Call/CreateRoom";
 import { FaUsers } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
 import { FaVideo } from 'react-icons/fa';
-const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
-  chatType,
-}) => {
+
+type ChatBoxProps = {
+  chatType: "individual" | "team";
+};
+
+const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const [showMembers, setShowMembers] = useState(false);
   const [isInCall, setIsInCall] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
@@ -61,9 +59,6 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
-
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
@@ -103,7 +98,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "Available":
         return "green.400";
