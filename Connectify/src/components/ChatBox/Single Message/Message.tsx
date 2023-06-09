@@ -92,7 +92,7 @@ function Message({
     }
   };
 
-  const addReaction = async (emoji: string) => {
+  const addReaction = async (messageId: string, emoji: string) => {
     if (!currUser) {
       console.log("Current user is not defined");
       return;

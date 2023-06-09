@@ -17,12 +17,22 @@ import {
 import { ImImages } from 'react-icons/im';
 import { CloseIcon } from '@chakra-ui/icons'; 
 
+interface Gif {
+  id: string;
+  title: string;
+  images: {
+    fixed_height: {
+      url: string;
+    }
+  };
+}
+
 type GiphyDropdownProps = {
   onGifSelect: (gifUrl: string) => void;
 };
 
 const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
-  const [gifs, setGifs] = useState([]);
+  const [gifs, setGifs] = useState<Gif[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   const GIPHY_API_KEY = 'OvghlS9FP4Hqqyo8t5kKp2LeLufHyPct';

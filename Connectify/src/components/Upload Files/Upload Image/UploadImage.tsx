@@ -1,6 +1,6 @@
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
-async function uploadImage(file) {
+async function uploadImage(file: File) {
     const storage = getStorage();
     const storageRef = ref(storage, 'images/' + file.name);
 

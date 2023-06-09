@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text, Center } from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from 'react';
@@ -32,14 +32,15 @@ const NotificationList = () => {
   return (
     <Menu>
       <Tooltip label="Notifications" placement="right-end">
-        <MenuButton>
-          <IconButton
-            variant="ghost"
-            icon={
+        <IconButton
+          variant="ghost"
+          icon={
+            <Center>
               <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
-            }
-          />
-        </MenuButton>
+            </Center>
+          }
+          as={MenuButton}
+        />
       </Tooltip>
       <MenuList>
         {notifications.length > 0 ? (
