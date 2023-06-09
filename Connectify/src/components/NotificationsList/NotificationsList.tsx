@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text, Center } from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
 import { useEffect, useState } from 'react';
@@ -35,7 +35,9 @@ const NotificationList = () => {
         <IconButton
           variant="ghost"
           icon={
-            <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
+            <Center>
+              <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
+            </Center>
           }
           as={MenuButton}
         />
