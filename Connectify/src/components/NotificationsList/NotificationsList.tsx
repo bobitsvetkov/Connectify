@@ -32,14 +32,13 @@ const NotificationList = () => {
   return (
     <Menu>
       <Tooltip label="Notifications" placement="right-end">
-        <MenuButton>
-          <IconButton
-            variant="ghost"
-            icon={
-              <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
-            }
-          />
-        </MenuButton>
+        <IconButton
+          variant="ghost"
+          icon={
+            <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
+          }
+          as={MenuButton}
+        />
       </Tooltip>
       <MenuList>
         {notifications.length > 0 ? (
