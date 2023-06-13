@@ -23,15 +23,7 @@ export interface Message {
   date?: string;
   fileName?: string;
 }
-export interface Team {
-  name: string;
-  owner: string;
-  uid: string;
-  channels: object;
-  participants: object;
-  photoUrl: string;
-  isInACall: boolean
-}
+
 export interface Channel {
   uid: string;
   name: string;

@@ -13,12 +13,12 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import  { useRef } from "react";
-import { BsPerson, } from "react-icons/bs";
+import { useRef } from "react";
+import { BsPerson } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import emailjs from "emailjs-com";
 
-const ContactForm = () => {
+const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();

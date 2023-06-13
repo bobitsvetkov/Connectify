@@ -11,29 +11,33 @@ import {
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import Slider from "react-slick";
 import { Image } from "@chakra-ui/react";
+import { Card } from "../../types/interfaces";
 
-export default function TeamCarousel() {
-  const [slider, setSlider] = useState(null);
+const TeamCarousel: React.FC = () => {
+  const [slider, setSlider] = useState<Slider | null>(null);
   const top = useBreakpointValue({ base: "90%", md: "50%" });
   const side = useBreakpointValue({ base: "30px", md: "40px" });
 
-  const cards = [
+  const cards: Card[] = [
     {
       title: "Radina Georgieva",
       text: "Junior JavaScript Front End Developer /Telerik Academy Student/",
-      additionalInfo: "Specializes in React and Node.js, and has contributed to several open source projects.",
+      additionalInfo:
+        "Specializes in React and Node.js, and has contributed to several open source projects.",
       image: "https://i.ibb.co/2FRLZfk/radi-3.jpg",
     },
     {
       title: "Viktor Lomliev",
       text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
-      additionalInfo: "Experienced in building and optimizing complex web applications. Passionate about learning new technologies.",
+      additionalInfo:
+        "Experienced in building and optimizing complex web applications. Passionate about learning new technologies.",
       image: "https://i.ibb.co/1GJsYRF/DSC-0984.jpg",
     },
     {
       title: "Borislav Tsvetkov",
       text: "Junior JavaScript Full-Stack Developer /Telerik Academy Student/",
-      additionalInfo: "Keen interest in cloud technologies and microservices. Proactive in learning and implementing best practices.",
+      additionalInfo:
+        "Keen interest in cloud technologies and microservices. Proactive in learning and implementing best practices.",
       image: "https://i.ibb.co/XjGfVbk/1661515068516-1.jpg",
     },
   ];
@@ -131,4 +135,5 @@ export default function TeamCarousel() {
       </Slider>
     </Box>
   );
-}
+};
+export default TeamCarousel;

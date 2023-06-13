@@ -119,3 +119,31 @@ export interface EventUserDisplayProps {
   selectedUsers: User[];
   handleRemoveUser: (uid: string) => void;
 }
+
+export interface Card {
+  title: string;
+  text: string;
+  additionalInfo: string;
+  image: string;
+}
+
+export interface CardsF {
+  title:string;
+  text:string;
+  image:string;
+}
+
+export interface Team {
+  name: string;
+  owner: string;
+  uid: string;
+  channels: object;
+  participants: object;
+  photoUrl: string;
+  isInACall: boolean
+}
+
+export interface SearchResultsProps {
+  results: User[];
+  searchQuery: string;
+}

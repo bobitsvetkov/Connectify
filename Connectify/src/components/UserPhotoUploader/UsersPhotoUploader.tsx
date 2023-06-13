@@ -20,8 +20,11 @@ export const PhotoUploader: React.FC = () => {
     return unsubscribe;
   }, []);
 
-  const handleFileInputChange = (e) => {
-    setFile(e.target.files[0]);
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      setFile(file);
+    }
   };
 
   const handleFileUpload = () => {

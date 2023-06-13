@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Box,
   IconButton,
@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
-
+import { CardsF } from "../../types/interfaces";
 import Slider from "react-slick";
 
 const settings = {
@@ -26,15 +26,13 @@ const settings = {
   slidesToScroll: 1,
 };
 
-export default function CaptionCarousel() {
-
+const CaptionCarousel: React.FC = () => {
   const [slider, setSlider] = React.useState<Slider | null>(null);
 
   const top = useBreakpointValue({ base: "90%", md: "50%" });
   const side = useBreakpointValue({ base: "30%", md: "40px" });
 
-
-  const cards = [
+  const cardsF: CardsF[] = [
     {
       title: "Chat messages",
       text: " Instant, direct, and efficient communication. Exchange thoughts, information, and engage in real-time",
@@ -110,7 +108,7 @@ export default function CaptionCarousel() {
         <BiRightArrowAlt size="40px" />
       </IconButton>
       <Slider {...settings} ref={(slider) => setSlider(slider)}>
-        {cards.map((card, index) => (
+        {cardsF.map((card, index) => (
           <Box key={index} height={"auto"} position="relative">
             <Container
               mt={20}
@@ -120,7 +118,7 @@ export default function CaptionCarousel() {
               textAlign={"center"}
             >
               <Image
-                w={{ base: "350px", md: "500px", lg: "800px" }} 
+                w={{ base: "350px", md: "500px", lg: "800px" }}
                 h={{ base: "200px", md: "300px", lg: "400px" }}
                 objectFit="cover"
                 src={card.image}
@@ -146,4 +144,5 @@ export default function CaptionCarousel() {
       </Slider>
     </Box>
   );
-}
+};
+export default CaptionCarousel;
