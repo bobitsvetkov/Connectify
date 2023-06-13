@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { auth, database } from '../../../config/firebaseConfig';
+import { auth } from '../../../config/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import useToastHandler from '../../../components/Toast/toastHandler';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import { SignInData } from '../../../types/interfaces';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '../../../features/AuthSlice';
+import { User } from '../../../api/databaseApi';
 
 const useSignIn = () => {
     const { getUserData } = useFirebaseHandler();
@@ -28,7 +29,7 @@ const useSignIn = () => {
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
-            const fetchedUserData = await getUserData(userCredential.user.uid);
+            const fetchedUserData: User | null = await getUserData(userCredential.user.uid);
             if (fetchedUserData) {
                 dispatch(setUser(fetchedUserData));
                 navigate('/home');
@@ -38,7 +39,7 @@ const useSignIn = () => {
             }
         } catch (error) {
             console.log(error);
-            let errorCode = (error as any).code; // TypeScript workaround
+            const errorCode = (error as any).code; // TypeScript workaround
             switch (errorCode) {
                 case 'auth/user-not-found':
                     setErrorMessage({ email: 'User with this email not found.', password: '' });
