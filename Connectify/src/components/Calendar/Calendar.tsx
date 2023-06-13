@@ -110,15 +110,17 @@ const CalendarApp: React.FC = () => {
           }}
         />
       </ModalWindowForCalendar>
-      <EventModal
-        isOpen={isEventModalOpen}
-        onClose={toggleEventModal}
-        eventTitle={eventTitle}
-        setEventTitle={setEventTitle}
-        selectedRange={selectedRange}
-        handleSelect={handleSelect}
-        user={user}
-      />
+      {user && (
+        <EventModal
+          isOpen={isEventModalOpen}
+          onClose={toggleEventModal}
+          eventTitle={eventTitle}
+          setEventTitle={setEventTitle}
+          selectedRange={selectedRange}
+          handleSelect={handleSelect}
+          user={user}
+        />
+      )}
     </>
   );
 };

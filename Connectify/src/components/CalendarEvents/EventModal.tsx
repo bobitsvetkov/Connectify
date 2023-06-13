@@ -17,18 +17,19 @@ import EventUserDisplay from "./EventUserDisplay";
 import { useState } from "react";
 import { database } from "../../config/firebaseConfig";
 import { ref, set, push } from "firebase/database";
-const EventModal = ({
+import { User } from "../../api/databaseApi";
+import { Event, EventModalProps } from "../../types/interfaces";
+
+const EventModal: React.FC<EventModalProps> = ({
   isOpen,
   onClose,
   eventTitle,
   setEventTitle,
   selectedRange,
-  handleSelect,
   user,
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [searchResults, setSearchResults] = useState<User[]>([]);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
   const handleSelectUser = (user: any) => {
     setSelectedUsers((prevUsers) => [...prevUsers, user]);
@@ -86,10 +87,10 @@ const EventModal = ({
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Add Event</ModalHeader>
-        <SearchInput onSearch={handleSearch} />
+        <SearchInput onSearch={handleSearch} size={"sm"} bg={""} />
         <EventUserSearch
           results={searchResults}
-          searchQuery={searchQuery}
+          searchQuery={""}
           onSelectUser={handleSelectUser}
         />
         <ModalCloseButton />

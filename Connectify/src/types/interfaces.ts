@@ -6,6 +6,10 @@ export interface User {
   username: string;
   phoneNumber: string;
   photoURL: string;
+  status: string;
+  latestChats:object;
+  events: object;
+  notifications: object;
 }
 export interface SearchInputProps {
   size: "sm" | "md" | "lg";
@@ -53,6 +57,7 @@ export interface Event {
   end: string;
   title: string;
   id: string | null;
+  users: string[];
 }
 
 export interface LandingHeaderProps {
@@ -92,4 +97,25 @@ export interface HeaderProps {
   onTeamsClick: () => void;
   setUserListOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setTeamListOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface EventModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  eventTitle: string;
+  setEventTitle: (title: string) => void;
+  selectedRange: { start: string; end: string };
+  handleSelect?: ({ start, end }: { start: Date; end: Date}) => void;
+  user: User
+}
+
+export interface EventUserSearchProps {
+  results: User[];
+  searchQuery: string;
+  onSelectUser: (user: User) => void;
+}
+
+export interface EventUserDisplayProps {
+  selectedUsers: User[];
+  handleRemoveUser: (uid: string) => void;
 }
