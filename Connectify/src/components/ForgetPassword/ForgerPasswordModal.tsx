@@ -12,7 +12,6 @@ const ForgotPassModal: React.FC<ForgotPassModalProps> = ({
   isOpen,
   onClose,
   onForgotPass,
-  onSuccess,
 }) => (
   <Modal isOpen={isOpen} onClose={onClose}>
     <ModalOverlay />
