@@ -1,4 +1,4 @@
-import { useState, useEffect, ChangeEvent, ReactElement } from "react";
+import { useState, useEffect } from "react";
 import {
   sendEmailVerification,
   updateEmail,
@@ -12,7 +12,6 @@ import {
 } from "firebase/auth";
 
 import {
-  useColorModeValue,
   VStack,
   Heading,
   FormControl,
@@ -25,7 +24,6 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
-import { PhotoUploader } from "../UserPhotoUploader/UsersPhotoUploader";
 import {
   Accordion,
   AccordionItem,
@@ -36,8 +34,8 @@ import {
 import { getAuth } from "firebase/auth";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
-import { CSSReset } from "@chakra-ui/react";
-export const UserSetting: React.FC = ({ avatar }) => {
+
+export const UserSetting: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [newEmail, setNewEmail] = useState<string>("");
   const [currentPasswordForEmail, setCurrentPasswordForEmail] =
@@ -49,11 +47,7 @@ export const UserSetting: React.FC = ({ avatar }) => {
   const auth = getAuth();
 
   const currUser = auth.currentUser;
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
+  const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
 
   const [newPassword, setNewPassword] = useState<string>("");
   const [updatingEmail, setUpdatingEmail] = useState<boolean>(false);
@@ -144,16 +138,16 @@ export const UserSetting: React.FC = ({ avatar }) => {
           <Flex direction="column" align="center" mt={8} mb={8}>
             <Avatar
               size="xl"
-              name={`${user.firstName} ${user.lastName}`}
+              name={`${user?.firstName} ${user?.lastName}`}
               src={photoURL}
             />
           </Flex>
           <AccordionItem>
             <VStack mt={10} mb={50} spacing={2} alignItems="flex-start">
               <Text fontSize="md" fontWeight="bold">
-                Welcome,{user.firstName} {user.lastName}
+                Welcome,{user?.firstName} {user?.lastName}
               </Text>
-              <Text fontSize={"sm"}> {user.email}</Text>
+              <Text fontSize={"sm"}> {user?.email}</Text>
             </VStack>
           </AccordionItem>
           <AccordionItem>

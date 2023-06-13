@@ -2,10 +2,7 @@ import { Input, InputGroup, InputLeftElement, HStack } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { SearchInputProps } from "../../types/interfaces";
 import { useState } from "react";
-import {
-  useGetUserSearchByUsernameQuery,
-  useGetUsersQuery,
-} from "../../api/databaseApi";
+import { useGetUsersQuery } from "../../api/databaseApi";
 
 const SearchInput: React.FC<SearchInputProps> = ({
   size,
@@ -14,7 +11,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   ...props
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const { data, error, isLoading } = useGetUsersQuery();
+  const { data, isLoading } = useGetUsersQuery();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
