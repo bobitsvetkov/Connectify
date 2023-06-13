@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getAuth } from "@firebase/auth";
-import { onValue, off, ref, DataSnapshot } from "@firebase/database";
+import { onValue, ref, DataSnapshot } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 import LatestChatSingle from "../LatestChatSingle/LatestChatSingle";
 import { useNavigate } from "react-router";
