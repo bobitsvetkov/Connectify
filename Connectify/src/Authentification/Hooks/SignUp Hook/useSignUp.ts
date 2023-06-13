@@ -35,9 +35,9 @@ const useSignUp = () => {
         phoneNumber: false,
         photoURL: false,
     });
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [passwordError, setPasswordError] = useState<string | null>(null);
-    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [passwordError, setPasswordError] = useState<string | undefined>(undefined);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>(undefined);
     const navigate = useNavigate();
     const { checkUsernameExists, createUser, checkPhoneNumberExists } = useFirebaseHandler();
     const showToast = useToastHandler();
@@ -67,7 +67,7 @@ const useSignUp = () => {
         validateUsername
     } = useFieldValidation();
 
-    const handleSignupDataChange = (name: keyof SignUpData, value: string) => {
+    const handleSignupDataChange = (name:string, value: string) => {
         const newSignupData = {
             ...signupData,
             [name]: value,
@@ -94,7 +94,7 @@ const useSignUp = () => {
             } else if (!validateEmail(value)) {
                 setEmailError("Invalid email address");
             } else {
-                setEmailError(null);
+                setEmailError(undefined);
             }
         }
         if (name === 'phoneNumber') {
@@ -103,7 +103,7 @@ const useSignUp = () => {
             } else if (!validatePhoneNumber(value)) {
                 setPhoneNumberError("Invalid phone number");
             } else {
-                setPhoneNumberError(null);
+                setPhoneNumberError(undefined);
             }
         }
         if (name === 'username') {
@@ -112,7 +112,7 @@ const useSignUp = () => {
             } else if (!validateUsername(value)) {
                 setUsernameError("Invalid username");
             } else {
-                setUsernameError(null);
+                setUsernameError(undefined);
             }
         }
         console.log('handleSignupDataChange:', name, value);
@@ -123,7 +123,7 @@ const useSignUp = () => {
     };
 
 
-    const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         console.log("handleNext function called.");
         setFormSubmitted(true);
@@ -164,7 +164,7 @@ const useSignUp = () => {
         }
 
         // Clear any existing errors
-        setErrorMessage(null);
+        setErrorMessage(undefined);
 
         // If no errors, move to the next step
         console.log("No errors found, proceeding to next step.");
@@ -178,7 +178,7 @@ const useSignUp = () => {
         }
     };
 
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSignUp = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setFormSubmitted(true);
 
@@ -224,7 +224,7 @@ const useSignUp = () => {
         
         try {
             await createUser(signupData);
-            setErrorMessage(null); // clear error message
+            setErrorMessage(undefined); // clear error message
             navigate('/home');
             showToast("Account created.", "You've successfully signed up!", "success");
         } catch (error: unknown) {

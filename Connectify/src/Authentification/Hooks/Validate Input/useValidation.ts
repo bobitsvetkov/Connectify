@@ -16,11 +16,11 @@ const validateUsername = (username: string): boolean => {
 }
 
 const useFieldValidation = () => {
-    const [emailError, setEmailError] = useState<string | null>(null);
-    const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
-    const [firstNameError, setFirstNameError] = useState<string | null>(null);
-    const [lastNameError, setLastNameError] = useState<string | null>(null);
-    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | undefined>(undefined);
+    const [phoneNumberError, setPhoneNumberError] = useState<string | undefined>(undefined);
+    const [firstNameError, setFirstNameError] = useState<string | undefined>(undefined);
+    const [lastNameError, setLastNameError] = useState<string | undefined>(undefined);
+    const [usernameError, setUsernameError] = useState<string | undefined>(undefined);
 
     const validateFirstName = (firstName: string): boolean => {
         if (firstName === '') {
@@ -30,7 +30,7 @@ const useFieldValidation = () => {
             setFirstNameError('First name should not exceed 10 characters');
             return false;
         }
-        setFirstNameError(null);
+        setFirstNameError(undefined);
         return true;
     };
 
@@ -42,7 +42,7 @@ const useFieldValidation = () => {
             setLastNameError('Last name should not exceed 10 characters');
             return false;
         }
-        setLastNameError(null);
+        setLastNameError(undefined);
         return true;
     };
 
@@ -77,7 +77,7 @@ const useFieldValidation = () => {
                     setEmailError(errorMessage);
                     errorMessages.push(errorMessage);
                 } else {
-                    setEmailError(null);
+                    setEmailError(undefined);
                 }
             }
 
@@ -91,7 +91,7 @@ const useFieldValidation = () => {
                     setPhoneNumberError(errorMessage);
                     errorMessages.push(errorMessage);
                 } else {
-                    setPhoneNumberError(null);
+                    setPhoneNumberError(undefined);
                 }
             }
 
@@ -103,7 +103,7 @@ const useFieldValidation = () => {
                     setUsernameError("Invalid username.");
                     errorMessages.push(usernameError || '');
                 } else {
-                    setUsernameError(null);
+                    setUsernameError(undefined);
                 }
             }
 
