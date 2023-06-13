@@ -78,3 +78,18 @@ export interface LayoutProps {
 export interface RightPanelProps {
   children: React.ReactNode;
 }
+
+export interface ModalWindowProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title: string;
+  children: React.ReactNode;
+}
+
+export interface HeaderProps {
+  onViewChange: (newView: "default" | "chat" | "teams") => void;
+  onChatClick: () => void;
+  onTeamsClick: () => void;
+  setUserListOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setTeamListOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}

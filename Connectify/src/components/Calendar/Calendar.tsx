@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { database } from "../../config/firebaseConfig";
-import { ref, push, set, onValue } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { FiCalendar } from "react-icons/fi";
 import EventComponent from "../CalendarEvents/Event";
 import { Event } from "../../types/interfaces";
@@ -20,7 +20,7 @@ const CalendarApp: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [eventTitle, setEventTitle] = useState("");
   const [selectedRange, setSelectedRange] = useState({ start: "", end: "" });
-  const { user, isUserLoading, isUserError } = useCurrentUser();
+  const { user } = useCurrentUser();
 
   const localizer = momentLocalizer(moment);
 
@@ -40,7 +40,7 @@ const CalendarApp: React.FC = () => {
   const handleDeleteEvent = (eventToDelete: Event) => {
     const eventRef = ref(
       database,
-      `users/${user.uid}/events/${eventToDelete.id}`
+      `users/${user?.uid}/events/${eventToDelete.id}`
     );
     remove(eventRef)
       .then(() => {
@@ -62,7 +62,7 @@ const CalendarApp: React.FC = () => {
           const formattedEvents = Object.keys(dbEvents).map((id) => {
             const event = dbEvents[id];
             const users = event.users || [];
-            const formattedUsers = users.map((userId) => {
+            const formattedUsers = users.map((userId: string) => {
               return {
                 uid: userId,
                 ...dbEvents[userId],

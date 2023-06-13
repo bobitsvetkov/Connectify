@@ -21,6 +21,7 @@ export interface Message {
   replies?: { [key: string]: Message };
   reactions?: Reaction[];
   date?: string;
+  fileName?: string;
 }
 export interface Team {
   name: string;

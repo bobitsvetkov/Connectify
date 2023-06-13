@@ -6,7 +6,7 @@ import { auth } from "../../config/firebaseConfig";
 import { update, ref as refDB } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 import { User } from "firebase/auth";
-import { Button, Box, Flex, Text } from "@chakra-ui/react";
+import { Button, Box, Text } from "@chakra-ui/react";
 
 export const PhotoUploader: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -33,7 +33,7 @@ export const PhotoUploader: React.FC = () => {
       contentType: file.type,
     };
 
-    const storageRef = ref(storage, `users/${user.uid}/${file.name}`);
+    const storageRef = ref(storage, `users/${user?.uid}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file, metadata);
     uploadTask.on(
       "state_changed",
@@ -68,7 +68,7 @@ export const PhotoUploader: React.FC = () => {
                 return prevUser;
               });
 
-              const userRef = refDB(database, `users/${user.uid}`);
+              const userRef = refDB(database, `users/${user?.uid}`);
               update(userRef, { photoURL: downloadURL })
                 .then(() => {
                   console.log("Photo URL updated successfully");

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { useAddReplyToMessageMutation } from "../../../api/databaseApi";
 import { useAddReactionToMessageMutation } from "../../../api/databaseApi";
 import { useSelector } from "react-redux";
-import { v4 as uuidv4 } from "uuid";
 import { RootState } from "../../../store";
 import {
   VStack,
@@ -10,9 +8,6 @@ import {
   Box,
   Flex,
   Text,
-  HStack,
-  Button,
-  Input,
   Menu,
   MenuButton,
   MenuList,
@@ -26,7 +21,6 @@ import EditMessage from "../Edit/EditMessage";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useGetUserByIdQuery } from "../../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
-import { Spacer } from "@chakra-ui/react";
 import { AvatarBadge } from "@chakra-ui/react";
 import { useAddReactionToTeamMessageMutation } from "../../../api/databaseApi";
 import { Message } from "../../../api/databaseApi";
@@ -34,7 +28,6 @@ function Message({
   message,
   messageId,
   chatId,
-  setReplyTo,
   getStatusColor,
   isChat,
   teamId,
@@ -49,7 +42,6 @@ function Message({
   teamId: string;
   channelId: string;
 }) {
-  const [addReplyToMessage] = useAddReplyToMessageMutation();
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();
   const [addReactionToTeamMessage] = useAddReactionToTeamMessageMutation();
@@ -57,18 +49,8 @@ function Message({
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [replyInputShown, setReplyInputShown] = useState(false);
-  const [replyContent, setReplyContent] = useState("");
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(message.user);
+  const { data: user } = useGetUserByIdQuery(message.user);
   const currUserUid = getAuth().currentUser?.uid;
-
-  const updateReactionCount = (newCount) => {
-    setReactionCount(newCount);
-  };
 
   useEffect(() => {
     if (message.reactions) {
@@ -81,16 +63,6 @@ function Message({
     return <div>Loading...</div>;
   }
 
-  const handleDelete = () => {
-    // Check if the message type is audio, gif, or image
-    if (
-      message.type === "audio" ||
-      message.type === "gif" ||
-      message.type === "image"
-    ) {
-      setIsDeleting(true);
-    }
-  };
 
   const addReaction = async (messageId: string, emoji: string) => {
     if (!currUser) {

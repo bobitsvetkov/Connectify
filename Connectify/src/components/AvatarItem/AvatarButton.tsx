@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarBadge } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
@@ -6,7 +6,7 @@ import { onValue, ref as refDB } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 
 interface AvatarButtonProps {
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLSpanElement>) => void;
   status: string;
 }
 

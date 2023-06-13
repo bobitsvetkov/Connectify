@@ -5,16 +5,8 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
-  Button,
 } from "@chakra-ui/react";
-
-interface ModalWindowProps {
-  isOpen: boolean;
-  onClose: () => void;
-  title: string;
-  children: React.ReactNode;
-}
+import { ModalWindowProps } from "../../types/interfaces";
 
 const ModalWindowForCalendar: React.FC<ModalWindowProps> = ({
   isOpen,
