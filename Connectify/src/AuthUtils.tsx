@@ -8,6 +8,11 @@ export const getCurrentUser = () => {
 
 export const useCurrentUser = () => {
   const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    return { user: null, isUserLoading: false, isUserError: false };
+  }
+
   const {
     data: user,
     isLoading: isUserLoading,

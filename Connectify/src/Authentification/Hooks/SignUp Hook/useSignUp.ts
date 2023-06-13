@@ -22,6 +22,10 @@ const useSignUp = () => {
         username: '',
         phoneNumber: '',
         photoURL: '',
+        status: '',  
+        latestChats: {},  
+        events: {},  
+        notifications: {},  
     });
 
     const [touchedFields, setTouchedFields] = useState({

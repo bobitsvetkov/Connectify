@@ -83,7 +83,7 @@ const useVoiceMessages = (
                     }, (error) => {
                         toast({
                             title: "Upload failed",
-                            description: "There was an error uploading the audio.",
+                            description: `There was an error uploading the audio: ${error.message}`,
                             status: "error",
                             duration: 5000,
                             isClosable: true,
