@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useCreateChannelMutation, Channel, Team } from '../../api/databaseApi';
+import { useCreateChannelMutation, Channel } from '../../api/databaseApi';
 import { v4 as uuidv4 } from "uuid";
 import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
 import { Box, Flex, Input, IconButton, HStack } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
+import { Team } from '../../types/interfaces';
 
 function ChannelList({ team }: { team: Team }) {
 
@@ -19,15 +20,18 @@ function ChannelList({ team }: { team: Team }) {
 
     useEffect(() => {
         const channelsRef = ref(database, `teams/${teamId}/channels`);
-        onValue(channelsRef, (snapshot: DataSnapshot) => {
+
+        const handleValueChange = (snapshot: DataSnapshot) => {
             setChannelsData(snapshot.val());
-        });
+        };
+
+        const unsubscribe = onValue(channelsRef, handleValueChange);
+
+        return () => {
+            unsubscribe();
+        };
     }, [teamId]);
 
-    console.log(teamId);
-
-    
-    
     const handleCreateChannel = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -43,7 +47,7 @@ function ChannelList({ team }: { team: Team }) {
         };
 
         try {
-            await createChannel({ teamId, channel});
+            await createChannel({ teamId, channel });
             setNewChannelName("");
             setIsAddingChannel(false);
         } catch (error) {
@@ -54,7 +58,7 @@ function ChannelList({ team }: { team: Team }) {
     const handleChannelClick = (channel: Channel) => {
         navigate(`/${teamId}/${channel.uid}`);
     };
-    
+
     return (
         <Box>
             <Flex justify="space-between" align="center" p="1rem" borderBottom="1px solid #EEE">
@@ -79,7 +83,7 @@ function ChannelList({ team }: { team: Team }) {
                                 variant="outline"
                                 size="sm"
                                 onClick={handleCreateChannel}
-                        />
+                            />
                         </>
                     )}
 
