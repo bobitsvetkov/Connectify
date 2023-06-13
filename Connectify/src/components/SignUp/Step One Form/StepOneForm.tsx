@@ -27,7 +27,7 @@ interface TouchedFields {
     photoURL: boolean;
 }
 
-interface PasswordValidationStates {
+export interface PasswordValidationStates {
     isLengthValid: boolean;
     isUpperAndLowerCaseValid: boolean;
     isNumberValid: boolean;
