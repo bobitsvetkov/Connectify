@@ -158,3 +158,13 @@ export interface SearchResultsProps {
   results: User[];
   searchQuery: string;
 }
+
+export interface Notification {
+  content: string;
+  date: string;
+  isChat: boolean;
+  isSeen: boolean;
+  type: string;
+  uid: string;
+  user: string;
+}

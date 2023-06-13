@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getAuth } from "@firebase/auth";
 import { onValue, off, ref, DataSnapshot } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
