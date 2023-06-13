@@ -5,7 +5,6 @@ import useToastHandler from '../../../components/Toast/toastHandler';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 import usePasswordValidation from '../../Password Hook/usePassValid';
 import useFieldValidation from '../Validate Input/useValidation';
-import { useEffect } from 'react';
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
@@ -58,8 +57,6 @@ const useSignUp = () => {
         lastNameError,  
         usernameError,
         validateFields,
-        setFirstNameError,
-        setLastNameError,
         validateFirstName,
         validateLastName,
         setEmailError,
@@ -230,11 +227,17 @@ const useSignUp = () => {
             setErrorMessage(null); // clear error message
             navigate('/home');
             showToast("Account created.", "You've successfully signed up!", "success");
-        } catch (error) {
-            console.log(error.code);
-            if (error.code === 'auth/email-already-in-use') {
-                setEmailExists(true);
-                setErrorMessage('This email is already in use.');
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "code" in error) {
+                const errorCode = (error as { code: string }).code;
+                console.log(errorCode);
+                if (errorCode === 'auth/email-already-in-use') {
+                    setEmailExists(true);
+                    setErrorMessage('This email is already in use.');
+                } else {
+                    setEmailExists(false);
+                    setErrorMessage("An unknown error occurred.");
+                }
             } else if (error instanceof Error) {
                 setEmailExists(false);
                 setErrorMessage(error.message);
