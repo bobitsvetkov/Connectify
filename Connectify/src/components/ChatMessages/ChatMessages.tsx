@@ -8,17 +8,38 @@ import {
   useDisclosure,
   Button,
 } from "@chakra-ui/react";
-import Message from "../ChatBox/Single Message/Message";
+import SingleMessage from "../ChatBox/Single Message/Message";
 import { useState, useRef, useEffect } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import DeleteMessage from "../ChatBox/Delete/DeleteMessage";
+import { Message } from "../../api/databaseApi";
 
-const ChatMessages = ({
+
+interface ChatData {
+  messages: { [key: string]: Message };
+}
+
+
+
+interface ChatMessagesProps {
+  chatData: ChatData;
+  userId: string;
+  activeChatUser: string;
+  activeChatId: string;
+  activeChatUserStatus: string;
+  getStatusColor: Function;
+  isChat: boolean;
+  teamId: string;
+  channelId: string;
+}
+
+
+
+
+const ChatMessages: React.FC<ChatMessagesProps> = ({
   chatData,
   userId,
-  activeChatUser,
   activeChatId,
-  activeChatUserStatus,
   getStatusColor,
   isChat,
   teamId,
@@ -28,12 +49,14 @@ const ChatMessages = ({
   const [selectedImage, setSelectedImage] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollToBottom = () => {
+    if (messagesEndRef.current){
     messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
   useEffect(scrollToBottom, [chatData]);
-  const handleImageClick = (imageUrl) => {
+  const handleImageClick = (imageUrl: string) => {
     setSelectedImage(imageUrl);
     onOpen();
   };
@@ -42,7 +65,8 @@ const ChatMessages = ({
     <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
       {chatData?.messages &&
         Object.values(chatData.messages)
-          .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .filter((message: Message) => message.date !== undefined)
+        .sort((a: Message, b: Message) => new Date(a.date!).getTime() - new Date(b.date!).getTime())
           .map((message) => (
             <Box
               key={message.uid}
@@ -105,17 +129,15 @@ const ChatMessages = ({
                   />
                 </div>
               ) : (
-                <Message
+                  <SingleMessage
                   key={message.uid}
                   message={message}
                   messageId={message.uid}
                   chatId={activeChatId}
-                  getStatusColor={getStatusColor}
+                  getStatusColor={(status: string) => getStatusColor(status)}
                   isChat={isChat}
                   teamId={teamId}
                   channelId={channelId}
-                  isDeleting={isDeleting}
-                  setIsDeleting={setIsDeleting}
                 />
               )}
             </Box>

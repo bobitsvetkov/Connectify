@@ -28,6 +28,11 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
 
+
+  if (!currUser || !user || !activeChatUser) {
+    return null;
+  }
+
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(
     currUser,
     user,

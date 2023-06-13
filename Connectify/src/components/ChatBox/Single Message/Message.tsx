@@ -24,7 +24,7 @@ import { getAuth } from "@firebase/auth";
 import { AvatarBadge } from "@chakra-ui/react";
 import { useAddReactionToTeamMessageMutation } from "../../../api/databaseApi";
 import { Message } from "../../../api/databaseApi";
-function Message({
+function SingleMessage({
   message,
   messageId,
   chatId,
@@ -36,7 +36,6 @@ function Message({
   message: Message;
   messageId: string;
   chatId: string;
-  setReplyTo: (replyTo: Message | null) => void;
   getStatusColor: (status: string) => string;
   isChat: boolean;
   teamId: string;
@@ -204,4 +203,4 @@ function Message({
   );
 }
 
-export default Message;
+export default SingleMessage;
