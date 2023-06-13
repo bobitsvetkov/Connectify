@@ -143,6 +143,17 @@ export interface Team {
   isInACall: boolean
 }
 
+export interface latestChat {
+  content: string;
+  date: string;
+  isChat: boolean;
+  type: string;
+  uid: string;
+  user: string;
+  userChatting: string;
+  userChattingUsername: string;
+}
+
 export interface SearchResultsProps {
   results: User[];
   searchQuery: string;
