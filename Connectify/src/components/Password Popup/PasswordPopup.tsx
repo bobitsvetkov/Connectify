@@ -1,8 +1,19 @@
 import Popup from "reactjs-popup";
 import { Box, Icon, useColorModeValue } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { JSX } from 'react';
 
-const PasswordValidationPopup = ({ passwordValidationStates, children }) => {
+interface PasswordValidationPopupProps {
+    passwordValidationStates: {
+        isLengthValid: boolean;
+        isUpperAndLowerCaseValid: boolean;
+        isNumberValid: boolean;
+        isSpecialCharValid: boolean;
+    };
+    children: JSX.Element;
+}
+
+const PasswordValidationPopup = ({ passwordValidationStates, children }: PasswordValidationPopupProps) => {
     const { isLengthValid, isUpperAndLowerCaseValid, isNumberValid, isSpecialCharValid } = passwordValidationStates;
 
     const validationRules = [
