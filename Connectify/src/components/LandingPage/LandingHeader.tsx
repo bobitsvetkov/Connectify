@@ -9,6 +9,7 @@ import {
   useColorModeValue,
   useBreakpointValue,
   useDisclosure,
+  Image,
 } from "@chakra-ui/react";
 
 import AuthModal from "./AuthModal";
@@ -38,7 +39,7 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ welcomeText }) => {
   const [formComponent, setFormComponent] = useState("signin");
 
   return (
-    <Box>
+    <Box overflow="hidden">
       <Flex
         bg={useColorModeValue("#f57c73", "gray.800")}
         color={useColorModeValue("gray.600", "white")}
@@ -59,69 +60,69 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ welcomeText }) => {
           display={{ base: "flex", md: "none" }}
         ></Flex>
         <Flex flex={{ base: 1 }} justify={{ base: "center", md: "start" }}>
-          <Text
-            textAlign={useBreakpointValue({ base: "center", md: "left" })}
-            fontFamily={"heading"}
-            color={useColorModeValue("gray.800", "white")}
-          >
-            Connectify
-          </Text>
+          <Image
+            src="https://i.ibb.co/kDhJgCz/Logo-Connectify.png"
+            maxWidth={"200px"}
+            alignContent={useBreakpointValue({ base: "center", md: "left" })}
+          ></Image>
 
           <Flex display={{ base: "none", md: "flex" }} ml={10}></Flex>
         </Flex>
 
         <Stack
           flex={{ base: 1, md: 0 }}
-          justify={"flex-end"}
+          justify={["center", "center", "flex-end", "flex-end"]}
           direction={"row"}
           spacing={6}
         >
-          <Button
-            as={"a"}
-            fontSize={"xl"}
-            p={6}
-            fontWeight={600}
-            href={"#"}
-            onClick={handleSignInClick}
-            color={"grey.700"}
-            variant={"ghost"}
-          >
-            Sign In
-          </Button>
+          <Flex alignItems="center">
+            <Button
+              as={"a"}
+              fontSize={["sm", "md", "lg", "xl"]}
+              p={[2, 4, 6, 6]}
+              fontWeight={600}
+              href={"#"}
+              onClick={handleSignInClick}
+              color={"grey.700"}
+              variant={"ghost"}
+            >
+              Sign In
+            </Button>
 
-          <AuthModal
-            isOpen={isSignInOpen}
-            onClose={handleCloseSignIn}
-            formComponent={formComponent}
-            setFormComponent={setFormComponent}
-            welcomeText={welcomeText}
-          />
+            <AuthModal
+              isOpen={isSignInOpen}
+              onClose={handleCloseSignIn}
+              formComponent={formComponent}
+              setFormComponent={setFormComponent}
+              welcomeText={welcomeText}
+            />
 
-          <Button
-            as={"a"}
-            fontSize={"xl"}
-            p={6}
-            fontWeight={600}
-            color={useColorModeValue("white", "#f57c73")}
-            href={"#"}
-            onClick={handleSignUpClick}
-            _hover={{
-              bg: "gray.700",
-            }}
-            variant={"ghost"}
-          >
-            Sign Up
-          </Button>
-          <Flex justifyContent="flex-end" width="100%">
+            <Button
+              as={"a"}
+              fontSize={["sm", "md", "lg", "xl"]} // responsive font size
+              p={[2, 4, 6, 6]} // responsive padding
+              fontWeight={600}
+              color={useColorModeValue("white", "#f57c73")}
+              href={"#"}
+              onClick={handleSignUpClick}
+              _hover={{
+                bg: "gray.700",
+              }}
+              variant={"ghost"}
+            >
+              Sign Up
+            </Button>
+            {/* <Flex justifyContent="flex-end" width="100%"> */}
             <ColorModeSwitcher />
+            {/* </Flex> */}
+            <AuthModal
+              isOpen={isSignUpOpen}
+              onClose={handleCloseSignUp}
+              formComponent={formComponent}
+              setFormComponent={setFormComponent}
+              welcomeText={welcomeText}
+            />
           </Flex>
-          <AuthModal
-            isOpen={isSignUpOpen}
-            onClose={handleCloseSignUp}
-            formComponent={formComponent}
-            setFormComponent={setFormComponent}
-            welcomeText={welcomeText}
-          />
         </Stack>
       </Flex>
 

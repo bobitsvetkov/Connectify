@@ -7,6 +7,7 @@ import {
   Heading,
   Text,
   Container,
+  Center,
 } from "@chakra-ui/react";
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi";
 import Slider from "react-slick";
@@ -110,14 +111,16 @@ const TeamCarousel: React.FC = () => {
               position="relative"
               textAlign={"center"}
             >
-              <Image
-                borderRadius={"20px"}
-                boxSize="400px"
-                objectFit="cover"
-                src={card.image}
-                alt={card.title}
-                mb={4}
-              />
+              <Center>
+                <Image
+                  borderRadius={"20px"}
+                  boxSize="400px"
+                  objectFit="cover"
+                  src={card.image}
+                  alt={card.title}
+                  mb={4}
+                />
+              </Center>
               <Stack spacing={6} w={"full"} maxW={"lg"} position="relative">
                 <Heading fontSize={{ base: "sm", md: "sm", lg: "sm" }}>
                   {card.title}

@@ -84,6 +84,7 @@ const ContactForm: React.FC = () => {
                           type="text"
                           name="name"
                           placeholder="Your Name"
+                          _placeholder={{ color: "white" }}
                         />
                       </InputGroup>
                     </FormControl>
@@ -96,6 +97,7 @@ const ContactForm: React.FC = () => {
                           type="email"
                           name="email"
                           placeholder="Your Email"
+                          _placeholder={{ color: "white" }}
                         />
                       </InputGroup>
                     </FormControl>
@@ -106,6 +108,7 @@ const ContactForm: React.FC = () => {
                       <Textarea
                         name="message"
                         placeholder="Your Message"
+                        _placeholder={{ color: "white" }}
                         rows={6}
                         resize="none"
                       />
