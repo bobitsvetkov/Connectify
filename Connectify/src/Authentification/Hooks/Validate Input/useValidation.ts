@@ -1,16 +1,16 @@
 import { SignUpData } from "../../../types/interfaces";
 import { useState } from "react";
-const validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const validateEmail = (email: string): boolean => {
+    const re = /^(([^<>()[\]\\.,;:@"]+(\.[^<>()[\]\\.,;:@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
-
-const validatePhoneNumber = (phoneNumber) => {
+const validatePhoneNumber = (phoneNumber: string): boolean => {
     const re = /^\+?\d{1,}$/;  // Assumes a phone number is valid if it starts with an optional '+' and followed only by digits
     return re.test(phoneNumber);
 }
 
-const validateUsername = (username) => {
+const validateUsername = (username: string): boolean => {
     const re = /^[a-z0-9_]{3,16}$/;  // Username can contain lower case letters, digits and underscore, and must be between 3 and 16 characters long
     return re.test(username);
 }
@@ -22,7 +22,7 @@ const useFieldValidation = () => {
     const [lastNameError, setLastNameError] = useState<string | null>(null);
     const [usernameError, setUsernameError] = useState<string | null>(null);
 
-    const validateFirstName = (firstName) => {
+    const validateFirstName = (firstName: string): boolean => {
         if (firstName === '') {
             setFirstNameError('First name is required');
             return false;
@@ -34,7 +34,7 @@ const useFieldValidation = () => {
         return true;
     };
 
-    const validateLastName = (lastName) => {
+    const validateLastName = (lastName: string): boolean => {
         if (lastName === '') {
             setLastNameError('Last name is required');
             return false;
@@ -49,7 +49,7 @@ const useFieldValidation = () => {
 
     const validateFields = async (data: Partial<SignUpData>): Promise<string[]> => {
         return new Promise<string[]>(resolve => {
-            let errorMessages: string[] = [];
+            const errorMessages: string[] = [];
 
             if (data.firstName !== undefined && data.firstName !== null) {
                 if (data.firstName === '') {
