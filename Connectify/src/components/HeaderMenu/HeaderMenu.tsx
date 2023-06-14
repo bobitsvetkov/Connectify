@@ -1,6 +1,5 @@
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Avatar,
   Flex,
   HStack,
   IconButton,
@@ -12,17 +11,13 @@ import {
   MenuItem,
   MenuDivider,
   Drawer,
-  DrawerBody,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
-  DrawerCloseButton,
-  Button,
-  Divider,
   Box,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "@chakra-ui/react";
-import { AiOutlineTeam, AiOutlineRobot, AiOutlineBell } from "react-icons/ai";
+import { AiOutlineTeam, AiOutlineRobot } from "react-icons/ai";
 import { BsFillChatLeftTextFill } from "react-icons/bs";
 import { UserSetting } from "../UserSettings/UserSettings";
 import AvatarButton from "../AvatarItem/AvatarButton";
@@ -33,17 +28,28 @@ import { database } from "../../config/firebaseConfig";
 import ProfileStatus from "../ProfileStatus/ProfileStatus";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import CalendarApp from "../Calendar/Calendar";
-import { useGetUserByIdQuery, useUpdateUserNotificationsMutation } from "../../api/databaseApi";
+import {
+  useGetUserByIdQuery,
+  useUpdateUserNotificationsMutation,
+} from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import { useColorMode } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { selectUser } from "../../features/ActiveUserSlice";
 import NotificationList from "../NotificationsList/NotificationsList";
-import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverBody } from "@chakra-ui/react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverArrow,
+  PopoverBody,
+} from "@chakra-ui/react";
 import NotificationSingle from "../NotificationSingle/NotificationSingle";
-import notificationSound from "../../assets/notification-sound.mp3"
+import notificationSound from "../../assets/notification-sound.mp3";
+import { DataSnapshot } from "firebase/database";
+import { HeaderProps } from "../../types/interfaces";
+import { Notification } from "../../types/interfaces";
 
-export const Header: React.FC = ({
+export const Header: React.FC<HeaderProps> = ({
   onViewChange,
   onChatClick,
   onTeamsClick,
@@ -55,27 +61,20 @@ export const Header: React.FC = ({
   const auth = getAuth();
   const currUser = auth.currentUser;
   const dispatch = useDispatch();
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
-  const { data: mimir } = useGetUserByIdQuery("mimir");
+  const user = currUser ? useGetUserByIdQuery(currUser.uid) : null;
+  const mimir = useGetUserByIdQuery("mimir");
   const [updateUserNotifications] = useUpdateUserNotificationsMutation();
-  const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
-  const [notificationData, setNotificationData] = useState(null);
-  const {
-    isOpen: isAvatarOpen,
-    onOpen: onAvatarOpen,
-    onClose: onAvatarClose,
-  } = useDisclosure();
+  const [notificationData, setNotificationData] = useState<Notification | null>(
+    null
+  );
+  const { onOpen: onAvatarOpen } = useDisclosure();
   const {
     isOpen: isSettingsOpen,
     onOpen: onSettingsOpen,
     onClose: onSettingsClose,
   } = useDisclosure();
-  
+
   useEffect(() => {
     const userStatusRef = refDB(database, `users/${currUser?.uid}/status`);
     const userStatusListener = onValue(userStatusRef, (snapshot) => {
@@ -94,23 +93,30 @@ export const Header: React.FC = ({
       database,
       `users/${currUser?.uid}/notifications`
     );
-    const handleNewNotification = (snapshot) => {
-      const notificationsArray = Object.values(snapshot.val() || {});
-      const newNotifications = notificationsArray.filter(
-        (notification) => !notification.wasShown
+    const handleNewNotification = (snapshot: DataSnapshot) => {
+      const notificationsArray: Notification[] = Object.values(
+        snapshot.val() || {}
+      );
+      const newNotifications: Notification[] = notificationsArray.filter(
+        (notification: any): notification is Notification =>
+          notification && !notification.wasShown
       );
 
-      newNotifications.forEach((notification) => {
+      newNotifications.forEach((notification: Notification) => {
         setNotificationData(notification);
         setShowPopover(true);
-        updateUserNotifications({ userUid: currUser.uid, notificationUid: notification.uid, notification: { ...notification, wasShown: true } });
-        notificationAudio.play(); 
+        updateUserNotifications({
+          userUid: currUser ? currUser.uid : "",
+          notificationUid: notification.uid,
+          notification: { ...notification, wasShown: true },
+        });
+        notificationAudio.play();
         setTimeout(() => setShowPopover(false), 2000);
       });
     };
 
     onValue(notificationsRef, handleNewNotification);
-    return () => off(notificationsRef, handleNewNotification);
+    return () => off(notificationsRef, "value", handleNewNotification);
   }, []);
 
   const handleChatClick = () => {
@@ -125,12 +131,10 @@ export const Header: React.FC = ({
     setTeamListOpen(true);
   };
 
-  const handleCalendarClick = () => {
-    setCalendarOpen(!isCalendarOpen);
-  };
-
   const handleChatBotClick = () => {
-    dispatch(selectUser(mimir));
+    if (mimir.isSuccess) {
+      dispatch(selectUser(mimir.data));
+    }
     navigate("/chat/mimir");
   };
 
@@ -148,13 +152,15 @@ export const Header: React.FC = ({
       color={useColorModeValue("#f57c73", "#f57c73")}
     >
       <Popover isOpen={showPopover} closeOnBlur={false}>
-          <PopoverContent>
-            <PopoverArrow />
-            <PopoverBody>
-              {notificationData && <NotificationSingle notification={notificationData} />}
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverBody>
+            {notificationData && (
+              <NotificationSingle notification={notificationData} />
+            )}
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
       <Menu>
         <Tooltip label={status} placement="right-end">
           <MenuButton
@@ -187,10 +193,11 @@ export const Header: React.FC = ({
         </MenuList>
       </Menu>
       <HStack spacing="3">
-      <NotificationList />
-        
+        <NotificationList />
+
         <IconButton
           variant="ghost"
+          aria-label="ChatBot Button"
           onClick={handleChatBotClick}
           icon={
             <Box
@@ -202,6 +209,7 @@ export const Header: React.FC = ({
         <IconButton
           variant="ghost"
           onClick={handleChatClick}
+          aria-label="Chat Button"
           icon={
             <Box
               color={useColorModeValue("black", "white")}
@@ -213,6 +221,7 @@ export const Header: React.FC = ({
         <IconButton
           variant="ghost"
           onClick={handleTeamsClick}
+          aria-label="Teams Button"
           icon={
             <Box
               color={useColorModeValue("black", "white")}

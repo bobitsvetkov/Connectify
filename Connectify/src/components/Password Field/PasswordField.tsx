@@ -16,7 +16,8 @@ import { HiEye, HiEyeOff } from 'react-icons/hi'
 export const PasswordField = forwardRef<HTMLInputElement, InputProps & {
     errorMessage?: string | null;
     isInvalid?: boolean;
-    isRequired?: boolean;  
+    isRequired?: boolean;
+    label?: string; 
 }>((props, ref) => {
     const { isOpen, onToggle } = useDisclosure()
     const inputRef = useRef<HTMLInputElement>(null)
@@ -29,11 +30,11 @@ export const PasswordField = forwardRef<HTMLInputElement, InputProps & {
         }
     }
 
-    const { isInvalid, errorMessage, isRequired, ...inputProps } = props; 
+    const { isInvalid, errorMessage, isRequired, label, ...inputProps } = props; 
 
     return (
         <FormControl isInvalid={isInvalid} isRequired={isRequired}>  
-            <FormLabel htmlFor="password">{props.label}</FormLabel>
+            <FormLabel htmlFor="password">{label}</FormLabel>
             <InputGroup>
                 <InputRightElement>
                     <IconButton

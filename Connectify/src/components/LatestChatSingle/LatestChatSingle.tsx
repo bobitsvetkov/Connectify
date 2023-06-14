@@ -1,39 +1,55 @@
 import { HStack, VStack, Text, Box, Spacer } from "@chakra-ui/layout";
 import {
-  useGetUserByIdQuery,
-  useGetChannelByIdQuery,
-  useGetTeamByIdQuery,
-  User,
-  Team,
-  Channel,
-  Chat,
+  useLazyGetUserByIdQuery,
+  useLazyGetChannelByIdQuery,
+  useLazyGetTeamByIdQuery
 } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
 import { Avatar, AvatarBadge } from "@chakra-ui/avatar";
 import { useColorModeValue } from "@chakra-ui/react";
+import { latestChat, User, Team, Channel } from "../../types/interfaces";
+import { useEffect } from 'react';
 
 interface LatestChatSingleProps {
-  chat: Chat;
+  chat: latestChat;
   handleChatClick: (user: User) => void;
   handleChannelClick: (teamId: string, channelId: string) => void;
 }
 
-const LatestChatSingle: FC<LatestChatSingleProps> = ({
+const LatestChatSingle = ({
   chat,
   handleChatClick,
   handleChannelClick,
-}) => {
-  
-  const hoverBgColor = useColorModeValue("gray.100", "gray.800");
-  const authorResult = useGetUserByIdQuery(chat.user);
-  const userChattingWithResult = useGetUserByIdQuery(chat.userChatting);
-  const channelResult = useGetChannelByIdQuery({
-    teamId: chat.teamId,
-    channelId: chat.channelId,
-  });
-  const teamResult = useGetTeamByIdQuery(chat.teamId);
+}: LatestChatSingleProps) => {
 
-  let author, userChattingWith, team, channel;
+  const hoverBgColor = useColorModeValue("gray.100", "gray.800");
+
+  const [triggerGetAuthor, authorResult] = useLazyGetUserByIdQuery();
+  const [triggerGetUserChattingWith, userChattingWithResult] = useLazyGetUserByIdQuery();
+  const [triggerGetChannel, channelResult] = useLazyGetChannelByIdQuery();
+  const [triggerGetTeam, teamResult] = useLazyGetTeamByIdQuery();
+
+  useEffect(() => {
+    if (chat.user) {
+      triggerGetAuthor(chat.user);
+    }
+
+    if (chat.userChatting) {
+      triggerGetUserChattingWith(chat.userChatting);
+    }
+  }, [chat.user, chat.userChatting, triggerGetAuthor, triggerGetUserChattingWith]);
+
+  useEffect(() => {
+    if (chat.teamId && chat.channelId) {
+      triggerGetChannel({
+        teamId: chat.teamId,
+        channelId: chat.channelId,
+      });
+      triggerGetTeam(chat.teamId);
+    }
+  }, [chat, triggerGetChannel, triggerGetTeam]);
+
+  let author: User | undefined, userChattingWith: User | undefined, team: Team | undefined, channel: Channel | undefined;
 
   if (!authorResult.isLoading && !authorResult.isError) {
     author = authorResult.data;
@@ -44,16 +60,16 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
       userChattingWith = userChattingWithResult.data;
     }
   } else {
-    if (!teamResult.isLoading && !teamResult.isError) {
-      team = teamResult.data;
-    }
-    if (!channelResult.isLoading && !channelResult.isError) {
+    if (channelResult && !channelResult.isLoading && !channelResult.isError) {
       channel = channelResult.data;
+    }
+    if (teamResult && !teamResult.isLoading && !teamResult.isError) {
+      team = teamResult.data;
     }
   }
 
   const formatDate = (dateString: string) => {
-    const options = {
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -63,7 +79,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string | undefined) => {
     switch (status) {
       case "Available":
         return "green.400";
@@ -91,7 +107,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
     <Box
       _hover={{ backgroundColor: hoverBgColor }}
       cursor="pointer"
-      onClick={() => handleChatClick(userChattingWith)}
+      onClick={() => userChattingWith && handleChatClick(userChattingWith)}
     >
       <HStack ml={2} mb={2}>
         <Avatar
@@ -123,7 +139,7 @@ const LatestChatSingle: FC<LatestChatSingleProps> = ({
     <Box
       _hover={{ backgroundColor: hoverBgColor }}
       cursor="pointer"
-      onClick={() => handleChannelClick(team.uid, channel.uid)}
+      onClick={() => team && channel && handleChannelClick(team.uid, channel.uid)}
     >
       <HStack ml={2} mb={2}>
         <Avatar name={team?.name} src={team?.photoUrl} borderRadius="6" />

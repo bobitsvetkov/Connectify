@@ -5,7 +5,6 @@ import useToastHandler from '../../../components/Toast/toastHandler';
 import useFirebaseHandler from '../Firebase Auth Hook/useFirebaseAuth';
 import usePasswordValidation from '../../Password Hook/usePassValid';
 import useFieldValidation from '../Validate Input/useValidation';
-import { useEffect } from 'react';
 
 const useSignUp = () => {
     const [step, setStep] = useState(1);
@@ -23,6 +22,10 @@ const useSignUp = () => {
         username: '',
         phoneNumber: '',
         photoURL: '',
+        status: '',  
+        latestChats: {},  
+        events: {},  
+        notifications: {},  
     });
 
     const [touchedFields, setTouchedFields] = useState({
@@ -36,9 +39,9 @@ const useSignUp = () => {
         phoneNumber: false,
         photoURL: false,
     });
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [passwordError, setPasswordError] = useState<string | null>(null);
-    const [confirmPasswordError, setConfirmPasswordError] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+    const [passwordError, setPasswordError] = useState<string | undefined>(undefined);
+    const [confirmPasswordError, setConfirmPasswordError] = useState<string | undefined>(undefined);
     const navigate = useNavigate();
     const { checkUsernameExists, createUser, checkPhoneNumberExists } = useFirebaseHandler();
     const showToast = useToastHandler();
@@ -58,8 +61,6 @@ const useSignUp = () => {
         lastNameError,  
         usernameError,
         validateFields,
-        setFirstNameError,
-        setLastNameError,
         validateFirstName,
         validateLastName,
         setEmailError,
@@ -70,7 +71,7 @@ const useSignUp = () => {
         validateUsername
     } = useFieldValidation();
 
-    const handleSignupDataChange = (name: keyof SignUpData, value: string) => {
+    const handleSignupDataChange = (name:string, value: string) => {
         const newSignupData = {
             ...signupData,
             [name]: value,
@@ -97,7 +98,7 @@ const useSignUp = () => {
             } else if (!validateEmail(value)) {
                 setEmailError("Invalid email address");
             } else {
-                setEmailError(null);
+                setEmailError(undefined);
             }
         }
         if (name === 'phoneNumber') {
@@ -106,7 +107,7 @@ const useSignUp = () => {
             } else if (!validatePhoneNumber(value)) {
                 setPhoneNumberError("Invalid phone number");
             } else {
-                setPhoneNumberError(null);
+                setPhoneNumberError(undefined);
             }
         }
         if (name === 'username') {
@@ -115,7 +116,7 @@ const useSignUp = () => {
             } else if (!validateUsername(value)) {
                 setUsernameError("Invalid username");
             } else {
-                setUsernameError(null);
+                setUsernameError(undefined);
             }
         }
         console.log('handleSignupDataChange:', name, value);
@@ -126,7 +127,7 @@ const useSignUp = () => {
     };
 
 
-    const handleNext = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleNext = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         console.log("handleNext function called.");
         setFormSubmitted(true);
@@ -167,7 +168,7 @@ const useSignUp = () => {
         }
 
         // Clear any existing errors
-        setErrorMessage(null);
+        setErrorMessage(undefined);
 
         // If no errors, move to the next step
         console.log("No errors found, proceeding to next step.");
@@ -181,7 +182,7 @@ const useSignUp = () => {
         }
     };
 
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSignUp = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setFormSubmitted(true);
 
@@ -227,14 +228,20 @@ const useSignUp = () => {
         
         try {
             await createUser(signupData);
-            setErrorMessage(null); // clear error message
+            setErrorMessage(undefined); // clear error message
             navigate('/home');
             showToast("Account created.", "You've successfully signed up!", "success");
-        } catch (error) {
-            console.log(error.code);
-            if (error.code === 'auth/email-already-in-use') {
-                setEmailExists(true);
-                setErrorMessage('This email is already in use.');
+        } catch (error: unknown) {
+            if (typeof error === "object" && error !== null && "code" in error) {
+                const errorCode = (error as { code: string }).code;
+                console.log(errorCode);
+                if (errorCode === 'auth/email-already-in-use') {
+                    setEmailExists(true);
+                    setErrorMessage('This email is already in use.');
+                } else {
+                    setEmailExists(false);
+                    setErrorMessage("An unknown error occurred.");
+                }
             } else if (error instanceof Error) {
                 setEmailExists(false);
                 setErrorMessage(error.message);

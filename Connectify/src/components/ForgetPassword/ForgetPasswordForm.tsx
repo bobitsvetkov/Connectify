@@ -15,7 +15,6 @@ import { ForgotPasswordFormProps } from "../../types/interfaces";
 
 export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({
   onSuccess,
-  onForgotPass,
 }) => {
   const [email, setEmail] = useState<string>("");
 

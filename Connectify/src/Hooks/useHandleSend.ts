@@ -1,19 +1,21 @@
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, User, useUpdateUserNotificationsMutation } from "../api/databaseApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, useUpdateUserNotificationsMutation } from "../api/databaseApi";
 import { useLazyGenerateConversationQuery } from "../api/openAiApi";
 import { useToast } from "@chakra-ui/react";
+import { Message, User } from "../types/interfaces";
+import { User as FirebaseUser } from 'firebase/auth';
 
 type AddMessageToChatMutation = ReturnType<typeof useAddMessageToChatMutation>[0];
 type AddMessageToChannelMutation = ReturnType<typeof useAddMessageToChannelMutation>[0];
 
 interface HandleSendProps {
-    currUser: object,
+    currUser: FirebaseUser | null,
     user: User,
-    chatUserId: string,
-    activeChatUser: User,
+    chatUserId: string | undefined,
+    activeChatUser: User | null,
     isChat: boolean,
-    teamId: string,
-    channelId: string,
+    teamId: string | undefined,
+    channelId: string | undefined,
     isBot: boolean,
     message: string,
     messagesForAI: Array<{ role: string, content: string }>,
@@ -26,13 +28,12 @@ interface HandleSendProps {
 export const useHandleSend = ({
     currUser,
     user,
-    chatUserId,
+    chatUserId = "",
     activeChatUser,
     isChat,
-    teamId,
-    channelId,
+    teamId = "",
+    channelId = "",
     isBot,
-    message,
     messagesForAI,
     setMessagesForAI,
     setMessage,
@@ -42,7 +43,7 @@ export const useHandleSend = ({
     const toast = useToast();
     const [updateLatestChats] = useUpdateUserLatestChatsMutation();
     const [updateUserNotifications] = useUpdateUserNotificationsMutation();
-    const { data: team } = useGetTeamByIdQuery(teamId) || null;
+    const { data: team } = useGetTeamByIdQuery(teamId) || undefined;
     const [executeGenerateConversation] = useLazyGenerateConversationQuery();
 
     const userIds = [chatUserId, user.username];
@@ -50,44 +51,57 @@ export const useHandleSend = ({
     const chatId = userIds.join("-");
 
     const handleSend = async (msg?: string | { downloadURL: string, fileName: string }, isImage?: boolean) => {
-        console.log(msg)
-        let content, type;
+        if (!currUser) {
+            console.error("User is not authenticated");
+            return; // or throw an error if you want
+        }
+
+        let content, type, fileName = undefined;
+
         if (typeof msg === 'string') {
             content = msg;
             type = content.includes('giphy.com') ? 'gif' : 'text';
-        } else if (typeof msg === 'object' && msg.downloadURL && msg.fileName) {
+        } else if (msg && 'downloadURL' in msg && 'fileName' in msg) {
             content = msg.downloadURL;
             type = 'image';
+            fileName = msg.fileName;
         } else {
             console.error('Invalid message:', msg);
             return;
         }
 
-        const newMessage = {
+        const currentUserUid = currUser.uid;
+        const newMessage: Message = {
             uid: uuidv4(),
-            user: currUser.uid,
+            user: currentUserUid,
             content: content,
-            fileName: msg.fileName || null,
             date: new Date().toISOString(),
-            type: type,
+            type: type as "audio" | "image" | "text" | "gif",
         };
+
+
+        if (fileName) {
+            newMessage.fileName = fileName;
+        }
 
         if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
-                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
-                updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
-                updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
-                addMessageToChat({ chatId: chatId, message: newMessage });
+                if ((currUser && activeChatUser) && content.trim().length > 0) {
+                    updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
+                    updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
+                    updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
+                    addMessageToChat({ chatId: chatId, message: newMessage });
+                }
             } else {
-                // updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                Object.entries(team.participants).map(([userUid, isMember]) => {
-                    updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                    if (userUid !== currUser.uid) {
-                        updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
-                    }
-
-                })
                 addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
+                if (team) {
+                    Object.entries(team.participants).map(([userUid]) => {
+                        updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                        if (userUid !== currUser.uid) {
+                            updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                        }
+                    })
+                }
             }
 
             setMessage("");
@@ -117,15 +131,18 @@ export const useHandleSend = ({
                     addMessageToChat({ chatId: chatId, message: aiMessage });
                 }
             } catch (error) {
+                const e = error as Error;
                 toast({
                     title: "An error occurred.",
-                    description: error.message,
+                    description: e.message,
                     status: "error",
                     duration: 9000,
                     isClosable: true,
                 });
             }
         }
+
+
     };
 
     return handleSend;

@@ -1,29 +1,61 @@
 import { useState } from "react";
-import { Input, Button, HStack, useToast, Icon } from "@chakra-ui/react";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, User } from "../../api/databaseApi";
+import {
+  Input,
+  Button,
+  HStack,
+  useToast,
+  Icon,
+  IconButton,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import {
+  useAddMessageToChatMutation,
+  useAddMessageToChannelMutation,
+  User,
+} from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { FaMicrophone, FaImage } from "react-icons/fa";
+import { FaImage, FaMicrophone } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
+import { User as FirebaseUser } from 'firebase/auth';
 
 interface ChatInputProps {
-  currUser: object,
-  user: User,
-  chatUserId: string,
-  activeChatUser: User,
-  isChat: boolean,
-  teamId: string,
-  channelId: string,
-  isBot: boolean,
+  currUser: FirebaseUser | null;
+  user: User;
+  chatUserId: string | undefined;
+  activeChatUser: User | null;
+  isChat: boolean;
+  teamId: string | undefined;
+  channelId: string | undefined;
+  isBot: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId, isBot }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  currUser,
+  user,
+  chatUserId,
+  activeChatUser,
+  isChat,
+  teamId,
+  channelId,
+  isBot,
+}) => {
+  const buttonColor = useColorModeValue("black", "white");
+  const buttonBg = useColorModeValue("#f57c73", "#d84e45");
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
-  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{ "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." }]);
+  const [messagesForAI, setMessagesForAI] = useState<
+    Array<{ role: string; content: string }>
+  >([
+    {
+      role: "system",
+      content:
+        "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such.",
+    },
+  ]);
   const [addMessageToChat] = useAddMessageToChatMutation();
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
@@ -54,19 +86,20 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     setMessagesForAI,
     setMessage,
     addMessageToChat,
-    addMessageToChannel
+    addMessageToChannel,
   });
 
-  const handleGifSelect = (gifUrl) => {
+  const handleGifSelect = (gifUrl: string) => {
     handleSend(gifUrl);
   };
 
-  const handleImageUpload = async (e) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const url = await uploadImage(e.target.files[0]);
       handleSend(url, true);
     }
   };
+console.log(teamId);
 
   return (
     <HStack width="100%" spacing={4}>
@@ -83,7 +116,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             placeholder="Type a message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 handleSend(message);
@@ -91,28 +124,24 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             }}
             flexGrow={1}
           />
-          <Button
+          <IconButton
             onClick={() => handleSend(message)}
-            colorScheme="teal"
-          >
-            <Icon
-              as={BsFillSendFill}
-              boxSize={6}
-              style={{ fontSize: "24px" }}
-            />
-          </Button>
-          <Button
+            color={buttonColor}
+            bg={buttonBg}
+            _hover={{ bg: buttonBg }}
+            aria-label="Send Message"
+            icon={<Icon as={BsFillSendFill} boxSize={6} />}
+          />
+          <IconButton
             as="label"
             htmlFor="image-upload"
-            colorScheme="teal"
+            color={buttonColor}
+            bg={buttonBg}
             cursor="pointer"
-          >
-            <Icon
-              as={FaImage}
-              boxSize={6}
-              style={{ fontSize: "24px" }}
-            />
-          </Button>
+            aria-label="Upload Image"
+            icon={<Icon as={FaImage} boxSize={6} />}
+            _hover={{ bg: buttonBg }}
+          />
           <input
             id="image-upload"
             type="file"
@@ -133,7 +162,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             placeholder="Type a message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSend();
               }
@@ -145,9 +174,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
           </Button>
         </>
       )}
-      <Button onClick={handleStart} colorScheme="teal">
-        <Icon as={FaMicrophone} boxSize={6} style={{ fontSize: "24px" }} />
-      </Button>
+      <IconButton
+        onClick={handleStart}
+        color={buttonColor}
+        bg={buttonBg}
+        _hover={{ bg: buttonBg }}
+        aria-label="Start Recording"
+        icon={<Icon as={FaMicrophone} boxSize={6} />}
+      />
     </HStack>
   );
 };

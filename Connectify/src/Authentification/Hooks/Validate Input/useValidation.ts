@@ -1,28 +1,28 @@
 import { SignUpData } from "../../../types/interfaces";
 import { useState } from "react";
-const validateEmail = (email) => {
-    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+const validateEmail = (email: string): boolean => {
+    const re = /^(([^<>()[\]\\.,;:@"]+(\.[^<>()[\]\\.,;:@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
-
-const validatePhoneNumber = (phoneNumber) => {
+const validatePhoneNumber = (phoneNumber: string): boolean => {
     const re = /^\+?\d{1,}$/;  // Assumes a phone number is valid if it starts with an optional '+' and followed only by digits
     return re.test(phoneNumber);
 }
 
-const validateUsername = (username) => {
+const validateUsername = (username: string): boolean => {
     const re = /^[a-z0-9_]{3,16}$/;  // Username can contain lower case letters, digits and underscore, and must be between 3 and 16 characters long
     return re.test(username);
 }
 
 const useFieldValidation = () => {
-    const [emailError, setEmailError] = useState<string | null>(null);
-    const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
-    const [firstNameError, setFirstNameError] = useState<string | null>(null);
-    const [lastNameError, setLastNameError] = useState<string | null>(null);
-    const [usernameError, setUsernameError] = useState<string | null>(null);
+    const [emailError, setEmailError] = useState<string | undefined>(undefined);
+    const [phoneNumberError, setPhoneNumberError] = useState<string | undefined>(undefined);
+    const [firstNameError, setFirstNameError] = useState<string | undefined>(undefined);
+    const [lastNameError, setLastNameError] = useState<string | undefined>(undefined);
+    const [usernameError, setUsernameError] = useState<string | undefined>(undefined);
 
-    const validateFirstName = (firstName) => {
+    const validateFirstName = (firstName: string): boolean => {
         if (firstName === '') {
             setFirstNameError('First name is required');
             return false;
@@ -30,11 +30,11 @@ const useFieldValidation = () => {
             setFirstNameError('First name should not exceed 10 characters');
             return false;
         }
-        setFirstNameError(null);
+        setFirstNameError(undefined);
         return true;
     };
 
-    const validateLastName = (lastName) => {
+    const validateLastName = (lastName: string): boolean => {
         if (lastName === '') {
             setLastNameError('Last name is required');
             return false;
@@ -42,14 +42,14 @@ const useFieldValidation = () => {
             setLastNameError('Last name should not exceed 10 characters');
             return false;
         }
-        setLastNameError(null);
+        setLastNameError(undefined);
         return true;
     };
 
 
     const validateFields = async (data: Partial<SignUpData>): Promise<string[]> => {
         return new Promise<string[]>(resolve => {
-            let errorMessages: string[] = [];
+            const errorMessages: string[] = [];
 
             if (data.firstName !== undefined && data.firstName !== null) {
                 if (data.firstName === '') {
@@ -77,7 +77,7 @@ const useFieldValidation = () => {
                     setEmailError(errorMessage);
                     errorMessages.push(errorMessage);
                 } else {
-                    setEmailError(null);
+                    setEmailError(undefined);
                 }
             }
 
@@ -91,7 +91,7 @@ const useFieldValidation = () => {
                     setPhoneNumberError(errorMessage);
                     errorMessages.push(errorMessage);
                 } else {
-                    setPhoneNumberError(null);
+                    setPhoneNumberError(undefined);
                 }
             }
 
@@ -103,7 +103,7 @@ const useFieldValidation = () => {
                     setUsernameError("Invalid username.");
                     errorMessages.push(usernameError || '');
                 } else {
-                    setUsernameError(null);
+                    setUsernameError(undefined);
                 }
             }
 

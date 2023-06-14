@@ -27,9 +27,9 @@ const useFirebaseHandler = () => {
     };
 
     const createUser = async (signupData: SignUpData) => {
-        const { email, password, username, phoneNumber, photoURL, firstName, lastName, uid } = signupData;
+        const { email, password, username, phoneNumber, photoURL, firstName, lastName } = signupData;
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await set(ref(database, `users/${userCredential.user.uid}`), { username, email, phoneNumber, photoURL, firstName, lastName,uid:userCredential.user.uid });
+        await set(ref(database, `users/${userCredential.user.uid}`), { username, email, phoneNumber, photoURL, firstName, lastName, uid:userCredential.user.uid });
         await set(ref(database, `usernames/${username}`), { exists: true });
         await set(ref(database, `phoneNumbers/${phoneNumber}`), { exists: true });
         return userCredential.user.uid;
@@ -42,13 +42,17 @@ const useFirebaseHandler = () => {
         if (userSnapshot.exists()) {
             const userData = userSnapshot.val();
             const user: User = {
-                uid : userData.uid,
+                uid: userData.uid,
                 email: userData.email,
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 username: userData.username,
                 phoneNumber: userData.phoneNumber,
-                photoURL: userData.photoURL
+                photoURL: userData.photoURL,
+                status: userData.status,
+                latestChats: userData.latestChats,
+                events: userData.events,
+                notifications: userData.notifications,
             };
             return user;
         }

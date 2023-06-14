@@ -19,7 +19,7 @@ import { database } from "../../config/firebaseConfig";
 import { useCurrentUser } from "../../AuthUtils";
 
 const ProfileInfo: React.FC = () => {
-  const { user, isUserLoading } = useCurrentUser();
+  const { user } = useCurrentUser();
   const [isUploadOpen, setIsUploadOpen] = useState(false);
   const [photoUrl, setPhotoUrl] = useState("");
   const [isHovering, setIsHovering] = useState(false);
@@ -32,7 +32,7 @@ const ProfileInfo: React.FC = () => {
     if (user) {
       const userRef = refDB(database, `users/${user.uid}`);
       onValue(userRef, (snapshot) => {
-        const data = snapshot.val();
+        const user = snapshot.val();
         setPhotoUrl(user.photoURL);
       });
     }

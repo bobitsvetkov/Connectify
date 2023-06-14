@@ -1,4 +1,3 @@
-import { User } from "../../types/interfaces";
 import SingleUser from "../LeftList/SingleUser";
 import {
   Stack,
@@ -13,44 +12,37 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import {
-  useGetTeamsQuery,
   useGetUserByIdQuery,
   useAddUserToTeamMutation,
 } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
-import { onValue, ref, off } from "firebase/database";
+import { onValue, ref, off, DataSnapshot } from "firebase/database";
 import { useEffect, useState } from "react";
 import { database } from "../../config/firebaseConfig";
-
-interface SearchResultsProps {
-  results: User[];
-  searchQuery: string;
-}
+import { Team } from "../../types/interfaces";
+import { SearchResultsProps } from "../../types/interfaces";
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
   results,
   searchQuery,
 }) => {
-  // const { data: teams, isLoading: areTeamsLoading, isError: isError } = useGetTeamsQuery();
   const [addUserToTeam, { isLoading: isAddingUser }] =
     useAddUserToTeamMutation();
   const auth = getAuth();
   const curr = auth.currentUser;
-  const {
-    data: currUser,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(curr && curr.uid);
+  const { data: currUser } = useGetUserByIdQuery(curr?.uid ?? "");
   const [teams, setTeams] = useState({});
 
   useEffect(() => {
     const teamsRef = ref(database, `teams/`);
-    const handleValueChange = (snapshot) => {
+    const handleValueChange = (snapshot: DataSnapshot) => {
       setTeams(snapshot.val());
     };
+
     onValue(teamsRef, handleValueChange);
+
     return () => {
-      off(teamsRef, handleValueChange);
+      off(teamsRef, "value", handleValueChange);
     };
   }, []);
 
@@ -87,7 +79,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               </MenuButton>
               <MenuList>
                 {teams &&
-                  Object.values(teams)
+                  (Object.values(teams) as Team[])
                     .filter((team) => team.owner === currUser?.uid)
                     .map((team) => (
                       <MenuItem

@@ -1,8 +1,13 @@
 import Popup from "reactjs-popup";
 import { Box, Icon, useColorModeValue } from "@chakra-ui/react";
 import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { PasswordValidationStates } from '../SignUp/Step One Form/StepOneForm'
+interface PasswordValidationPopupProps {
+    passwordValidationStates: PasswordValidationStates;
+    children: React.ReactNode;
+}
 
-const PasswordValidationPopup = ({ passwordValidationStates, children }) => {
+const PasswordValidationPopup: React.FC<PasswordValidationPopupProps> = ({ passwordValidationStates, children }) => {
     const { isLengthValid, isUpperAndLowerCaseValid, isNumberValid, isSpecialCharValid } = passwordValidationStates;
 
     const validationRules = [
@@ -12,9 +17,9 @@ const PasswordValidationPopup = ({ passwordValidationStates, children }) => {
         { label: "At least 1 special character", isValid: isSpecialCharValid }
     ];
 
-   return (
+    return (
         <Popup
-            trigger={children}
+            trigger={children as JSX.Element}
             position="right center"
             on="focus"
             arrow={false}

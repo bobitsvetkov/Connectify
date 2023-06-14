@@ -1,18 +1,13 @@
-import { useState, useEffect, ChangeEvent, ReactElement } from "react";
+import { useState, useEffect } from "react";
 import {
   sendEmailVerification,
   updateEmail,
   updatePassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import {
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  User as FirebaseUser,
-} from "firebase/auth";
+import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 
 import {
-  useColorModeValue,
   VStack,
   Heading,
   FormControl,
@@ -24,8 +19,7 @@ import {
   Avatar,
   Text,
 } from "@chakra-ui/react";
-import { useGetUserByIdQuery } from "../../api/databaseApi";
-import { PhotoUploader } from "../UserPhotoUploader/UsersPhotoUploader";
+import { useLazyGetUserByIdQuery } from "../../api/databaseApi";
 import {
   Accordion,
   AccordionItem,
@@ -36,8 +30,8 @@ import {
 import { getAuth } from "firebase/auth";
 import { onValue, ref } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
-import { CSSReset } from "@chakra-ui/react";
-export const UserSetting: React.FC = ({ avatar }) => {
+
+export const UserSetting: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [newEmail, setNewEmail] = useState<string>("");
   const [currentPasswordForEmail, setCurrentPasswordForEmail] =
@@ -49,19 +43,28 @@ export const UserSetting: React.FC = ({ avatar }) => {
   const auth = getAuth();
 
   const currUser = auth.currentUser;
-  const {
-    data: user,
-    isLoading: isUserLoading,
-    isError: isUserError,
-  } = useGetUserByIdQuery(currUser && currUser.uid);
+
+  const [getUserById, { data: user }] = useLazyGetUserByIdQuery();
 
   const [newPassword, setNewPassword] = useState<string>("");
   const [updatingEmail, setUpdatingEmail] = useState<boolean>(false);
   const [updatingPassword, setUpdatingPassword] = useState<boolean>(false);
 
-  const { data: currentUser, isSuccess } = useGetUserByIdQuery(
-    auth.currentUser?.uid || ""
-  );
+  useEffect(() => {
+    if (currUser?.uid) {
+      getUserById(currUser.uid);
+      const userRef = ref(database, `users/${currUser.uid}`);
+      const unsubscribeDb = onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          setEmail(userData.email);
+        }
+      });
+      return () => {
+        unsubscribeDb();
+      };
+    }
+  }, [currUser, getUserById]);
 
   useEffect(() => {
     const photoURLRef = ref(database, `users/${currUser?.uid}/photoURL`);
@@ -83,48 +86,50 @@ export const UserSetting: React.FC = ({ avatar }) => {
 
     setUpdatingEmail(true);
 
-    reauthenticateWithCredential(auth.currentUser as FirebaseUser, credential)
-      .then(() => {
-        updateEmail(auth.currentUser as FirebaseUser, newEmail)
-          .then(() => {
-            console.log("Email updated!");
-            setEmail(newEmail);
-            setNewEmail("");
-            sendEmailVerification(auth.currentUser as FirebaseUser)
-              .then(() => {
-                console.log("Email verification sent!");
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-            setUpdatingEmail(false);
-          })
-          .catch((error) => {
-            console.error(error);
-            setUpdatingEmail(false);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        setUpdatingEmail(false);
-      });
+    if (currUser) {
+      reauthenticateWithCredential(currUser, credential)
+        .then(() => {
+          updateEmail(currUser, newEmail)
+            .then(() => {
+              console.log("Email updated!");
+              setEmail(newEmail);
+              setNewEmail("");
+              sendEmailVerification(currUser)
+                .then(() => {
+                  console.log("Email verification sent!");
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+              setUpdatingEmail(false);
+            })
+            .catch((error) => {
+              console.error(error);
+              setUpdatingEmail(false);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+          setUpdatingEmail(false);
+        });
+    }
   };
 
   const handleUpdatePassword = () => {
     setUpdatingPassword(true);
-
-    updatePassword(auth.currentUser as FirebaseUser, newPassword)
-      .then(() => {
-        console.log("Password updated!");
-        setNewPassword("");
-        setUpdatingPassword(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setUpdatingPassword(false);
-      });
+    if (currUser) {
+      updatePassword(currUser, newPassword)
+        .then(() => {
+          console.log("Password updated!");
+          setNewPassword("");
+          setUpdatingPassword(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setUpdatingPassword(false);
+        });
+    }
   };
-
   const handleResetPassword = () => {
     sendPasswordResetEmail(auth, email)
       .then(() => {
@@ -139,21 +144,21 @@ export const UserSetting: React.FC = ({ avatar }) => {
 
   return (
     <>
-      {currentUser ? (
+      {user ? (
         <Accordion allowToggle>
           <Flex direction="column" align="center" mt={8} mb={8}>
             <Avatar
               size="xl"
-              name={`${user.firstName} ${user.lastName}`}
+              name={`${user?.firstName} ${user?.lastName}`}
               src={photoURL}
             />
           </Flex>
           <AccordionItem>
             <VStack mt={10} mb={50} spacing={2} alignItems="flex-start">
               <Text fontSize="md" fontWeight="bold">
-                Welcome,{user.firstName} {user.lastName}
+                Welcome,{user?.firstName} {user?.lastName}
               </Text>
-              <Text fontSize={"sm"}> {user.email}</Text>
+              <Text fontSize={"sm"}> {user?.email}</Text>
             </VStack>
           </AccordionItem>
           <AccordionItem>
@@ -185,7 +190,12 @@ export const UserSetting: React.FC = ({ avatar }) => {
                     onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
                   />
                 </FormControl>
-                <Button variant="ghost" onClick={handleUpdateEmail}>
+                <Button
+                  isLoading={updatingEmail}
+                  loadingText="Updating..."
+                  variant="ghost"
+                  onClick={handleUpdateEmail}
+                >
                   Update Email
                 </Button>
               </VStack>

@@ -2,7 +2,6 @@ import { configureStore } from "@reduxjs/toolkit";
 import { baseApi } from "./api/databaseApi"; // import baseApi instead of individual APIs
 import activeUserReducer from "./features/ActiveUserSlice";
 import authReducer from "./features/AuthSlice";
-import { chatsApi, teamsApi, usersApi } from "./api/databaseApi";
 import { openaiApi } from "./api/openAiApi";
 
 

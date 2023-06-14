@@ -11,7 +11,6 @@ interface LeftListProps {
 const LeftList: React.FC<LeftListProps> = ({
   results,
   searchQuery,
-  onUserClick,
 }) => {
   return (
     <Box>

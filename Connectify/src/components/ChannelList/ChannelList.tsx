@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useCreateChannelMutation } from '../../api/databaseApi';
 import { v4 as uuidv4 } from "uuid";
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
-import { Box, Flex, Input, InputGroup, InputRightElement, IconButton, Button, HStack } from "@chakra-ui/react";
+import { Box, Flex, Input, IconButton, HStack } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
+import { Team, Channel } from '../../types/interfaces';
 
-function ChannelList({ team }) {
+function ChannelList({ team }: { team: Team }) {
 
     const navigate = useNavigate();
     const [isAddingChannel, setIsAddingChannel] = useState(false);
@@ -19,16 +20,19 @@ function ChannelList({ team }) {
 
     useEffect(() => {
         const channelsRef = ref(database, `teams/${teamId}/channels`);
-        const handleValueChange = (snapshot) => {
+
+        const handleValueChange = (snapshot: DataSnapshot) => {
             setChannelsData(snapshot.val());
         };
-        onValue(channelsRef, handleValueChange);
+
+        const unsubscribe = onValue(channelsRef, handleValueChange);
+
         return () => {
-            off(channelsRef, handleValueChange);
+            unsubscribe();
         };
     }, [teamId]);
 
-    const handleCreateChannel = async (e) => {
+    const handleCreateChannel = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (newChannelName.trim() === "") {
@@ -36,7 +40,7 @@ function ChannelList({ team }) {
             return;
         }
 
-        const channel = {
+        const channel: Channel = {
             uid: uuidv4(),
             name: newChannelName,
             messages: {},
@@ -51,7 +55,7 @@ function ChannelList({ team }) {
         }
     };
 
-    const handleChannelClick = (channel) => {
+    const handleChannelClick = (channel: Channel) => {
         navigate(`/${teamId}/${channel.uid}`);
     };
 
@@ -60,6 +64,7 @@ function ChannelList({ team }) {
             <Flex justify="space-between" align="center" p="1rem" borderBottom="1px solid #EEE">
                 <HStack>
                     <IconButton
+                        aria-label="Add channel"
                         icon={<AddIcon />}
                         variant="outline"
                         size="sm"
@@ -73,18 +78,19 @@ function ChannelList({ team }) {
                             onChange={(e) => setNewChannelName(e.target.value)}
                         />
                             <IconButton
+                                aria-label="Create channel"
                                 icon={<CheckIcon />}
                                 variant="outline"
                                 size="sm"
                                 onClick={handleCreateChannel}
-                        />
+                            />
                         </>
                     )}
 
                 </HStack>
             </Flex>
             <Box>
-                {Object.values(channelsData || {}).map((channel, index) => (
+                {Object.values(channelsData || {}).map((channel: Channel, index: number) => (
                     <Box
                         key={index}
                         onClick={() => handleChannelClick(channel)}

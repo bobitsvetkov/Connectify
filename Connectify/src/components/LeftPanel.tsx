@@ -1,4 +1,4 @@
-import { Box, Flex, Stack, VStack } from "@chakra-ui/react";
+import { Box, Flex, Stack } from "@chakra-ui/react";
 import { Header } from "./HeaderMenu/HeaderMenu";
 import SearchInput from "./Search/SearchInput";
 import { useState } from "react";
@@ -7,22 +7,22 @@ import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
 import { useColorModeValue } from "@chakra-ui/react";
+import { Team, User } from "../types/interfaces";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
   const [isUserListOpen, setUserListOpen] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState(null);
+  const [searchResults, setSearchResults] = useState<User[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isTeamListOpen, setTeamListOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
-  const handleSearch = (data) => {
+  const handleSearch = (data: User[]) => {
     setSearchResults(data);
     setIsSearching(!!data);
   };
 
-  const handleViewChange = (newView) => {
+  const handleViewChange = (newView: "default" | "chat" | "teams") => {
     setView(newView);
   };
 
@@ -38,6 +38,8 @@ export const LeftPanel: React.FC = () => {
     setSelectedTeam(null);
   };
 
+  const colorMode = useColorModeValue("#EDF3F5", "#3C4256");
+
   return (
     <Flex direction="column" w={["100%", "100%", "30%"]}>
       <Box>
@@ -48,23 +50,25 @@ export const LeftPanel: React.FC = () => {
           setUserListOpen={setUserListOpen}
           setTeamListOpen={setTeamListOpen}
         />
-        <SearchInput size="sm" onSearch={handleSearch} />
+        <SearchInput size="sm" onSearch={handleSearch} bg={""} />
       </Box>
       {isSearching ? (
-        <SearchResults results={searchResults} searchQuery={searchQuery} />
+        <SearchResults
+          results={searchResults ? searchResults : []}
+          searchQuery={""}
+        />
       ) : (
-        <Stack overflowY="auto" bg={useColorModeValue("#EDF3F5", "	#3C4256")}>
+          <Stack overflowY="auto" bg={colorMode}>
           {view === "chat" && isUserListOpen && (
-            <LatestChatsList setUserListOpen={setUserListOpen} />
+            <LatestChatsList />
           )}
           {view === "teams" && isTeamListOpen && (
             <Flex
               direction="row"
               w="100%"
-              bg={useColorModeValue("#EDF3F5", "	#3C4256")}
+                bg={colorMode}
             >
               <TeamsList
-                setTeamListOpen={setTeamListOpen}
                 setSelectedTeam={setSelectedTeam}
                 selectedTeam={selectedTeam}
               />

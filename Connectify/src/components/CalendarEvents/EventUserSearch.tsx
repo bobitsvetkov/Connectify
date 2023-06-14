@@ -1,11 +1,12 @@
-import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { HStack, Stack, Spacer, StackDivider } from "@chakra-ui/react";
 import SingleUser from "../LeftList/SingleUser";
-import { useCurrentUser } from "../../AuthUtils";
-export const EventUserSearch = ({ results, searchQuery, onSelectUser }) => {
-  const { user, isUserLoading, isUserError } = useCurrentUser();
+import { EventUserSearchProps } from "../../types/interfaces";
 
+const EventUserSearch: React.FC<EventUserSearchProps> = ({
+  results,
+  searchQuery,
+  onSelectUser,
+}) => {
   return (
     <>
       <Stack
@@ -16,7 +17,7 @@ export const EventUserSearch = ({ results, searchQuery, onSelectUser }) => {
         maxHeight="100px"
       >
         {results &&
-          Object.values(results)
+          results
             .filter(
               (user) =>
                 user.firstName

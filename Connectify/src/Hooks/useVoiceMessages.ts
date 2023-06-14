@@ -4,14 +4,15 @@ import { getDownloadURL } from 'firebase/storage';
 import { storage } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../types/interfaces';
+import { User as FirebaseUser } from 'firebase/auth';
 
 export interface VoiceMessage {
     uid: string,
     user: string,
     content: string,
-    type: 'audio' | 'image',  
+    type: 'audio' | 'image',
     date: string,
-    fileName?: string,  
+    fileName?: string,
 }
 
 interface AddMessageToChat {
@@ -34,12 +35,12 @@ type ToastOptions = {
 };
 
 const useVoiceMessages = (
-    currUser: User,
+    currUser: FirebaseUser | null,
     user: User,
-    chatUserId: string,
+    chatUserId: string | undefined,
     isChat: boolean,
-    teamId: string,
-    channelId: string,
+    teamId: string | undefined,
+    channelId: string | undefined,
     addMessageToChat: (data: AddMessageToChat) => void,
     addMessageToChannel: (data: AddMessageToChannel) => void,
     toast: (options: ToastOptions) => void
@@ -48,7 +49,7 @@ const useVoiceMessages = (
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
     const handleStart = () => {
-        let chunks: Blob[] = [];
+        const chunks: Blob[] = [];
 
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -63,16 +64,14 @@ const useVoiceMessages = (
                     }
                 };
                 mediaRecorder.onstop = () => {
-                    // Create blob from chunks
                     const blob = new Blob(chunks, { type: 'audio/webm' });
 
-                    // Upload to Firebase
                     const timestamp = Date.now();
                     const audioRef = ref(storage, `audio/${timestamp}.webm`);
                     const uploadTask = uploadBytesResumable(audioRef, blob);
 
                     uploadTask.on('state_changed', (snapshot) => {
-                        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         toast({
                             title: "Uploading...",
                             description: `Upload is ${progress}% done`,
@@ -83,7 +82,7 @@ const useVoiceMessages = (
                     }, (error) => {
                         toast({
                             title: "Upload failed",
-                            description: "There was an error uploading the audio.",
+                            description: `There was an error uploading the audio: ${error.message}`,
                             status: "error",
                             duration: 5000,
                             isClosable: true,
@@ -93,21 +92,25 @@ const useVoiceMessages = (
                             const userIds = [chatUserId, user.username];
                             userIds.sort();
                             const chatId = userIds.join("-");
+                            if (currUser !== null) {
+                                const newMessage: VoiceMessage = {
+                                    uid: uuidv4(),
+                                    user: currUser.uid,
+                                    content: downloadURL,
+                                    type: 'audio',
+                                    date: new Date().toISOString(),
+                                    fileName: `${timestamp}.webm`,
+                                };
 
-                            const newMessage: VoiceMessage = {
-                                uid: uuidv4(),
-                                user: currUser.uid,
-                                content: downloadURL,
-                                type: 'audio',
-                                date: new Date().toISOString(),
-                                fileName: `${timestamp}.webm`, 
-                            };
-
-                            if (isChat) {
-                                addMessageToChat({ chatId: chatId, message: newMessage });
-                            } else {
-                                addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                if (isChat) {
+                                    addMessageToChat({ chatId: chatId, message: newMessage });
+                                } else {
+                                    if(teamId && channelId) {
+                                        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                    }
+                                }
                             }
+
                         });
 
                         setRecording(false);

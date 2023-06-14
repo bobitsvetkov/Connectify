@@ -6,10 +6,7 @@ import {
   Divider,
   HStack,
   Button,
-  Icon,
   Spacer,
-  Slide,
-  Drawer,
   Text,
   Avatar,
   AvatarBadge,
@@ -19,35 +16,39 @@ import {
   ModalHeader,
   ModalCloseButton,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery } from "../../api/databaseApi";
-import { useGenerateMessageQuery } from "../../api/openaiApi";
+import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useLazyGetTeamCallStatusQuery } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
 import CreateRoom from "../Video Call/CreateRoom";
 import { FaUsers } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
 import { FaVideo } from 'react-icons/fa';
-const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
-  chatType,
-}) => {
+
+type ChatBoxProps = {
+  chatType: "individual" | "team";
+};
+
+const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const [showMembers, setShowMembers] = useState(false);
-  const [isInCall, setIsInCall] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
   const [isStatusLoading, setIsStatusLoading] = useState(true);
   const auth = getAuth();
   const currUser = auth.currentUser;
+
+  if (!currUser) {
+    throw new Error('Current user is null');
+  }
   const {
     data: user,
     isLoading: isUserLoading,
@@ -55,15 +56,23 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
   } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
-  const { data: isMeetingActive } = useGetTeamCallStatusQuery(teamId);
+  const [executeGetTeamCallStatusQuery, { data: isMeetingActive}] = useLazyGetTeamCallStatusQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
+  
+  
+ 
+  useEffect(() => {
 
+    if(teamId){
+      executeGetTeamCallStatusQuery(teamId);
+    }
+  }, [teamId, executeGetTeamCallStatusQuery]);
 
-  const dispatch = useDispatch();
+  console.log(teamId);
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
@@ -92,18 +101,18 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
     }
   }, [activeChatUser?.uid]);
 
-  const { chatData, activeChatId } = useSubscription(
+  const { chatData, activeChatId } = useSubscription({
     user,
     teamId,
     channelId,
     chatUserId,
-    isChat
-  );
+    isChat,
+  });
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "Available":
         return "green.400";
@@ -126,11 +135,13 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
       // If a meeting is already active, don't start a new one
       return;
     }
-    console.log(teamId);
-    
-    setIsInCall(true);
-    isChat || addCallStatusToTeam({ teamId, callStatus: true });
+
+
+    if (teamId) {
+      addCallStatusToTeam({ teamId, callStatus: true });
+    }
   }
+
 
   return (
     <Flex height="100%" width="100%" borderWidth={1} bg={bg} boxShadow="xl">
@@ -138,12 +149,12 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
         <Flex width="100%">
           <Box fontSize="xl">
             <Box fontSize="xl" mr={3}>
-              {isChat ? (
+              {isChat && activeChatUser && (
                 <HStack>
                   <Avatar
                     size="sm"
-                    name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
-                    src={activeChatUser?.photoURL}
+                    name={`${activeChatUser.firstName} ${activeChatUser.lastName}`}
+                    src={activeChatUser.photoURL}
                     marginRight="0.5rem"
                   >
                     {!isStatusLoading && (
@@ -159,14 +170,11 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
                     {activeChatUser.firstName + " " + activeChatUser.lastName}
                   </Text>
                 </HStack>
-              ) : (
-                (chatData && chatData.name) || "Loading..."
               )}
             </Box>
           </Box>
           {isBot ||
             <Flex direction="row" justify="flex-end">
-              {}
               <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                 <ModalOverlay />
@@ -209,7 +217,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
         <ChatMessages
           chatData={chatData}
           userId={user.uid}
-          activeChatUser={activeChatUser}
+          activeChatUser={activeChatUser ? activeChatUser.uid : ""}
           activeChatId={activeChatId}
           activeChatUserStatus={activeChatUserStatus}
           getStatusColor={getStatusColor}
@@ -218,7 +226,7 @@ const ChatBox: React.FC<{ chatType: "individual" | "team" }> = ({
           channelId={channelId}
         />
         <ChatInput
-          currUser={currUser}
+          currUser={currUser ? currUser : null}
           user={user}
           chatUserId={chatUserId}
           activeChatUser={activeChatUser}

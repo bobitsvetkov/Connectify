@@ -22,7 +22,7 @@ type UpdateMessageParams = {
 };
 
 type EditMessageProps = {
-    chatId: string;
+    chatId: string | undefined;
     messageId: string;
     teamId?: string;
     initialMessageContent: string;
@@ -45,6 +45,10 @@ function EditMessage({
     );
 
     const handleUpdateMessage = () => {
+        if (!chatId) {
+            console.error("Chat ID is undefined");
+            return;
+        }
         const params: UpdateMessageParams = { chatId, messageId, newMessageContent, teamId };
         updateMessage(params)
             .unwrap()
@@ -56,7 +60,7 @@ function EditMessage({
 
     return (
         <>
-            
+
 
             <Modal isOpen={isEditing} onClose={() => setIsEditing(false)}>
                 <ModalOverlay />

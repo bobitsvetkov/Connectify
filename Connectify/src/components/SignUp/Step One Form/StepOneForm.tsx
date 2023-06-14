@@ -1,20 +1,18 @@
 import { Grid } from "@chakra-ui/react";
 import { FormField } from "../Form Field/FormField";
 import PasswordValidationPopup from "../../Password Popup/PasswordPopup";
-import useSignUp from "../../../Authentification/Hooks/SignUp Hook/useSignUp";
 import { SignUpData } from "../../../types/interfaces";
 import { PasswordField } from "../../Password Field/PasswordField";
-import usePasswordValidation from "../../../Authentification/Password Hook/usePassValid";
-
+// import usePasswordValidation from "../../../Authentification/Password Hook/usePassValid";
 
 interface ValidationErrors {
-    firstNameError: string | null;
-    lastNameError: string | null;
-    emailError: string | null;
-    phoneNumberError: string | null;
-    usernameError: string | null;
-    passwordError: string | null;
-    confirmPasswordError: string | null;
+    firstNameError: string | undefined;
+    lastNameError: string | undefined;
+    emailError: string | undefined;
+    phoneNumberError: string | undefined;
+    usernameError: string | undefined;
+    passwordError: string | undefined;
+    confirmPasswordError: string | undefined;
 }
 
 interface TouchedFields {
@@ -29,12 +27,19 @@ interface TouchedFields {
     photoURL: boolean;
 }
 
+export interface PasswordValidationStates {
+    isLengthValid: boolean;
+    isUpperAndLowerCaseValid: boolean;
+    isNumberValid: boolean;
+    isSpecialCharValid: boolean;
+}
+
 interface SignUpStepOneFormProps {
     handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     signupData: SignUpData;
     validationErrors: ValidationErrors;
     touchedFields: TouchedFields;
-    passwordValidationStates: typeof usePasswordValidation;  // Add this line
+    passwordValidationStates: PasswordValidationStates; 
 }
 
 export const SignUpStepOneForm: React.FC<SignUpStepOneFormProps> = ({ handleChange, signupData, validationErrors, touchedFields, passwordValidationStates }) => {

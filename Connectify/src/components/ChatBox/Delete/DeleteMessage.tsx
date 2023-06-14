@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { deleteObject, ref } from "firebase/storage";
 import { storage } from "../../../config/firebaseConfig";
 import { useRemoveMessageFromChatMutation } from "../../../api/databaseApi";
@@ -13,7 +12,6 @@ import {
     ModalFooter,
 } from "@chakra-ui/react";
 import { Message } from "../../../api/databaseApi";
-import { useRef } from 'react';
 
 type RemoveMessageParams = {
     chatId: string;
@@ -22,7 +20,7 @@ type RemoveMessageParams = {
 };
 
 type DeleteMessageProps = {
-    chatId: string;
+    chatId: string | undefined;
     messageId: string;
     teamId?: string;
     isDeleting: boolean;
@@ -32,10 +30,13 @@ type DeleteMessageProps = {
 
 function DeleteMessage({ chatId, messageId, teamId, isDeleting, setIsDeleting, message, }: DeleteMessageProps) {
     const [removeMessage] = useRemoveMessageFromChatMutation();
-    const cancelRef = useRef();
 
     const handleRemoveMessage = async () => {
-        // delete the message from the database
+        if (!chatId) {
+
+            console.error("Chat ID is undefined");
+            return;
+        }
         const params: RemoveMessageParams = { chatId, messageId, teamId };
         removeMessage(params)
             .unwrap()

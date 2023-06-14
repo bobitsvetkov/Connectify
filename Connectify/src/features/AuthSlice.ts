@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "../api/databaseApi";
+import { RootState } from "../store";
 
 interface AuthState {
     user: User | null | undefined;
@@ -18,6 +19,7 @@ const authSlice = createSlice({
         },
     },
 });
+export const selectIsLoggedIn = (state: RootState) => state.auth.user !== null && state.auth.user !== undefined;
 
 export const { setUser } = authSlice.actions;
 

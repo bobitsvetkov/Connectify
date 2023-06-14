@@ -18,7 +18,6 @@ export function SignUpForm() {
         handleSignupDataChange,
         handleSignUp,
         step,
-        setStep,
         handleBack,
         validationErrors,
         touchedFields,
@@ -30,19 +29,20 @@ export function SignUpForm() {
 
     const passwordValidationStates = usePasswordValidation();
 
-    const handleChange = (event) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         handleSignupDataChange(event.target.name, event.target.value);
         if (event.target.name === 'password') {
             passwordValidationStates.validatePassword(event.target.value);
         }
     };
+    
 
-    const handleNextClick = (event) => {
+    const handleNextClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         handleNext(event);
     };
 
-    const handleSubmitClick = (event) => {
+    const handleSubmitClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         handleSignUp(event);
     };

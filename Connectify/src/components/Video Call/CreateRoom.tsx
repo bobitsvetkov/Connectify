@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import AgoraUIKit from 'agora-react-uikit';
+interface CreateRoomProps {
+  onClose: () => void;
+}
 
-const CreateRoom = ({onClose, teamId, isChat}) => {
+const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
   const [videoCall, setVideoCall] = useState(true);
 
   const rtcProps = {

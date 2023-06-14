@@ -1,7 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi} from "@reduxjs/toolkit/query/react";
 import { get, ref, set, update } from "firebase/database";
 import { database } from "../config/firebaseConfig";
-
+import { Team, Channel } from "../types/interfaces";
 export interface Chat {
   uid: string;
   participants: object;
@@ -21,21 +21,10 @@ export interface Message {
   replies?: { [key: string]: Message };
   reactions?: Reaction[];
   date?: string;
+  fileName?: string;
 }
-export interface Team {
-  name: string;
-  owner: string;
-  uid: string;
-  channels: object;
-  participants: object;
-  photoUrl: string;
-  isInACall: boolean
-}
-export interface Channel {
-  uid: string;
-  name: string;
-  messages: object;
-}
+
+
 export interface User {
   uid: string;
   firstName: string;
@@ -311,12 +300,13 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery, useDeleteTeamMemberMutation
+  useGetTeamsQuery, useLazyGetTeamByIdQuery, useLazyGetChannelByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation
 } = teamsApi;
 
 export const {
   useGetUsersQuery,
   useGetUserByIdQuery,
+  useLazyGetUserByIdQuery,
   useGetUserSearchByUsernameQuery,
   useUpdateUserStatusMutation,
   useUpdateUserLatestChatsMutation,

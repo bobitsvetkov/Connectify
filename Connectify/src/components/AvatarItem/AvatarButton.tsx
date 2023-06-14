@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarBadge } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "@firebase/auth";
@@ -6,20 +6,20 @@ import { onValue, ref as refDB } from "firebase/database";
 import { database } from "../../config/firebaseConfig";
 
 interface AvatarButtonProps {
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLSpanElement>) => void;
   status: string;
 }
 
 const AvatarButton: React.FC<AvatarButtonProps> = ({ onClick, status }) => {
   const auth = getAuth();
   const currUser = auth.currentUser;
-  const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
+  const user = currUser ? useGetUserByIdQuery(currUser.uid) : null;
 
   const [photoUrl, setPhotoUrl] = useState("");
 
   useEffect(() => {
     if (currUser) {
-      const userRef = refDB(database, `users/${currUser.uid}`);
+      const userRef = refDB(database, `users/${currUser?.uid}`);
       onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         setPhotoUrl(data.photoURL);
@@ -45,10 +45,10 @@ const AvatarButton: React.FC<AvatarButtonProps> = ({ onClick, status }) => {
 
   return (
     <>
-      {user && (
+      {user?.data && (
         <Avatar
           size="sm"
-          name={`${user.firstName} ${user.lastName}`}
+          name={`${user.data.firstName} ${user.data.lastName}`}
           src={photoUrl}
           onClick={onClick}
         >

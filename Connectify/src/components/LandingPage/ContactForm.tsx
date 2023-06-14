@@ -13,12 +13,12 @@ import {
   useColorModeValue,
   VStack,
 } from "@chakra-ui/react";
-import  { useRef } from "react";
-import { BsPerson, } from "react-icons/bs";
+import { useRef } from "react";
+import { BsPerson } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import emailjs from "emailjs-com";
 
-const ContactForm = () => {
+const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
   const sendEmail = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +84,7 @@ const ContactForm = () => {
                           type="text"
                           name="name"
                           placeholder="Your Name"
+                          _placeholder={{ color: "white" }}
                         />
                       </InputGroup>
                     </FormControl>
@@ -96,6 +97,7 @@ const ContactForm = () => {
                           type="email"
                           name="email"
                           placeholder="Your Email"
+                          _placeholder={{ color: "white" }}
                         />
                       </InputGroup>
                     </FormControl>
@@ -106,6 +108,7 @@ const ContactForm = () => {
                       <Textarea
                         name="message"
                         placeholder="Your Message"
+                        _placeholder={{ color: "white" }}
                         rows={6}
                         resize="none"
                       />

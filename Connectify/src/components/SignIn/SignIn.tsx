@@ -6,15 +6,12 @@ import {
   Checkbox,
   Link,
   Button,
-  Text,
   Flex,
   Stack,
   Divider,
   FormErrorMessage,
 } from "@chakra-ui/react";
-import ColorModeSwitcher from "../Dark Mode Toggle/DarkModeToggle";
 import { PasswordField } from "../Password Field/PasswordField";
-import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import useSignIn from "../../Authentification/Hooks/Sign In Hook/useSignIn";
 import ForgotPassModal from "../ForgetPassword/ForgerPasswordModal";
@@ -23,7 +20,6 @@ import { useState } from "react";
 export const MotionBox = motion(Box);
 
 export function SignInForm() {
-  const navigate = useNavigate();
   const { user, handleUserChange, handleSignIn, errorMessage } = useSignIn();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const handleOpenModal = () => {
