@@ -23,10 +23,6 @@ const ProfileStatus: React.FC = () => {
   }, [status]);
 
   const handleChangeStatus = async (status: string) => {
-    if (!currUser) {
-      console.error('User not signed in');
-      return;
-    }
     try {
       await updateUserStatus({ uid: currUser.uid, status });
       dispatch(updateStatus({ uid: currUser.uid, status }));
