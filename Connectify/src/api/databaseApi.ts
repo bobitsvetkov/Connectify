@@ -304,7 +304,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useLazyGetTeamByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery, useDeleteTeamMemberMutation
+  useGetTeamsQuery, useLazyGetTeamByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation
 } = teamsApi;
 
 export const {

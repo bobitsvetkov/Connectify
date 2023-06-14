@@ -25,11 +25,11 @@ import { User as FirebaseUser } from 'firebase/auth';
 interface ChatInputProps {
   currUser: FirebaseUser | null;
   user: User;
-  chatUserId: string;
+  chatUserId: string | undefined;
   activeChatUser: User | null;
   isChat: boolean;
-  teamId: string;
-  channelId: string;
+  teamId: string | undefined;
+  channelId: string | undefined;
   isBot: boolean;
 }
 

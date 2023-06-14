@@ -11,7 +11,7 @@ import { Team } from "../../types/interfaces";
 import { DataSnapshot } from "firebase/database";
 
 interface MemberListProps {
-    teamId: string;
+    teamId: string | undefined;
 }
 
 interface Members {

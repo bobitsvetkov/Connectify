@@ -11,11 +11,11 @@ type AddMessageToChannelMutation = ReturnType<typeof useAddMessageToChannelMutat
 interface HandleSendProps {
     currUser: FirebaseUser | null,
     user: User,
-    chatUserId: string,
+    chatUserId: string | undefined,
     activeChatUser: User | null,
     isChat: boolean,
-    teamId: string,
-    channelId: string,
+    teamId: string | undefined,
+    channelId: string | undefined,
     isBot: boolean,
     message: string,
     messagesForAI: Array<{ role: string, content: string }>,
@@ -28,11 +28,11 @@ interface HandleSendProps {
 export const useHandleSend = ({
     currUser,
     user,
-    chatUserId,
+    chatUserId = "",
     activeChatUser,
     isChat,
-    teamId,
-    channelId,
+    teamId = "",
+    channelId = "",
     isBot,
     messagesForAI,
     setMessagesForAI,
@@ -43,7 +43,7 @@ export const useHandleSend = ({
     const toast = useToast();
     const [updateLatestChats] = useUpdateUserLatestChatsMutation();
     const [updateUserNotifications] = useUpdateUserNotificationsMutation();
-    const { data: team } = useGetTeamByIdQuery(teamId) || null;
+    const { data: team } = useGetTeamByIdQuery(teamId) || undefined;
     const [executeGenerateConversation] = useLazyGenerateConversationQuery();
 
     const userIds = [chatUserId, user.username];
@@ -51,7 +51,7 @@ export const useHandleSend = ({
     const chatId = userIds.join("-");
 
     const handleSend = async (msg?: string | { downloadURL: string, fileName: string }, isImage?: boolean) => {
-        let content, type, fileName = undefined; // use undefined here
+        let content, type, fileName = undefined; 
 
         if (typeof msg === 'string') {
             content = msg;
@@ -64,7 +64,7 @@ export const useHandleSend = ({
             console.error('Invalid message:', msg);
             return;
         }
-        
+
         if (currUser && activeChatUser && content.trim().length > 0) {
 
 

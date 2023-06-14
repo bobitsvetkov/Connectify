@@ -22,15 +22,15 @@ interface ChatData {
 
 
 interface ChatMessagesProps {
-  chatData: ChatData;
+  chatData: Message[] | undefined;
   userId: string;
   activeChatUser: string;
-  activeChatId: string;
+  activeChatId: string | undefined;
   activeChatUserStatus: string;
   getStatusColor: Function;
   isChat: boolean;
-  teamId: string;
-  channelId: string;
+  teamId: string | undefined;
+  channelId: string | undefined;
 }
 
 

@@ -21,7 +21,7 @@ import {
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery } from "../../api/databaseApi";
+import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useLazyGetTeamCallStatusQuery } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -41,11 +41,14 @@ type ChatBoxProps = {
 
 const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const [showMembers, setShowMembers] = useState(false);
-  const [isInCall, setIsInCall] = useState(false);
   const [activeChatUserStatus, setActiveChatUserStatus] = useState("");
   const [isStatusLoading, setIsStatusLoading] = useState(true);
   const auth = getAuth();
   const currUser = auth.currentUser;
+
+  if (!currUser) {
+    throw new Error('Current user is null');
+  }
   const {
     data: user,
     isLoading: isUserLoading,
@@ -53,12 +56,19 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
   const { teamId, channelId, chatUserId } = useParams();
-  const { data: isMeetingActive } = useGetTeamCallStatusQuery(teamId);
+  const [executeGetTeamCallStatusQuery, { data: isMeetingActive}] = useLazyGetTeamCallStatusQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
+
+  useEffect(() => {
+
+    if(teamId){
+      executeGetTeamCallStatusQuery(teamId);
+    }
+  }, [teamId, executeGetTeamCallStatusQuery]);
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
@@ -123,9 +133,11 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
     }
     console.log(teamId);
 
-    setIsInCall(true);
-    isChat || addCallStatusToTeam({ teamId, callStatus: true });
+    if (teamId) {
+      addCallStatusToTeam({ teamId, callStatus: true });
+    }
   }
+
 
   return (
     <Flex height="100%" width="100%" borderWidth={1} bg={bg} boxShadow="xl">
@@ -133,12 +145,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
         <Flex width="100%">
           <Box fontSize="xl">
             <Box fontSize="xl" mr={3}>
-              {isChat ? (
+              {isChat && activeChatUser && (
                 <HStack>
                   <Avatar
                     size="sm"
-                    name={`${activeChatUser?.firstName} ${activeChatUser?.lastName}`}
-                    src={activeChatUser?.photoURL}
+                    name={`${activeChatUser.firstName} ${activeChatUser.lastName}`}
+                    src={activeChatUser.photoURL}
                     marginRight="0.5rem"
                   >
                     {!isStatusLoading && (
@@ -154,8 +166,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                     {activeChatUser.firstName + " " + activeChatUser.lastName}
                   </Text>
                 </HStack>
-              ) : (
-                (chatData && chatData.name) || "Loading..."
               )}
             </Box>
           </Box>
@@ -168,7 +178,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                 <ModalContent>
                   {/* <ModalCloseButton /> */}
                   <ModalBody>
-                    <CreateRoom onClose={onClose} />
+                    <CreateRoom onClose={onClose} teamId={teamId} isChat={isChat} />
                   </ModalBody>
                 </ModalContent>
               </Modal>
@@ -185,7 +195,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                     <ModalHeader>Create Room</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                      <CreateRoom onClose={onClose} />
+                      <CreateRoom onClose={onClose} teamId={teamId} isChat={isChat} />
                     </ModalBody>
                   </ModalContent>
                 </Modal>
@@ -204,7 +214,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
         <ChatMessages
           chatData={chatData}
           userId={user.uid}
-          activeChatUser={activeChatUser}
+          activeChatUser={activeChatUser ? activeChatUser.uid : ""}
           activeChatId={activeChatId}
           activeChatUserStatus={activeChatUserStatus}
           getStatusColor={getStatusColor}
@@ -213,7 +223,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
           channelId={channelId}
         />
         <ChatInput
-          currUser={currUser}
+          currUser={currUser ? currUser : null}
           user={user}
           chatUserId={chatUserId}
           activeChatUser={activeChatUser}

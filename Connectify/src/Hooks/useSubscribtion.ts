@@ -18,9 +18,9 @@ export const useSubscription = ({
   chatUserId,
   isChat,
 }: UseSubscriptionProps) => {
-  const [chatData, setChatData] = useState<Message[] | null>(null);
+  const [chatData, setChatData] = useState<Message[] | undefined>(undefined);
   const activeChatId =
-    user && chatUserId ? [user.username, chatUserId].sort().join("-") : null;
+    user && chatUserId ? [user.username, chatUserId].sort().join("-") : undefined;
 
 
   useEffect(() => {

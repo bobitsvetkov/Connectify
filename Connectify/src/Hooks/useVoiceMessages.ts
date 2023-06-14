@@ -37,10 +37,10 @@ type ToastOptions = {
 const useVoiceMessages = (
     currUser: FirebaseUser | null,
     user: User,
-    chatUserId: string,
+    chatUserId: string | undefined,
     isChat: boolean,
-    teamId: string,
-    channelId: string,
+    teamId: string | undefined,
+    channelId: string | undefined,
     addMessageToChat: (data: AddMessageToChat) => void,
     addMessageToChannel: (data: AddMessageToChannel) => void,
     toast: (options: ToastOptions) => void
@@ -64,10 +64,8 @@ const useVoiceMessages = (
                     }
                 };
                 mediaRecorder.onstop = () => {
-                    // Create blob from chunks
                     const blob = new Blob(chunks, { type: 'audio/webm' });
 
-                    // Upload to Firebase
                     const timestamp = Date.now();
                     const audioRef = ref(storage, `audio/${timestamp}.webm`);
                     const uploadTask = uploadBytesResumable(audioRef, blob);
@@ -107,7 +105,9 @@ const useVoiceMessages = (
                                 if (isChat) {
                                     addMessageToChat({ chatId: chatId, message: newMessage });
                                 } else {
-                                    addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                    if(teamId && channelId) {
+                                        addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                    }
                                 }
                             }
 
