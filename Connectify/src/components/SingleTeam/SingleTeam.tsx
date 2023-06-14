@@ -1,6 +1,6 @@
 import { Box, HStack, Text, Avatar } from "@chakra-ui/react";
-import { Team } from '../../api/databaseApi';
 import { useColorModeValue } from "@chakra-ui/react";
+import { Team } from "../../types/interfaces";
 
 interface SingleTeamProps {
   team: Team;

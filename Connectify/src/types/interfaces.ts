@@ -164,7 +164,11 @@ export interface Notification {
   date: string;
   isChat: boolean;
   isSeen: boolean;
+  owner: string;
   type: string;
   uid: string;
   user: string;
+  wasShown: boolean;
+  teamId?: string | undefined;
+  channelId?: string | undefined;
 }
