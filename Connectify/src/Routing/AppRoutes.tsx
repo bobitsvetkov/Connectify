@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "../components/LandingPage/LandingPage";
 import Layout from "../pages/Layout";
 import ChatBox from "../components/ChatBox/ChatBox";
 import ErrorPage from "../pages/ErrorPage";
+import { useAuth } from "../Hooks/useAuth";
 
 const routes = [
   {
@@ -36,6 +37,8 @@ const routes = [
 ];
 
 const AppRoutes = () => {
+  const isLoggedIn = useAuth();
+
   return (
     <Router>
       <Routes>
@@ -48,7 +51,7 @@ const AppRoutes = () => {
             />
           }
         />
-        {generateRoutes()}
+        {isLoggedIn ? generateRoutes() : <Route path="*" element={<Navigate replace to="/" />} />}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </Router>
