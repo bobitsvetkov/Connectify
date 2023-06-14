@@ -59,7 +59,7 @@ export const PhotoUploader: React.FC = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          updateProfile(auth.currentUser, {
+          updateProfile(auth.currentUser as User, {
             photoURL: downloadURL,
           })
             .then(() => {

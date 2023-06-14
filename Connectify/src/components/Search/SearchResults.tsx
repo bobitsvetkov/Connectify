@@ -30,7 +30,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     useAddUserToTeamMutation();
   const auth = getAuth();
   const curr = auth.currentUser;
-  const { data: currUser } = useGetUserByIdQuery(curr && curr.uid);
+  const { data: currUser } = useGetUserByIdQuery(curr?.uid ?? "");
   const [teams, setTeams] = useState({});
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     onValue(teamsRef, handleValueChange);
 
     return () => {
-      off(teamsRef, handleValueChange);
+      off(teamsRef, "value", handleValueChange);
     };
   }, []);
 
