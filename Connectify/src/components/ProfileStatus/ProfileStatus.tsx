@@ -23,12 +23,16 @@ const ProfileStatus: React.FC = () => {
   }, [status]);
 
   const handleChangeStatus = async (status: string) => {
-    try {
-      await updateUserStatus({ uid: currUser.uid, status });
-      dispatch(updateStatus({ uid: currUser.uid, status }));
-      setStatus(status);
-    } catch (error) {
-      console.error(error);
+    if (currUser) {
+      try {
+        await updateUserStatus({ uid: currUser.uid, status });
+        dispatch(updateStatus({ uid: currUser.uid, status }));
+        setStatus(status);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      console.error("currUser is null");
     }
   };
 
