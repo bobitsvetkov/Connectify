@@ -24,11 +24,7 @@ export interface Message {
   fileName?: string;
 }
 
-export interface Channel {
-  uid: string;
-  name: string;
-  messages: object;
-}
+
 export interface User {
   uid: string;
   firstName: string;
@@ -304,7 +300,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useLazyGetTeamByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation
+  useGetTeamsQuery, useLazyGetTeamByIdQuery, useLazyGetChannelByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation
 } = teamsApi;
 
 export const {

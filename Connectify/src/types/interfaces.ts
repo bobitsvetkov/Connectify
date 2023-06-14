@@ -160,14 +160,16 @@ export interface Team {
 }
 
 export interface latestChat {
-  content: string;
+  content:string;
   date: string;
   isChat: boolean;
   type: string;
   uid: string;
   user: string;
-  userChatting: string;
-  userChattingUsername: string;
+  userChatting?: string;
+  userChattingUsername?: string;
+  teamId?: string;
+  channelId?: string;
 }
 
 export interface SearchResultsProps {
@@ -193,4 +195,9 @@ export interface ChatData {
   messages: {
     [key: string]: Message;
   };
+}
+export interface Channel {
+  uid: string;
+  name: string;
+  messages: object;
 }

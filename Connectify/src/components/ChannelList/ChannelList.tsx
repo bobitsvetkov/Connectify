@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useCreateChannelMutation, Channel } from '../../api/databaseApi';
+import { useCreateChannelMutation } from '../../api/databaseApi';
 import { v4 as uuidv4 } from "uuid";
 import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
 import { Box, Flex, Input, IconButton, HStack } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
-import { Team } from '../../types/interfaces';
+import { Team, Channel } from '../../types/interfaces';
 
 function ChannelList({ team }: { team: Team }) {
 
