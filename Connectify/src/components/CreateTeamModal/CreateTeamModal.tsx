@@ -26,15 +26,19 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
     const auth = getAuth();
     const currUser = auth.currentUser;
     if (!currUser) {
-        return null;
+        throw new Error('Current user is null');
     }
-    const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+    const {
+        data: user,
+        isLoading: isUserLoading,
+        isError: isUserError,
+    } = useGetUserByIdQuery(currUser && currUser.uid);
     const [createTeam] = useCreateTeamMutation()
-    const teamName = useRef<HTMLInputElement>(null);;
+    const teamName = useRef<HTMLInputElement>(null);
     if (isUserLoading) return <Text>Loading...</Text>;
     if (isUserError) return <Text>An error has occurred.</Text>;
     const placeholderText = user?.username ? `${user.username}'s Team` : 'Enter team name';
-    
+
     const handleCreate = () => {
         if (!user || !teamName.current) return;
         const teamNameValue = teamName.current.value;
@@ -66,7 +70,7 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
                         <Input id="team-icon-upload" type="file" hidden onChange={(e) => console.log(e.target.files)} />
                     </Center>
                     <Text mt={4}>Team Name</Text>
-                    <Input type='text' placeholder={placeholderText} ref={teamName}/>
+                    <Input type='text' placeholder={placeholderText} ref={teamName} />
                 </ModalBody>
                 <ModalFooter>
                     <Button variant='ghost' onClick={onClose}>Close</Button>

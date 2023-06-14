@@ -1,7 +1,7 @@
 import { createApi} from "@reduxjs/toolkit/query/react";
 import { get, ref, set, update } from "firebase/database";
 import { database } from "../config/firebaseConfig";
-import { Team } from "../types/interfaces";
+import { Team, Channel } from "../types/interfaces";
 export interface Chat {
   uid: string;
   participants: object;
