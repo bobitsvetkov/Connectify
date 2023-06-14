@@ -62,13 +62,17 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
   const isBot = chatUserId === 'mimir' ? true : false;
-
+  
+  
+ 
   useEffect(() => {
 
     if(teamId){
       executeGetTeamCallStatusQuery(teamId);
     }
   }, [teamId, executeGetTeamCallStatusQuery]);
+
+  console.log(teamId);
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
@@ -131,7 +135,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
       // If a meeting is already active, don't start a new one
       return;
     }
-    console.log(teamId);
+
 
     if (teamId) {
       addCallStatusToTeam({ teamId, callStatus: true });
@@ -171,7 +175,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
           </Box>
           {isBot ||
             <Flex direction="row" justify="flex-end">
-              { }
               <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                 <ModalOverlay />

@@ -51,7 +51,12 @@ export const useHandleSend = ({
     const chatId = userIds.join("-");
 
     const handleSend = async (msg?: string | { downloadURL: string, fileName: string }, isImage?: boolean) => {
-        let content, type, fileName = undefined; 
+        if (!currUser) {
+            console.error("User is not authenticated");
+            return; // or throw an error if you want
+        }
+
+        let content, type, fileName = undefined;
 
         if (typeof msg === 'string') {
             content = msg;
@@ -65,79 +70,78 @@ export const useHandleSend = ({
             return;
         }
 
-        if (currUser && activeChatUser && content.trim().length > 0) {
+        const currentUserUid = currUser.uid;
+        const newMessage: Message = {
+            uid: uuidv4(),
+            user: currentUserUid,
+            content: content,
+            date: new Date().toISOString(),
+            type: type as "audio" | "image" | "text" | "gif",
+        };
 
 
-            const newMessage: Message = {
-                uid: uuidv4(),
-                user: currUser.uid,
-                content: content,
-                date: new Date().toISOString(),
-                type: type as "audio" | "image" | "text" | "gif",
-            };
+        if (fileName) {
+            newMessage.fileName = fileName;
+        }
 
-            if (fileName) {
-                newMessage.fileName = fileName;
-            }
-
-            if (content.trim().length > 0 && currUser && user) {
-                if (isChat) {
+        if (content.trim().length > 0 && currUser && user) {
+            if (isChat) {
+                if ((currUser && activeChatUser) && content.trim().length > 0) {
                     updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
                     updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
                     updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                     addMessageToChat({ chatId: chatId, message: newMessage });
-                } else {
-                    if (team) {
-                        Object.entries(team.participants).map(([userUid]) => {
-                            updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                            if (userUid !== currUser.uid) {
-                                updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
-                            }
-
-                        })
-                    }
-
-                    addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
                 }
-
-                setMessage("");
+            } else {
+                addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
+                if (team) {
+                    Object.entries(team.participants).map(([userUid]) => {
+                        updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                        if (userUid !== currUser.uid) {
+                            updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                        }
+                    })
+                }
             }
 
-            if (isBot && !isImage) {
-                const updatedMessagesForAI = [
-                    ...messagesForAI,
-                    { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
-                    { role: 'user', content: content }
-                ];
+            setMessage("");
+        }
 
-                setMessagesForAI(updatedMessagesForAI);
+        if (isBot && !isImage) {
+            const updatedMessagesForAI = [
+                ...messagesForAI,
+                { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
+                { role: 'user', content: content }
+            ];
 
-                try {
-                    const generatedMessage = await executeGenerateConversation(updatedMessagesForAI);
+            setMessagesForAI(updatedMessagesForAI);
 
-                    if (generatedMessage.data) {
-                        const aiMessage = {
-                            uid: uuidv4(),
-                            user: chatUserId,
-                            content: generatedMessage.data.choices[0].message.content,
-                            date: new Date().toISOString(),
-                            isGenerated: true,
-                        };
+            try {
+                const generatedMessage = await executeGenerateConversation(updatedMessagesForAI);
 
-                        addMessageToChat({ chatId: chatId, message: aiMessage });
-                    }
-                } catch (error) {
-                    const e = error as Error;
-                    toast({
-                        title: "An error occurred.",
-                        description: e.message,
-                        status: "error",
-                        duration: 9000,
-                        isClosable: true,
-                    });
+                if (generatedMessage.data) {
+                    const aiMessage = {
+                        uid: uuidv4(),
+                        user: chatUserId,
+                        content: generatedMessage.data.choices[0].message.content,
+                        date: new Date().toISOString(),
+                        isGenerated: true,
+                    };
+
+                    addMessageToChat({ chatId: chatId, message: aiMessage });
                 }
+            } catch (error) {
+                const e = error as Error;
+                toast({
+                    title: "An error occurred.",
+                    description: e.message,
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                });
             }
         }
+
 
     };
 

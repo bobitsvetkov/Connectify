@@ -99,6 +99,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       handleSend(url, true);
     }
   };
+console.log(teamId);
 
   return (
     <HStack width="100%" spacing={4}>
