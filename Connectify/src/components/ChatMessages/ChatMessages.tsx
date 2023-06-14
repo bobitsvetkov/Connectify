@@ -14,8 +14,13 @@ import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import DeleteMessage from "../ChatBox/Delete/DeleteMessage";
 import { Message } from "../../api/databaseApi";
 
+interface ChatData {
+  messages: {
+    [key: string]: Message;
+  };
+}
 interface ChatMessagesProps {
-  chatData: Message[] | undefined;
+  chatData: ChatData | undefined;
   userId: string;
   activeChatUser: string;
   activeChatId: string | undefined;
@@ -53,8 +58,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 
   return (
     <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
-      {chatData && // Remove .messages from chatData
-        chatData
+      {chatData && 
+        Object.values(chatData.messages)
         .filter((message: Message) => message.date !== undefined)
         .sort((a: Message, b: Message) => new Date(a.date ?? "").getTime() - new Date(b.date ?? "").getTime())
           .map((message) => (
