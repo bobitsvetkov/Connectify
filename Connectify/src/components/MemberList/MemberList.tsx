@@ -1,13 +1,12 @@
 import { Button, AlertDialog, AlertDialogBody, AlertDialogFooter, AlertDialogHeader, AlertDialogContent, AlertDialogOverlay, useDisclosure, IconButton, Flex, Spacer } from "@chakra-ui/react";
 import { CloseIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useEffect, useState, useRef } from 'react';
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue } from "firebase/database";
 import { getAuth } from "firebase/auth";
 import { useGetTeamByIdQuery, useDeleteTeamMemberMutation } from "../../api/databaseApi";
 import SingleUser from "../LeftList/SingleUser";
 import { Text } from "@chakra-ui/react";
 import { database } from "../../config/firebaseConfig";
-import { Team } from "../../types/interfaces";
 import { DataSnapshot } from "firebase/database";
 
 interface MemberListProps {
@@ -20,7 +19,10 @@ interface Members {
 
 function MemberList({ teamId }: MemberListProps) {
     const [members, setMembers] = useState<Members>({});
-    const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery<Team>(teamId); 
+    if (!teamId) {
+        return <div>No teamId provided</div>;
+    }
+    const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery(teamId);
     const [deleteTeamMember] = useDeleteTeamMemberMutation();
 
     const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
@@ -59,14 +61,14 @@ function MemberList({ teamId }: MemberListProps) {
     };
 
     const handleRemoveConfirm = () => {
-        if (selectedMember) {
+        if (selectedMember && teamId) {
             deleteTeamMember({ userUid: selectedMember, teamId: teamId });
             onRemoveClose();
         }
     }
 
     const handleLeaveConfirm = () => {
-        if (selectedMember) {
+        if (selectedMember && teamId) {
             deleteTeamMember({ userUid: selectedMember, teamId: teamId });
             onLeaveClose();
         }
