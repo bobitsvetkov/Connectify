@@ -32,7 +32,11 @@ function DeleteMessage({ chatId, messageId, teamId, isDeleting, setIsDeleting, m
     const [removeMessage] = useRemoveMessageFromChatMutation();
 
     const handleRemoveMessage = async () => {
-        // delete the message from the database
+        if (!chatId) {
+
+            console.error("Chat ID is undefined");
+            return;
+        }
         const params: RemoveMessageParams = { chatId, messageId, teamId };
         removeMessage(params)
             .unwrap()
