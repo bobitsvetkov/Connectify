@@ -64,76 +64,81 @@ export const useHandleSend = ({
             console.error('Invalid message:', msg);
             return;
         }
+        
+        if (currUser && activeChatUser && content.trim().length > 0) {
 
-        const newMessage: Message = {
-            uid: uuidv4(),
-            user: currUser.uid,
-            content: content,
-            date: new Date().toISOString(),
-            type: type as "audio" | "image" | "text" | "gif",
-        };
 
-        if (fileName) {
-            newMessage.fileName = fileName;
-        }
+            const newMessage: Message = {
+                uid: uuidv4(),
+                user: currUser.uid,
+                content: content,
+                date: new Date().toISOString(),
+                type: type as "audio" | "image" | "text" | "gif",
+            };
 
-        if (content.trim().length > 0 && currUser && user) {
-            if (isChat) {
-                updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
-                updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
-                updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
-                addMessageToChat({ chatId: chatId, message: newMessage });
-            } else {
-                if (team) {
-                    Object.entries(team.participants).map(([userUid]) => {
-                        updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                        if (userUid !== currUser.uid) {
-                            updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
-                        }
-
-                    })
-                }
-
-                addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
+            if (fileName) {
+                newMessage.fileName = fileName;
             }
 
-            setMessage("");
-        }
+            if (content.trim().length > 0 && currUser && user) {
+                if (isChat) {
+                    updateUserNotifications({ userUid: activeChatUser.uid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, wasShown: false, isChat: isChat, owner: activeChatUser.uid } });
+                    updateLatestChats({ userUid: currUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: activeChatUser.uid, userChattingUsername: chatUserId } });
+                    updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
+                    addMessageToChat({ chatId: chatId, message: newMessage });
+                } else {
+                    if (team) {
+                        Object.entries(team.participants).map(([userUid]) => {
+                            updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                            if (userUid !== currUser.uid) {
+                                updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                            }
 
-        if (isBot && !isImage) {
-            const updatedMessagesForAI = [
-                ...messagesForAI,
-                { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
-                { role: 'user', content: content }
-            ];
+                        })
+                    }
 
-            setMessagesForAI(updatedMessagesForAI);
-
-            try {
-                const generatedMessage = await executeGenerateConversation(updatedMessagesForAI);
-
-                if (generatedMessage.data) {
-                    const aiMessage = {
-                        uid: uuidv4(),
-                        user: chatUserId,
-                        content: generatedMessage.data.choices[0].message.content,
-                        date: new Date().toISOString(),
-                        isGenerated: true,
-                    };
-
-                    addMessageToChat({ chatId: chatId, message: aiMessage });
+                    addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
                 }
-            } catch (error) {
-                const e = error as Error;
-                toast({
-                    title: "An error occurred.",
-                    description: e.message,
-                    status: "error",
-                    duration: 9000,
-                    isClosable: true,
-                });
+
+                setMessage("");
+            }
+
+            if (isBot && !isImage) {
+                const updatedMessagesForAI = [
+                    ...messagesForAI,
+                    { "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." },
+                    { role: 'user', content: content }
+                ];
+
+                setMessagesForAI(updatedMessagesForAI);
+
+                try {
+                    const generatedMessage = await executeGenerateConversation(updatedMessagesForAI);
+
+                    if (generatedMessage.data) {
+                        const aiMessage = {
+                            uid: uuidv4(),
+                            user: chatUserId,
+                            content: generatedMessage.data.choices[0].message.content,
+                            date: new Date().toISOString(),
+                            isGenerated: true,
+                        };
+
+                        addMessageToChat({ chatId: chatId, message: aiMessage });
+                    }
+                } catch (error) {
+                    const e = error as Error;
+                    toast({
+                        title: "An error occurred.",
+                        description: e.message,
+                        status: "error",
+                        duration: 9000,
+                        isClosable: true,
+                    });
+                }
             }
         }
+
     };
 
     return handleSend;

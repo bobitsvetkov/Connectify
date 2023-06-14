@@ -10,9 +10,9 @@ export interface VoiceMessage {
     uid: string,
     user: string,
     content: string,
-    type: 'audio' | 'image',  
+    type: 'audio' | 'image',
     date: string,
-    fileName?: string,  
+    fileName?: string,
 }
 
 interface AddMessageToChat {
@@ -49,7 +49,7 @@ const useVoiceMessages = (
     const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
     const handleStart = () => {
-        let chunks: Blob[] = [];
+        const chunks: Blob[] = [];
 
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then(stream => {
@@ -73,7 +73,7 @@ const useVoiceMessages = (
                     const uploadTask = uploadBytesResumable(audioRef, blob);
 
                     uploadTask.on('state_changed', (snapshot) => {
-                        let progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         toast({
                             title: "Uploading...",
                             description: `Upload is ${progress}% done`,
@@ -94,21 +94,23 @@ const useVoiceMessages = (
                             const userIds = [chatUserId, user.username];
                             userIds.sort();
                             const chatId = userIds.join("-");
+                            if (currUser !== null) {
+                                const newMessage: VoiceMessage = {
+                                    uid: uuidv4(),
+                                    user: currUser.uid,
+                                    content: downloadURL,
+                                    type: 'audio',
+                                    date: new Date().toISOString(),
+                                    fileName: `${timestamp}.webm`,
+                                };
 
-                            const newMessage: VoiceMessage = {
-                                uid: uuidv4(),
-                                user: currUser.uid,
-                                content: downloadURL,
-                                type: 'audio',
-                                date: new Date().toISOString(),
-                                fileName: `${timestamp}.webm`, 
-                            };
-
-                            if (isChat) {
-                                addMessageToChat({ chatId: chatId, message: newMessage });
-                            } else {
-                                addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                if (isChat) {
+                                    addMessageToChat({ chatId: chatId, message: newMessage });
+                                } else {
+                                    addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage })
+                                }
                             }
+
                         });
 
                         setRecording(false);

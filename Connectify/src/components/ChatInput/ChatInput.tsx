@@ -15,12 +15,13 @@ import {
 } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { FaImage } from "react-icons/fa";
+import { FaImage, FaMicrophone } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
 import { User as FirebaseUser } from 'firebase/auth';
+
 interface ChatInputProps {
   currUser: FirebaseUser | null;
   user: User;
@@ -59,7 +60,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
 
-  const { recording, handleSendAudio } = useVoiceMessages(
+  const { recording, handleStart, handleSendAudio } = useVoiceMessages(
     currUser,
     user,
     chatUserId,
@@ -173,12 +174,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
         </>
       )}
       <IconButton
-        onClick={() => handleSend(message)}
+        onClick={handleStart}
         color={buttonColor}
         bg={buttonBg}
         _hover={{ bg: buttonBg }}
-        aria-label="Send Message"
-        icon={<Icon as={BsFillSendFill} boxSize={6} />}
+        aria-label="Start Recording"
+        icon={<Icon as={FaMicrophone} boxSize={6} />}
       />
     </HStack>
   );
