@@ -50,6 +50,7 @@ function SingleMessage({
   const [isDeleting, setIsDeleting] = useState(false);
   const { data: user } = useGetUserByIdQuery(message.user);
   const currUserUid = getAuth().currentUser?.uid;
+  const bgColor = useColorModeValue("gray.300", "gray.700");
 
   useEffect(() => {
     if (message.reactions) {
@@ -63,8 +64,8 @@ function SingleMessage({
   }
 
   const addReaction = async (messageId: string, emoji: string) => {
-    if (!currUser) {
-      console.log("Current user is not defined");
+    if (!currUser || !chatId || !teamId || !channelId) {
+      console.log("Required parameters are not defined");
       return;
     }
 
@@ -78,12 +79,7 @@ function SingleMessage({
 
     isChat
       ? await addReactionToMessage({ chatId, messageId, reaction })
-      : await addReactionToTeamMessage({
-          teamId,
-          channelId,
-          messageId,
-          reaction,
-        });
+      : await addReactionToTeamMessage({ teamId, channelId, messageId, reaction });
   };
 
   return (
@@ -187,7 +183,7 @@ function SingleMessage({
           <Flex
             border={"1px"}
             borderRadius={"20px"}
-            bg={useColorModeValue("gray.300", "gray.700")}
+            bg={bgColor}
             p={0.5}
           >
             {Object.values(message.reactions).map((reaction) => (

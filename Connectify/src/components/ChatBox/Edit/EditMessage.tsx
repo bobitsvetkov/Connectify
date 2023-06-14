@@ -22,7 +22,7 @@ type UpdateMessageParams = {
 };
 
 type EditMessageProps = {
-    chatId: string;
+    chatId: string | undefined;
     messageId: string;
     teamId?: string;
     initialMessageContent: string;
