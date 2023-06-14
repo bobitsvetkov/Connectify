@@ -1,30 +1,38 @@
 import { useEffect, useState } from "react";
 import { Box, Button, useDisclosure } from "@chakra-ui/react";
-import { useGetUserByIdQuery } from '../../api/databaseApi';
+import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import SingleTeam from "../SingleTeam/SingleTeam";
 import CreateTeamModal from "../CreateTeamModal/CreateTeamModal";
 import { ref, onValue } from "firebase/database";
-import { database } from '../../config/firebaseConfig';
-import { DataSnapshot } from 'firebase/database';
+import { database } from "../../config/firebaseConfig";
+import { DataSnapshot } from "firebase/database";
 import { Team } from "../../types/interfaces";
 
 type Props = {
   setSelectedTeam: (team: Team) => void;
   selectedTeam: Team | null;
-}
+};
 
 const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   const currUser = getAuth().currentUser;
+<<<<<<< Updated upstream
   if (!currUser) {
     return null;
   }
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
+=======
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+  } = useGetUserByIdQuery(currUser?.uid || "");
+>>>>>>> Stashed changes
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [teamsData, setTeamsData] = useState<Team[]>([]);
 
   useEffect(() => {
-    const teamsRef = ref(database, 'teams/');
+    const teamsRef = ref(database, "teams/");
 
     const handleValueChange = (snapshot: DataSnapshot) => {
       setTeamsData(snapshot.val());
@@ -46,24 +54,28 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   }
 
   const handleTeamClick = (team: Team) => {
-    setSelectedTeam(team)
-  }
+    setSelectedTeam(team);
+  };
 
   return (
     <Box>
-      {user && (teamsData && Object.values(teamsData).length) && Object.values(teamsData).map((team: Team) => {
-        const isInTeam = user.uid in team.participants;
-        return (
-          isInTeam &&
-          user &&
-          <SingleTeam
-            key={team.uid}
-            team={team}
-            onTeamClick={handleTeamClick}
-            isSelected={selectedTeam === team}
-          />
-        );
-      })}
+      {user &&
+        teamsData &&
+        Object.values(teamsData).length &&
+        Object.values(teamsData).map((team: Team) => {
+          const isInTeam = user.uid in team.participants;
+          return (
+            isInTeam &&
+            user && (
+              <SingleTeam
+                key={team.uid}
+                team={team}
+                onTeamClick={handleTeamClick}
+                isSelected={selectedTeam === team}
+              />
+            )
+          );
+        })}
       <Button onClick={onOpen}>Add Team</Button>
       <CreateTeamModal isOpen={isOpen} onClose={onClose} />
     </Box>
