@@ -47,6 +47,7 @@ import NotificationSingle from "../NotificationSingle/NotificationSingle";
 import notificationSound from "../../assets/notification-sound.mp3";
 import { DataSnapshot } from "firebase/database";
 import { HeaderProps } from "../../types/interfaces";
+import { Notification } from "../../types/interfaces";
 
 export const Header: React.FC<HeaderProps> = ({
   onViewChange,
@@ -60,12 +61,13 @@ export const Header: React.FC<HeaderProps> = ({
   const auth = getAuth();
   const currUser = auth.currentUser;
   const dispatch = useDispatch();
-  const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
-  const { data: mimir } = useGetUserByIdQuery("mimir");
+  const user = currUser ? useGetUserByIdQuery(currUser.uid) : null;
+  const mimir = useGetUserByIdQuery("mimir");
   const [updateUserNotifications] = useUpdateUserNotificationsMutation();
-  const [isCalendarOpen, setCalendarOpen] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
-  const [notificationData, setNotificationData] = useState(null);
+  const [notificationData, setNotificationData] = useState<Notification | null>(
+    null
+  );
   const { onOpen: onAvatarOpen } = useDisclosure();
   const {
     isOpen: isSettingsOpen,
@@ -92,16 +94,19 @@ export const Header: React.FC<HeaderProps> = ({
       `users/${currUser?.uid}/notifications`
     );
     const handleNewNotification = (snapshot: DataSnapshot) => {
-      const notificationsArray = Object.values(snapshot.val() || {});
-      const newNotifications = notificationsArray.filter(
-        (notification) => !notification.wasShown
+      const notificationsArray: Notification[] = Object.values(
+        snapshot.val() || {}
+      );
+      const newNotifications: Notification[] = notificationsArray.filter(
+        (notification: any): notification is Notification =>
+          notification && !notification.wasShown
       );
 
-      newNotifications.forEach((notification) => {
+      newNotifications.forEach((notification: Notification) => {
         setNotificationData(notification);
         setShowPopover(true);
         updateUserNotifications({
-          userUid: currUser.uid,
+          userUid: currUser ? currUser.uid : "",
           notificationUid: notification.uid,
           notification: { ...notification, wasShown: true },
         });
@@ -111,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
     };
 
     onValue(notificationsRef, handleNewNotification);
-    return () => off(notificationsRef, handleNewNotification);
+    return () => off(notificationsRef, "value", handleNewNotification);
   }, []);
 
   const handleChatClick = () => {
@@ -126,12 +131,10 @@ export const Header: React.FC<HeaderProps> = ({
     setTeamListOpen(true);
   };
 
-  const handleCalendarClick = () => {
-    setCalendarOpen(!isCalendarOpen);
-  };
-
   const handleChatBotClick = () => {
-    dispatch(selectUser(mimir));
+    if (mimir.isSuccess) {
+      dispatch(selectUser(mimir.data));
+    }
     navigate("/chat/mimir");
   };
 
