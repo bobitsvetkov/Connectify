@@ -62,7 +62,6 @@ function SingleMessage({
     return <div>Loading...</div>;
   }
 
-
   const addReaction = async (messageId: string, emoji: string) => {
     if (!currUser) {
       console.log("Current user is not defined");
@@ -123,6 +122,7 @@ function SingleMessage({
             position="absolute"
             top={2}
             right={2}
+            zIndex={2}
           >
             {currUserUid === message.user && (
               <Menu>
