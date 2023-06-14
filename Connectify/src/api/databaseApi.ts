@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi} from "@reduxjs/toolkit/query/react";
 import { get, ref, set, update } from "firebase/database";
 import { database } from "../config/firebaseConfig";
 import { Team } from "../types/interfaces";

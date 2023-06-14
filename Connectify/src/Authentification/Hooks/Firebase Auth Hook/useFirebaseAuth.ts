@@ -42,13 +42,17 @@ const useFirebaseHandler = () => {
         if (userSnapshot.exists()) {
             const userData = userSnapshot.val();
             const user: User = {
-                uid : userData.uid,
+                uid: userData.uid,
                 email: userData.email,
                 firstName: userData.firstName,
                 lastName: userData.lastName,
                 username: userData.username,
                 phoneNumber: userData.phoneNumber,
-                photoURL: userData.photoURL
+                photoURL: userData.photoURL,
+                status: userData.status,
+                latestChats: userData.latestChats,
+                events: userData.events,
+                notifications: userData.notifications,
             };
             return user;
         }
