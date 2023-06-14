@@ -4,6 +4,7 @@ import { getDownloadURL } from 'firebase/storage';
 import { storage } from '../config/firebaseConfig';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../types/interfaces';
+import { User as FirebaseUser } from 'firebase/auth';
 
 export interface VoiceMessage {
     uid: string,
@@ -34,7 +35,7 @@ type ToastOptions = {
 };
 
 const useVoiceMessages = (
-    currUser: User,
+    currUser: FirebaseUser | null,
     user: User,
     chatUserId: string,
     isChat: boolean,

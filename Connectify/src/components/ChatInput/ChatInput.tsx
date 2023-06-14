@@ -15,13 +15,14 @@ import {
 } from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
-import { FaMicrophone, FaImage } from "react-icons/fa";
+import { FaImage } from "react-icons/fa";
 import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
+import { User as FirebaseUser } from 'firebase/auth';
 interface ChatInputProps {
-  currUser: User | null;
+  currUser: FirebaseUser | null;
   user: User;
   chatUserId: string;
   activeChatUser: User | null;
@@ -41,6 +42,8 @@ const ChatInput: React.FC<ChatInputProps> = ({
   channelId,
   isBot,
 }) => {
+  const buttonColor = useColorModeValue("black", "white");
+  const buttonBg = useColorModeValue("#f57c73", "#d84e45");
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
   const [messagesForAI, setMessagesForAI] = useState<
@@ -56,7 +59,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
 
-  const { recording, handleStart, handleSendAudio } = useVoiceMessages(
+  const { recording, handleSendAudio } = useVoiceMessages(
     currUser,
     user,
     chatUserId,
@@ -111,7 +114,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             placeholder="Type a message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
                 handleSend(message);
@@ -121,21 +124,21 @@ const ChatInput: React.FC<ChatInputProps> = ({
           />
           <IconButton
             onClick={() => handleSend(message)}
-            color={useColorModeValue("black", "white")}
-            bg={"#f57c73"}
-            _hover={{ bg: "#d84e45" }}
+            color={buttonColor}
+            bg={buttonBg}
+            _hover={{ bg: buttonBg }}
             aria-label="Send Message"
             icon={<Icon as={BsFillSendFill} boxSize={6} />}
           />
           <IconButton
             as="label"
             htmlFor="image-upload"
-            color={useColorModeValue("black", "white")}
-            bg={"#f57c73"}
+            color={buttonColor}
+            bg={buttonBg}
             cursor="pointer"
             aria-label="Upload Image"
             icon={<Icon as={FaImage} boxSize={6} />}
-            _hover={{ bg: "#d84e45" }}
+            _hover={{ bg: buttonBg }}
           />
           <input
             id="image-upload"
@@ -157,7 +160,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
             placeholder="Type a message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={(e) => {
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSend();
               }
@@ -170,12 +173,12 @@ const ChatInput: React.FC<ChatInputProps> = ({
         </>
       )}
       <IconButton
-        onClick={handleStart}
-        color={useColorModeValue("black", "white")}
-        bg="#f57c73"
-        _hover={{ bg: "#d84e45" }}
-        aria-label="Start Recording"
-        icon={<Icon as={FaMicrophone} boxSize={6} />}
+        onClick={() => handleSend(message)}
+        color={buttonColor}
+        bg={buttonBg}
+        _hover={{ bg: buttonBg }}
+        aria-label="Send Message"
+        icon={<Icon as={BsFillSendFill} boxSize={6} />}
       />
     </HStack>
   );

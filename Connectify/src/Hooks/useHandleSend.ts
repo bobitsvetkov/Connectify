@@ -9,10 +9,10 @@ type AddMessageToChatMutation = ReturnType<typeof useAddMessageToChatMutation>[0
 type AddMessageToChannelMutation = ReturnType<typeof useAddMessageToChannelMutation>[0];
 
 interface HandleSendProps {
-    currUser: FirebaseUser,
+    currUser: FirebaseUser | null,
     user: User,
     chatUserId: string,
-    activeChatUser: User,
+    activeChatUser: User | null,
     isChat: boolean,
     teamId: string,
     channelId: string,
