@@ -25,14 +25,18 @@ interface CreateTeamModalProps {
 const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) => {
     const auth = getAuth();
     const currUser = auth.currentUser;
+    if (!currUser) {
+        return null;
+    }
     const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
-    const [createTeam, { isLoading: isCreatingTeam }] = useCreateTeamMutation()
-    const teamName = useRef();
+    const [createTeam] = useCreateTeamMutation()
+    const teamName = useRef<HTMLInputElement>(null);;
     if (isUserLoading) return <Text>Loading...</Text>;
     if (isUserError) return <Text>An error has occurred.</Text>;
     const placeholderText = user?.username ? `${user.username}'s Team` : 'Enter team name';
     
     const handleCreate = () => {
+        if (!user || !teamName.current) return;
         const teamNameValue = teamName.current.value;
 
         const newTeam = {

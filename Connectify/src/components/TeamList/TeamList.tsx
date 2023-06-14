@@ -16,6 +16,9 @@ type Props = {
 
 const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   const currUser = getAuth().currentUser;
+  if (!currUser) {
+    return null;
+  }
   const { data: user, isLoading: isUserLoading, isError: isUserError } = useGetUserByIdQuery(currUser && currUser.uid);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [teamsData, setTeamsData] = useState<Team[]>([]);
