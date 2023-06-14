@@ -1,13 +1,15 @@
 import { v4 as uuidv4 } from "uuid";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, User, useUpdateUserNotificationsMutation } from "../api/databaseApi";
+import { useAddMessageToChatMutation, useAddMessageToChannelMutation, useUpdateUserLatestChatsMutation, useGetTeamByIdQuery, useUpdateUserNotificationsMutation } from "../api/databaseApi";
 import { useLazyGenerateConversationQuery } from "../api/openAiApi";
 import { useToast } from "@chakra-ui/react";
+import { Message, User } from "../types/interfaces";
+import { User as FirebaseUser } from 'firebase/auth';
 
 type AddMessageToChatMutation = ReturnType<typeof useAddMessageToChatMutation>[0];
 type AddMessageToChannelMutation = ReturnType<typeof useAddMessageToChannelMutation>[0];
 
 interface HandleSendProps {
-    currUser: object,
+    currUser: FirebaseUser,
     user: User,
     chatUserId: string,
     activeChatUser: User,
@@ -32,7 +34,6 @@ export const useHandleSend = ({
     teamId,
     channelId,
     isBot,
-    message,
     messagesForAI,
     setMessagesForAI,
     setMessage,
@@ -50,27 +51,31 @@ export const useHandleSend = ({
     const chatId = userIds.join("-");
 
     const handleSend = async (msg?: string | { downloadURL: string, fileName: string }, isImage?: boolean) => {
-        console.log(msg)
-        let content, type;
+        let content, type, fileName = undefined; // use undefined here
+
         if (typeof msg === 'string') {
             content = msg;
             type = content.includes('giphy.com') ? 'gif' : 'text';
-        } else if (typeof msg === 'object' && msg.downloadURL && msg.fileName) {
+        } else if (msg && 'downloadURL' in msg && 'fileName' in msg) {
             content = msg.downloadURL;
             type = 'image';
+            fileName = msg.fileName;
         } else {
             console.error('Invalid message:', msg);
             return;
         }
 
-        const newMessage = {
+        const newMessage: Message = {
             uid: uuidv4(),
             user: currUser.uid,
             content: content,
-            fileName: msg.fileName || null,
             date: new Date().toISOString(),
-            type: type,
+            type: type as "audio" | "image" | "text" | "gif",
         };
+
+        if (fileName) {
+            newMessage.fileName = fileName;
+        }
 
         if (content.trim().length > 0 && currUser && user) {
             if (isChat) {
@@ -79,14 +84,16 @@ export const useHandleSend = ({
                 updateLatestChats({ userUid: activeChatUser.uid, chatUid: chatId, message: { ...newMessage, isChat: isChat, userChatting: currUser.uid, userChattingUsername: user.username } });
                 addMessageToChat({ chatId: chatId, message: newMessage });
             } else {
-                // updateLatestChats({ userUid: currUser.uid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                Object.entries(team.participants).map(([userUid, isMember]) => {
-                    updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
-                    if (userUid !== currUser.uid) {
-                        updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
-                    }
+                if (team) {
+                    Object.entries(team.participants).map(([userUid]) => {
+                        updateLatestChats({ userUid: userUid, chatUid: channelId, message: { ...newMessage, isChat: isChat, teamId: teamId, channelId: channelId } });
+                        if (userUid !== currUser.uid) {
+                            updateUserNotifications({ userUid: userUid, notificationUid: newMessage.uid, notification: { ...newMessage, isSeen: false, teamId: teamId, channelId: channelId, isChat: isChat } })
+                        }
 
-                })
+                    })
+                }
+
                 addMessageToChannel({ teamId: teamId, channelId: channelId, message: newMessage });
             }
 
@@ -117,9 +124,10 @@ export const useHandleSend = ({
                     addMessageToChat({ chatId: chatId, message: aiMessage });
                 }
             } catch (error) {
+                const e = error as Error;
                 toast({
                     title: "An error occurred.",
-                    description: error.message,
+                    description: e.message,
                     status: "error",
                     duration: 9000,
                     isClosable: true,
