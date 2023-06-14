@@ -26,7 +26,7 @@ const useSignIn = () => {
 
     const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+ 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, user.email, user.password);
             const fetchedUserData: User | null = await getUserData(userCredential.user.uid);
