@@ -120,6 +120,22 @@ export interface EventUserDisplayProps {
   handleRemoveUser: (uid: string) => void;
 }
 
+interface Reaction {
+  uid: string;
+  emoji: string;
+  user: string;
+}
+export interface Message {
+  uid: string;
+  user: string;
+  content: string;
+  type?: "text" | "gif" | "image" | "audio";  
+  replies?: { [key: string]: Message };
+  reactions?: Reaction[];
+  date?: string;
+  fileName?: string;
+}
+
 export interface Card {
   title: string;
   text: string;

@@ -87,13 +87,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
     }
   }, [activeChatUser?.uid]);
 
-  const { chatData, activeChatId } = useSubscription(
+  const { chatData, activeChatId } = useSubscription({
     user,
     teamId,
     channelId,
     chatUserId,
-    isChat
-  );
+    isChat,
+  });
 
   if (isUserLoading) return <div>Loading...</div>;
   if (isUserError || !user) return <div>Error loading user</div>;
@@ -122,7 +122,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
       return;
     }
     console.log(teamId);
-    
+
     setIsInCall(true);
     isChat || addCallStatusToTeam({ teamId, callStatus: true });
   }
@@ -161,7 +161,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
           </Box>
           {isBot ||
             <Flex direction="row" justify="flex-end">
-              {}
+              { }
               <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
                 <ModalOverlay />

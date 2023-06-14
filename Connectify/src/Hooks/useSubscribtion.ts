@@ -1,10 +1,27 @@
 import { useState, useEffect } from "react";
 import { onValue, ref } from "firebase/database";
 import { database } from "../config/firebaseConfig";
+import { User, Message } from "../types/interfaces";
 
-export const useSubscription = (user, teamId, channelId, chatUserId, isChat) => {
-  const [chatData, setChatData] = useState<any | null>(null);
-  const activeChatId = user && chatUserId ? [user.username, chatUserId].sort().join("-") : null;
+type UseSubscriptionProps = {
+  user: User | undefined;
+  teamId: string | undefined;
+  channelId: string | undefined;
+  chatUserId: string | undefined;
+  isChat: boolean;
+};
+
+export const useSubscription = ({
+  user,
+  teamId,
+  channelId,
+  chatUserId,
+  isChat,
+}: UseSubscriptionProps) => {
+  const [chatData, setChatData] = useState<Message[] | null>(null);
+  const activeChatId =
+    user && chatUserId ? [user.username, chatUserId].sort().join("-") : null;
+
 
   useEffect(() => {
     let chatRef;
@@ -24,4 +41,4 @@ export const useSubscription = (user, teamId, channelId, chatUserId, isChat) => 
   }, [activeChatId, teamId, channelId, isChat]);
 
   return { chatData, activeChatId };
-}
+};
