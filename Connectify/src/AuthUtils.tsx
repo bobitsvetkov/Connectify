@@ -1,6 +1,7 @@
 import { getAuth } from "@firebase/auth";
 import { useGetUserByIdQuery } from "./api/databaseApi";
 
+
 export const getCurrentUser = () => {
   const auth = getAuth();
   return auth.currentUser;
@@ -13,7 +14,9 @@ export const useCurrentUser = () => {
     data: user,
     isLoading: isUserLoading,
     isError: isUserError,
-  } = useGetUserByIdQuery(currentUser && currentUser.uid);
+  } = currentUser
+      ? useGetUserByIdQuery(currentUser.uid)
+      : { data: null, isLoading: false, isError: false };
 
   return { user, isUserLoading, isUserError };
 };
