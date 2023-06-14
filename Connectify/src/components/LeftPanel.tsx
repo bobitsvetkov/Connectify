@@ -7,7 +7,7 @@ import TeamsList from "./TeamList/TeamList";
 import ChannelList from "./ChannelList/ChannelList";
 import LatestChatsList from "./LatestChatsList/LatestChatsList";
 import { useColorModeValue } from "@chakra-ui/react";
-import { User } from "../api/databaseApi";
+import { Team, User } from "../types/interfaces";
 
 export const LeftPanel: React.FC = () => {
   const [view, setView] = useState("default");
@@ -15,7 +15,7 @@ export const LeftPanel: React.FC = () => {
   const [searchResults, setSearchResults] = useState<User[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [isTeamListOpen, setTeamListOpen] = useState(false);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
 
   const handleSearch = (data: User[]) => {
     setSearchResults(data);
@@ -60,7 +60,7 @@ export const LeftPanel: React.FC = () => {
       ) : (
           <Stack overflowY="auto" bg={colorMode}>
           {view === "chat" && isUserListOpen && (
-            <LatestChatsList setUserListOpen={setUserListOpen} />
+            <LatestChatsList />
           )}
           {view === "teams" && isTeamListOpen && (
             <Flex
@@ -69,7 +69,6 @@ export const LeftPanel: React.FC = () => {
                 bg={colorMode}
             >
               <TeamsList
-                setTeamListOpen={setTeamListOpen}
                 setSelectedTeam={setSelectedTeam}
                 selectedTeam={selectedTeam}
               />
