@@ -40,7 +40,7 @@ const AppRoutes = () => {
   const { loading, currentUser } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Or your preferred loading indicator
   }
 
   return (
@@ -49,11 +49,10 @@ const AppRoutes = () => {
         <Route
           path="/"
           element={
-            currentUser ? <Navigate to="/home" replace /> :
-              <LandingPage
-                welcomeText="Welcome to the Connectify"
-                detailsText="Please sign in or sign up"
-              />
+            <LandingPage
+              welcomeText="Welcome to the Connectify"
+              detailsText="Please sign in or sign up"
+            />
           }
         />
         {currentUser ? generateRoutes() : <Route path="*" element={<Navigate replace to="/" />} />}
@@ -62,6 +61,7 @@ const AppRoutes = () => {
     </Router>
   );
 };
+
 
 function generateRoutes() {
   return routes.map((route) => (
