@@ -38,6 +38,8 @@ export const LeftPanel: React.FC = () => {
     setSelectedTeam(null);
   };
 
+  const colorMode = useColorModeValue("#EDF3F5", "#3C4256");
+
   return (
     <Flex direction="column" w={["100%", "100%", "30%"]}>
       <Box>
@@ -56,7 +58,7 @@ export const LeftPanel: React.FC = () => {
           searchQuery={""}
         />
       ) : (
-        <Stack overflowY="auto" bg={useColorModeValue("#EDF3F5", "	#3C4256")}>
+          <Stack overflowY="auto" bg={colorMode}>
           {view === "chat" && isUserListOpen && (
             <LatestChatsList setUserListOpen={setUserListOpen} />
           )}
@@ -64,7 +66,7 @@ export const LeftPanel: React.FC = () => {
             <Flex
               direction="row"
               w="100%"
-              bg={useColorModeValue("#EDF3F5", "	#3C4256")}
+                bg={colorMode}
             >
               <TeamsList
                 setTeamListOpen={setTeamListOpen}
