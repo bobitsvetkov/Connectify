@@ -23,7 +23,7 @@ import {
   Avatar,
   Text,
 } from "@chakra-ui/react";
-import { useGetUserByIdQuery } from "../../api/databaseApi";
+import { useLazyGetUserByIdQuery } from "../../api/databaseApi";
 import {
   Accordion,
   AccordionItem,
@@ -38,24 +38,25 @@ import { database } from "../../config/firebaseConfig";
 export const UserSetting: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [newEmail, setNewEmail] = useState<string>("");
-  const [currentPasswordForEmail, setCurrentPasswordForEmail] =
-    useState<string>("");
-  const [currentPasswordForPassword, setCurrentPasswordForPassword] =
-    useState<string>("");
+  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState<string>("");
+  const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState<string>("");
 
   const [photoURL, setPhotoURL] = useState<string>("");
   const auth = getAuth();
 
   const currUser = auth.currentUser;
-  const { data: user } = useGetUserByIdQuery(currUser && currUser.uid);
+  const [getUserById, { data: user }] = useLazyGetUserByIdQuery();
 
   const [newPassword, setNewPassword] = useState<string>("");
   const [updatingEmail, setUpdatingEmail] = useState<boolean>(false);
   const [updatingPassword, setUpdatingPassword] = useState<boolean>(false);
 
-  const { data: currentUser, isSuccess } = useGetUserByIdQuery(
-    auth.currentUser?.uid || ""
-  );
+  useEffect(() => {
+    if (currUser?.uid) {
+      getUserById(currUser.uid);
+    }
+  }, [currUser?.uid, getUserById]);
+
 
   useEffect(() => {
     const photoURLRef = ref(database, `users/${currUser?.uid}/photoURL`);
@@ -133,7 +134,7 @@ export const UserSetting: React.FC = () => {
 
   return (
     <>
-      {currentUser ? (
+      {user ? (
         <Accordion allowToggle>
           <Flex direction="column" align="center" mt={8} mb={8}>
             <Avatar
@@ -179,7 +180,12 @@ export const UserSetting: React.FC = () => {
                     onChange={(e) => setCurrentPasswordForEmail(e.target.value)}
                   />
                 </FormControl>
-                <Button variant="ghost" onClick={handleUpdateEmail}>
+                <Button
+                  isLoading={updatingEmail}
+                  loadingText="Updating..."
+                  variant="ghost"
+                  onClick={handleUpdateEmail}
+                >
                   Update Email
                 </Button>
               </VStack>
