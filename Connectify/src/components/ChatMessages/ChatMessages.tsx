@@ -13,12 +13,7 @@ import { useState, useRef, useEffect } from "react";
 import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import DeleteMessage from "../ChatBox/Delete/DeleteMessage";
 import { Message } from "../../api/databaseApi";
-
-interface ChatData {
-  messages: {
-    [key: string]: Message;
-  };
-}
+import { ChatData } from "../../types/interfaces";
 interface ChatMessagesProps {
   chatData: ChatData | undefined;
   userId: string;

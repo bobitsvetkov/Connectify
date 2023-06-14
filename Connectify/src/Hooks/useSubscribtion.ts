@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { onValue, ref } from "firebase/database";
 import { database } from "../config/firebaseConfig";
-import { User, Message } from "../types/interfaces";
+import { User } from "../types/interfaces";
+import { ChatData } from "../types/interfaces";
 
 type UseSubscriptionProps = {
   user: User | undefined;
@@ -18,7 +19,7 @@ export const useSubscription = ({
   chatUserId,
   isChat,
 }: UseSubscriptionProps) => {
-  const [chatData, setChatData] = useState<Message[] | undefined>(undefined);
+  const [chatData, setChatData] = useState<ChatData | undefined>(undefined);
   const activeChatId =
     user && chatUserId ? [user.username, chatUserId].sort().join("-") : undefined;
 

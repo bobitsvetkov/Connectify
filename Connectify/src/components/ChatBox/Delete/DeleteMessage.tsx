@@ -20,7 +20,7 @@ type RemoveMessageParams = {
 };
 
 type DeleteMessageProps = {
-    chatId: string;
+    chatId: string | undefined;
     messageId: string;
     teamId?: string;
     isDeleting: boolean;

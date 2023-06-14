@@ -188,3 +188,9 @@ export interface Notification {
   teamId?: string | undefined;
   channelId?: string | undefined;
 }
+
+export interface ChatData {
+  messages: {
+    [key: string]: Message;
+  };
+}
