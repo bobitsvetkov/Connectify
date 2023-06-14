@@ -51,9 +51,12 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
     onOpen();
   };
 
+  console.log(chatData);
+  
+
   return (
     <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
-      {chatData && 
+      {chatData?.messages && 
         Object.values(chatData.messages)
         .filter((message: Message) => message.date !== undefined)
         .sort((a: Message, b: Message) => new Date(a.date ?? "").getTime() - new Date(b.date ?? "").getTime())
