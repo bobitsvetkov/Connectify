@@ -5,11 +5,7 @@ import {
   updatePassword,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import {
-  EmailAuthProvider,
-  reauthenticateWithCredential,
-  User as FirebaseUser,
-} from "firebase/auth";
+import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 
 import {
   VStack,
@@ -38,13 +34,16 @@ import { database } from "../../config/firebaseConfig";
 export const UserSetting: React.FC = () => {
   const [email, setEmail] = useState<string>("");
   const [newEmail, setNewEmail] = useState<string>("");
-  const [currentPasswordForEmail, setCurrentPasswordForEmail] = useState<string>("");
-  const [currentPasswordForPassword, setCurrentPasswordForPassword] = useState<string>("");
+  const [currentPasswordForEmail, setCurrentPasswordForEmail] =
+    useState<string>("");
+  const [currentPasswordForPassword, setCurrentPasswordForPassword] =
+    useState<string>("");
 
   const [photoURL, setPhotoURL] = useState<string>("");
   const auth = getAuth();
 
   const currUser = auth.currentUser;
+
   const [getUserById, { data: user }] = useLazyGetUserByIdQuery();
 
   const [newPassword, setNewPassword] = useState<string>("");
@@ -54,9 +53,18 @@ export const UserSetting: React.FC = () => {
   useEffect(() => {
     if (currUser?.uid) {
       getUserById(currUser.uid);
+      const userRef = ref(database, `users/${currUser.uid}`);
+      const unsubscribeDb = onValue(userRef, (snapshot) => {
+        const userData = snapshot.val();
+        if (userData) {
+          setEmail(userData.email);
+        }
+      });
+      return () => {
+        unsubscribeDb();
+      };
     }
-  }, [currUser?.uid, getUserById]);
-
+  }, [currUser, getUserById]);
 
   useEffect(() => {
     const photoURLRef = ref(database, `users/${currUser?.uid}/photoURL`);
@@ -78,48 +86,50 @@ export const UserSetting: React.FC = () => {
 
     setUpdatingEmail(true);
 
-    reauthenticateWithCredential(auth.currentUser as FirebaseUser, credential)
-      .then(() => {
-        updateEmail(auth.currentUser as FirebaseUser, newEmail)
-          .then(() => {
-            console.log("Email updated!");
-            setEmail(newEmail);
-            setNewEmail("");
-            sendEmailVerification(auth.currentUser as FirebaseUser)
-              .then(() => {
-                console.log("Email verification sent!");
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-            setUpdatingEmail(false);
-          })
-          .catch((error) => {
-            console.error(error);
-            setUpdatingEmail(false);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        setUpdatingEmail(false);
-      });
+    if (currUser) {
+      reauthenticateWithCredential(currUser, credential)
+        .then(() => {
+          updateEmail(currUser, newEmail)
+            .then(() => {
+              console.log("Email updated!");
+              setEmail(newEmail);
+              setNewEmail("");
+              sendEmailVerification(currUser)
+                .then(() => {
+                  console.log("Email verification sent!");
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+              setUpdatingEmail(false);
+            })
+            .catch((error) => {
+              console.error(error);
+              setUpdatingEmail(false);
+            });
+        })
+        .catch((error) => {
+          console.error(error);
+          setUpdatingEmail(false);
+        });
+    }
   };
 
   const handleUpdatePassword = () => {
     setUpdatingPassword(true);
-
-    updatePassword(auth.currentUser as FirebaseUser, newPassword)
-      .then(() => {
-        console.log("Password updated!");
-        setNewPassword("");
-        setUpdatingPassword(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        setUpdatingPassword(false);
-      });
+    if (currUser) {
+      updatePassword(currUser, newPassword)
+        .then(() => {
+          console.log("Password updated!");
+          setNewPassword("");
+          setUpdatingPassword(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setUpdatingPassword(false);
+        });
+    }
   };
-
   const handleResetPassword = () => {
     sendPasswordResetEmail(auth, email)
       .then(() => {
