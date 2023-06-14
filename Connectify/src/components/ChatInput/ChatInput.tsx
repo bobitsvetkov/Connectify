@@ -29,9 +29,6 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
   const toast = useToast();
 
 
-  if (!currUser || !user || !activeChatUser) {
-    return null;
-  }
 
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(
     currUser,
