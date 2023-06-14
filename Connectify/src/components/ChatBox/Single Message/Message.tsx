@@ -35,11 +35,11 @@ function SingleMessage({
 }: {
   message: Message;
   messageId: string;
-  chatId: string;
+  chatId: string | undefined;
   getStatusColor: (status: string) => string;
   isChat: boolean;
-  teamId: string;
-  channelId: string;
+  teamId: string | undefined;
+  channelId: string | undefined;
 }) {
   const currUser = useSelector((state: RootState) => state.activeUser.user);
   const [addReactionToMessage] = useAddReactionToMessageMutation();

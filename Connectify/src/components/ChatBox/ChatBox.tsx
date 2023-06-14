@@ -178,7 +178,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                 <ModalContent>
                   {/* <ModalCloseButton /> */}
                   <ModalBody>
-                    <CreateRoom onClose={onClose} teamId={teamId} isChat={isChat} />
+                    <CreateRoom onClose={onClose} />
                   </ModalBody>
                 </ModalContent>
               </Modal>
@@ -195,7 +195,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                     <ModalHeader>Create Room</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                      <CreateRoom onClose={onClose} teamId={teamId} isChat={isChat} />
+                      <CreateRoom onClose={onClose} />
                     </ModalBody>
                   </ModalContent>
                 </Modal>
