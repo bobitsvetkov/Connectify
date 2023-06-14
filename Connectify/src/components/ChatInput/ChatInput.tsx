@@ -1,6 +1,18 @@
 import { useState } from "react";
-import { Input, Button, HStack, useToast, Icon } from "@chakra-ui/react";
-import { useAddMessageToChatMutation, useAddMessageToChannelMutation, User } from "../../api/databaseApi";
+import {
+  Input,
+  Button,
+  HStack,
+  useToast,
+  Icon,
+  IconButton,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import {
+  useAddMessageToChatMutation,
+  useAddMessageToChannelMutation,
+  User,
+} from "../../api/databaseApi";
 import Emojis from "../ChatBox/Emojis/Emojis";
 import useVoiceMessages from "../../Hooks/useVoiceMessages";
 import { FaMicrophone, FaImage } from "react-icons/fa";
@@ -8,27 +20,41 @@ import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
-
 interface ChatInputProps {
-  currUser: User | null,
-  user: User,
-  chatUserId: string,
-  activeChatUser: User | null,
-  isChat: boolean,
-  teamId: string,
-  channelId: string,
-  isBot: boolean,
+  currUser: User | null;
+  user: User;
+  chatUserId: string;
+  activeChatUser: User | null;
+  isChat: boolean;
+  teamId: string;
+  channelId: string;
+  isBot: boolean;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activeChatUser, isChat, teamId, channelId, isBot }) => {
+const ChatInput: React.FC<ChatInputProps> = ({
+  currUser,
+  user,
+  chatUserId,
+  activeChatUser,
+  isChat,
+  teamId,
+  channelId,
+  isBot,
+}) => {
   const [message, setMessage] = useState<string>("");
   const [emojiPickerState, SetEmojiPickerState] = useState<boolean>(false);
-  const [messagesForAI, setMessagesForAI] = useState<Array<{ role: string, content: string }>>([{ "role": "system", "content": "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such." }]);
+  const [messagesForAI, setMessagesForAI] = useState<
+    Array<{ role: string; content: string }>
+  >([
+    {
+      role: "system",
+      content:
+        "You are Mimir, a wise being from Norse mythology. You're known for your wisdom, knowledge, and eloquence. Speak as such.",
+    },
+  ]);
   const [addMessageToChat] = useAddMessageToChatMutation();
   const [addMessageToChannel] = useAddMessageToChannelMutation();
   const toast = useToast();
-
-
 
   const { recording, handleStart, handleSendAudio } = useVoiceMessages(
     currUser,
@@ -56,7 +82,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
     setMessagesForAI,
     setMessage,
     addMessageToChat,
-    addMessageToChannel
+    addMessageToChannel,
   });
 
   const handleGifSelect = (gifUrl: string) => {
@@ -93,28 +119,24 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
             }}
             flexGrow={1}
           />
-          <Button
+          <IconButton
             onClick={() => handleSend(message)}
-            colorScheme="teal"
-          >
-            <Icon
-              as={BsFillSendFill}
-              boxSize={6}
-              style={{ fontSize: "24px" }}
-            />
-          </Button>
-          <Button
+            color={useColorModeValue("black", "white")}
+            bg={"#f57c73"}
+            _hover={{ bg: "#d84e45" }}
+            aria-label="Send Message"
+            icon={<Icon as={BsFillSendFill} boxSize={6} />}
+          />
+          <IconButton
             as="label"
             htmlFor="image-upload"
-            colorScheme="teal"
+            color={useColorModeValue("black", "white")}
+            bg={"#f57c73"}
             cursor="pointer"
-          >
-            <Icon
-              as={FaImage}
-              boxSize={6}
-              style={{ fontSize: "24px" }}
-            />
-          </Button>
+            aria-label="Upload Image"
+            icon={<Icon as={FaImage} boxSize={6} />}
+            _hover={{ bg: "#d84e45" }}
+          />
           <input
             id="image-upload"
             type="file"
@@ -147,9 +169,14 @@ const ChatInput: React.FC<ChatInputProps> = ({ currUser, user, chatUserId, activ
           </Button>
         </>
       )}
-      <Button onClick={handleStart} colorScheme="teal">
-        <Icon as={FaMicrophone} boxSize={6} style={{ fontSize: "24px" }} />
-      </Button>
+      <IconButton
+        onClick={handleStart}
+        color={useColorModeValue("black", "white")}
+        bg="#f57c73"
+        _hover={{ bg: "#d84e45" }}
+        aria-label="Start Recording"
+        icon={<Icon as={FaMicrophone} boxSize={6} />}
+      />
     </HStack>
   );
 };

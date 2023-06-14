@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Input,
   Button,
@@ -13,9 +13,10 @@ import {
   PopoverHeader,
   InputGroup,
   InputRightElement,
-} from '@chakra-ui/react';
-import { ImImages } from 'react-icons/im';
-import { CloseIcon } from '@chakra-ui/icons'; 
+  IconButton,
+} from "@chakra-ui/react";
+import { CloseIcon } from "@chakra-ui/icons";
+import { AiOutlineGif } from "react-icons/ai";
 
 interface Gif {
   id: string;
@@ -23,7 +24,7 @@ interface Gif {
   images: {
     fixed_height: {
       url: string;
-    }
+    };
   };
 }
 
@@ -33,19 +34,23 @@ type GiphyDropdownProps = {
 
 const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
   const [gifs, setGifs] = useState<Gif[]>([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const GIPHY_API_KEY = 'OvghlS9FP4Hqqyo8t5kKp2LeLufHyPct';
+  const GIPHY_API_KEY = "OvghlS9FP4Hqqyo8t5kKp2LeLufHyPct";
 
   const fetchTrendingGifs = () => {
-    fetch(`https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=12`)
+    fetch(
+      `https://api.giphy.com/v1/gifs/trending?api_key=${GIPHY_API_KEY}&limit=12`
+    )
       .then((res) => res.json())
       .then((data) => setGifs(data.data))
       .catch((err) => console.error(err));
   };
 
   const fetchSearchGifs = () => {
-    fetch(`https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${searchTerm}&limit=12`)
+    fetch(
+      `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=${searchTerm}&limit=12`
+    )
       .then((res) => res.json())
       .then((data) => setGifs(data.data))
       .catch((err) => console.error(err));
@@ -64,20 +69,22 @@ const GiphyDropdown: React.FC<GiphyDropdownProps> = ({ onGifSelect }) => {
   }, [searchTerm]);
 
   const handleReset = () => {
-    setSearchTerm(''); 
+    setSearchTerm("");
   };
 
   const handleGifClick = (gifUrl: string) => {
-    console.log('GIF clicked: ', gifUrl);
+    console.log("GIF clicked: ", gifUrl);
     onGifSelect(gifUrl);
   };
 
   return (
     <Popover>
       <PopoverTrigger>
-        <Button variant="ghost">
-          <ImImages />
-        </Button>
+        <IconButton
+          aria-label="gif picker"
+          variant={"ghost"}
+          icon={<AiOutlineGif size={25} />}
+        ></IconButton>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />
