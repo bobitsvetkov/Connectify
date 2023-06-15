@@ -68,7 +68,7 @@ const NotificationList = () => {
         />
       </Tooltip>
 
-      <MenuList maxH="400px" overflowY="auto">
+      <MenuList maxH="400px" overflowY="auto" zIndex={2}>
         {notifications.length > 0 ? (
           notifications.map((notification: Notification, index: number) => (
             <NotificationSingle key={index} notification={notification} />
