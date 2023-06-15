@@ -79,7 +79,12 @@ function SingleMessage({
 
     isChat
       ? await addReactionToMessage({ chatId, messageId, reaction })
-      : await addReactionToTeamMessage({ teamId, channelId, messageId, reaction });
+      : await addReactionToTeamMessage({
+          teamId,
+          channelId,
+          messageId,
+          reaction,
+        });
   };
 
   return (
@@ -108,9 +113,10 @@ function SingleMessage({
           rounded={"lg"}
           p={6}
           textAlign="left"
-          bg={message.user === (currUser?.uid || "") ? "teal.200" : "gray.200"}
+          bg={message.user === (currUser?.uid || "") ? "#4960d9" : "gray.200"}
           color="black"
           position="relative"
+          wordBreak="break-word"
         >
           <Flex
             direction="row"
@@ -180,12 +186,7 @@ function SingleMessage({
           mt="-1.5rem"
           zIndex={1}
         >
-          <Flex
-            border={"1px"}
-            borderRadius={"20px"}
-            bg={bgColor}
-            p={0.5}
-          >
+          <Flex border={"1px"} borderRadius={"20px"} bg={bgColor} p={0.5}>
             {Object.values(message.reactions).map((reaction) => (
               <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
                 {reaction.emoji}
