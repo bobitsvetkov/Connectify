@@ -3,7 +3,7 @@ import { CloseIcon, ArrowBackIcon } from "@chakra-ui/icons";
 import { useEffect, useState, useRef } from 'react';
 import { ref, onValue } from "firebase/database";
 import { getAuth } from "firebase/auth";
-import { useGetTeamByIdQuery, useDeleteTeamMemberMutation } from "../../api/databaseApi";
+import { useDeleteTeamMemberMutation, useLazyGetTeamByIdQuery } from "../../api/databaseApi";
 import SingleUser from "../LeftList/SingleUser";
 import { Text } from "@chakra-ui/react";
 import { database } from "../../config/firebaseConfig";
@@ -19,10 +19,10 @@ interface Members {
 
 function MemberList({ teamId }: MemberListProps) {
     const [members, setMembers] = useState<Members>({});
-    if (!teamId) {
-        return <div>No teamId provided</div>;
-    }
-    const { data: team, isLoading: isTeamLoading, isError: isError } = useGetTeamByIdQuery(teamId);
+    const [
+        trigger, { data: team, isLoading: isTeamLoading, isError: isError }
+    ] = useLazyGetTeamByIdQuery();
+
     const [deleteTeamMember] = useDeleteTeamMemberMutation();
 
     const { isOpen: isRemoveOpen, onOpen: onRemoveOpen, onClose: onRemoveClose } = useDisclosure();
@@ -31,19 +31,22 @@ function MemberList({ teamId }: MemberListProps) {
     const [selectedMember, setSelectedMember] = useState<string | null>(null);
 
     useEffect(() => {
-        const membersRef = ref(database, `teams/${teamId}/participants`);
+        if (teamId) {
+            trigger(teamId);
+            const membersRef = ref(database, `teams/${teamId}/participants`);
 
-        const handleValueChange = (snapshot: DataSnapshot) => {
-            const membersObject: Members = snapshot.val() || {};
-            setMembers(membersObject);
-        };
+            const handleValueChange = (snapshot: DataSnapshot) => {
+                const membersObject: Members = snapshot.val() || {};
+                setMembers(membersObject);
+            };
 
-        const unsubscribe = onValue(membersRef, handleValueChange);
+            const unsubscribe = onValue(membersRef, handleValueChange);
 
-        return () => {
-            unsubscribe();
-        };
-    }, [teamId]);
+            return () => {
+                unsubscribe();
+            };
+        }
+    }, [teamId, trigger]);
 
     const currUserUid = getAuth().currentUser?.uid;
     const isOwner = team?.owner === currUserUid;
