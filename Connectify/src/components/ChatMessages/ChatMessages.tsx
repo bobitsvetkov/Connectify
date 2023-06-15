@@ -53,8 +53,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
     onOpen();
   };
 
-  console.log(chatData);
-
   return (
     <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
       {chatData?.messages &&

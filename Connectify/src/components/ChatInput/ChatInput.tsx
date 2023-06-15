@@ -20,7 +20,7 @@ import { BsFillSendFill } from "react-icons/bs";
 import GiphyDropdown from "../Gifs/Gifs";
 import { useHandleSend } from "../../Hooks/useHandleSend";
 import uploadImage from "../Upload Files/Upload Image/UploadImage";
-import { User as FirebaseUser } from 'firebase/auth';
+import { User as FirebaseUser } from "firebase/auth";
 
 interface ChatInputProps {
   currUser: FirebaseUser | null;
@@ -99,7 +99,6 @@ const ChatInput: React.FC<ChatInputProps> = ({
       handleSend(url, true);
     }
   };
-console.log(teamId);
 
   return (
     <HStack width="100%" spacing={4}>
