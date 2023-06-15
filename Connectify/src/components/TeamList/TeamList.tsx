@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, useDisclosure, useColorModeValue } from "@chakra-ui/react";
 import { useGetUserByIdQuery } from "../../api/databaseApi";
 import { getAuth } from "firebase/auth";
 import SingleTeam from "../SingleTeam/SingleTeam";
@@ -23,6 +23,9 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   } = useGetUserByIdQuery(currUser?.uid || "");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [teamsData, setTeamsData] = useState<Team[]>([]);
+  // Color Mode Values
+  const bgColor = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
 
   useEffect(() => {
     const teamsRef = ref(database, "teams/");
@@ -50,34 +53,34 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
     setSelectedTeam(team);
   };
 
+
   return (
     <Box
-      bg="white"
+      bg={bgColor}
       h="82.5vh"
       p={4}
       shadow="md"
       borderRight="1px"
-      borderColor="gray.200"
+      borderColor={borderColor}
+      overflowY="auto"
     >
-      <Box overflowY="auto">
-        {user &&
-          teamsData &&
-          Object.values(teamsData).length &&
-          Object.values(teamsData).map((team: Team) => {
-            const isInTeam = user.uid in team.participants;
-            return (
-              isInTeam &&
-              user && (
-                <SingleTeam
-                  key={team.uid}
-                  team={team}
-                  onTeamClick={handleTeamClick}
-                  isSelected={selectedTeam === team}
-                />
-              )
-            );
-          })}
-      </Box>
+      {user &&
+        teamsData &&
+        Object.values(teamsData).length &&
+        Object.values(teamsData).map((team: Team) => {
+          const isInTeam = user.uid in team.participants;
+          return (
+            isInTeam &&
+            user && (
+              <SingleTeam
+                key={team.uid}
+                team={team}
+                onTeamClick={handleTeamClick}
+                isSelected={selectedTeam === team}
+              />
+            )
+          );
+        })}
       <Button size="lg" colorScheme="teal" onClick={onOpen} mt={3}>+</Button>
       <CreateTeamModal isOpen={isOpen} onClose={onClose} />
     </Box>
