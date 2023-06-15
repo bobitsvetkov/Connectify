@@ -26,6 +26,7 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { getAuth } from "firebase/auth";
 import { onValue, ref } from "firebase/database";
@@ -142,6 +143,8 @@ export const UserSetting: React.FC = () => {
       });
   };
 
+  const textColor = useColorModeValue("#41525d", "black");
+  const textColorInput = useColorModeValue("gray.500", "gray.500");
   return (
     <>
       {user ? (
@@ -170,11 +173,12 @@ export const UserSetting: React.FC = () => {
                 <AccordionIcon />
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4}>
+            <AccordionPanel pb={4} color={textColor}>
               <VStack spacing={4}>
                 <FormControl id="newEmail">
                   <FormLabel>New Email</FormLabel>
                   <Input
+                    color={textColorInput}
                     type="text"
                     placeholder="New email"
                     value={newEmail}
@@ -184,6 +188,7 @@ export const UserSetting: React.FC = () => {
                 <FormControl id="currentPasswordForEmail">
                   <FormLabel>Current Password</FormLabel>
                   <Input
+                    color={textColorInput}
                     type="password"
                     placeholder="Current password"
                     value={currentPasswordForEmail}
@@ -211,11 +216,12 @@ export const UserSetting: React.FC = () => {
                 <AccordionIcon />
               </AccordionButton>
             </h2>
-            <AccordionPanel pb={4}>
+            <AccordionPanel pb={4} color={textColor}>
               <VStack spacing={4}>
                 <FormControl id="newPassword">
                   <FormLabel>New Password</FormLabel>
                   <Input
+                    color={textColorInput}
                     type="password"
                     placeholder="New password"
                     value={newPassword}
@@ -225,6 +231,7 @@ export const UserSetting: React.FC = () => {
                 <FormControl id="currentPasswordForPassword">
                   <FormLabel>Current Password</FormLabel>
                   <Input
+                    color={textColorInput}
                     type="password"
                     placeholder="Current password"
                     value={currentPasswordForPassword}
