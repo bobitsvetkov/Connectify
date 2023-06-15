@@ -21,7 +21,12 @@ import {
 import { useParams } from "react-router-dom";
 import { RootState } from "../../store";
 import { getAuth } from "firebase/auth";
-import { useGetUserByIdQuery, useAddCallStatusToTeamMutation, useLazyGetTeamCallStatusQuery } from "../../api/databaseApi";
+import {
+  useGetUserByIdQuery,
+  useAddCallStatusToTeamMutation,
+  useLazyGetTeamCallStatusQuery,
+  useGetChannelByIdQuery
+} from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
 import ChatInput from "../ChatInput/ChatInput";
@@ -33,7 +38,7 @@ import MemberList from "../MemberList/MemberList";
 import { ref, onValue } from "@firebase/database";
 import { database } from "../../config/firebaseConfig";
 
-import { FaVideo } from 'react-icons/fa';
+import { FaVideo } from "react-icons/fa";
 
 type ChatBoxProps = {
   chatType: "individual" | "team";
@@ -47,7 +52,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const currUser = auth.currentUser;
 
   if (!currUser) {
-    throw new Error('Current user is null');
+    throw new Error("Current user is null");
   }
   const {
     data: user,
@@ -55,24 +60,21 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
-  const { teamId, channelId, chatUserId } = useParams();
-  const [executeGetTeamCallStatusQuery, { data: isMeetingActive}] = useLazyGetTeamCallStatusQuery();
+  const { teamId = "", channelId = "", chatUserId } = useParams();
+  const { data: channel = {} as any } = useGetChannelByIdQuery({teamId: teamId, channelId: channelId});
+  const [executeGetTeamCallStatusQuery, { data: isMeetingActive }] =
+    useLazyGetTeamCallStatusQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [addCallStatusToTeam] = useAddCallStatusToTeamMutation();
   const isChat = chatType === "individual" ? true : false;
-  const isBot = chatUserId === 'mimir' ? true : false;
-  
-  
- 
-  useEffect(() => {
+  const isBot = chatUserId === "mimir" ? true : false;
 
-    if(teamId){
+  useEffect(() => {
+    if (teamId) {
       executeGetTeamCallStatusQuery(teamId);
     }
   }, [teamId, executeGetTeamCallStatusQuery]);
-
-  console.log(teamId);
 
   useEffect(() => {
     if (chatType === "individual" && showMembers) {
@@ -132,16 +134,13 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const handleVideoChatClick = () => {
     onOpen();
     if (isMeetingActive) {
-      // If a meeting is already active, don't start a new one
       return;
     }
-
 
     if (teamId) {
       addCallStatusToTeam({ teamId, callStatus: true });
     }
-  }
-
+  };
 
   return (
     <Flex height="100%" width="100%" borderWidth={1} bg={bg} boxShadow="xl">
@@ -173,7 +172,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
               )}
             </Box>
           </Box>
-          {isBot ||
+          {isChat && !isBot && (
             <Flex direction="row" justify="flex-end">
               <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
@@ -186,13 +185,14 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
                 </ModalContent>
               </Modal>
             </Flex>
-          }
+          )}
           {isChat || (
             <>
+            <Text fontSize="2xl">#{channel?.name || 'Unknown Channel'}</Text>
               <Spacer />
               <Flex direction="row" alignItems="center">
                 <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
-                <Modal isOpen={isOpen} onClose={onClose} size="6xl" >
+                <Modal isOpen={isOpen} onClose={onClose} size="6xl">
                   <ModalOverlay />
                   <ModalContent>
                     <ModalHeader>Create Room</ModalHeader>

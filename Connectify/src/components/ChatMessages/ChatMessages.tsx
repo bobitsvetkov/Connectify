@@ -6,7 +6,8 @@ import {
   ModalContent,
   ModalBody,
   useDisclosure,
-  Button,
+  Flex,
+  IconButton,
 } from "@chakra-ui/react";
 import SingleMessage from "../ChatBox/Single Message/Message";
 import { useState, useRef, useEffect } from "react";
@@ -14,6 +15,7 @@ import VoiceMessage from "../ChatBox/Voice Message/voiceMessage";
 import DeleteMessage from "../ChatBox/Delete/DeleteMessage";
 import { Message } from "../../api/databaseApi";
 import { ChatData } from "../../types/interfaces";
+import { TiDeleteOutline } from "react-icons/ti";
 interface ChatMessagesProps {
   chatData: ChatData | undefined;
   userId: string;
@@ -41,8 +43,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const scrollToBottom = () => {
-    if (messagesEndRef.current){
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
   useEffect(scrollToBottom, [chatData]);
@@ -53,10 +55,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 
   return (
     <Box flexGrow={1} overflowY="auto" width="100%" overflowX="hidden">
-      {chatData && 
+      {chatData?.messages &&
         Object.values(chatData.messages)
-        .filter((message: Message) => message.date !== undefined)
-        .sort((a: Message, b: Message) => new Date(a.date ?? "").getTime() - new Date(b.date ?? "").getTime())
+          .filter((message: Message) => message.date !== undefined)
+          .sort(
+            (a: Message, b: Message) =>
+              new Date(a.date ?? "").getTime() -
+              new Date(b.date ?? "").getTime()
+          )
           .map((message) => (
             <Box
               key={message.uid}
@@ -68,58 +74,82 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
               marginBottom="1rem"
             >
               {message.type === "audio" ? (
-                <div>
-                  <VoiceMessage url={message.content} />
-                  <Button onClick={() => setIsDeleting(true)}>
+                <Flex direction="column" align="flex-end">
+                  <IconButton
+                    aria-label="Delete Voice message"
+                    size={"xxs"}
+                    mr={1}
+                    as={TiDeleteOutline}
+                    onClick={() => setIsDeleting(true)}
+                  >
                     Delete Audio
-                  </Button>
-                  <DeleteMessage
-                    chatId={activeChatId}
-                    messageId={message.uid}
-                    teamId={teamId}
-                    isDeleting={isDeleting}
-                    setIsDeleting={setIsDeleting}
-                    message={message}
-                  />
-                </div>
+                  </IconButton>
+
+                  <Box>
+                    <VoiceMessage url={message.content} />
+                    <DeleteMessage
+                      chatId={activeChatId}
+                      messageId={message.uid}
+                      teamId={teamId}
+                      isDeleting={isDeleting}
+                      setIsDeleting={setIsDeleting}
+                      message={message}
+                    />
+                  </Box>
+                </Flex>
               ) : message.type === "gif" ? (
-                <div>
-                  <Image src={message.content} alt="GIF" />
-                  <Button onClick={() => setIsDeleting(true)}>
+                <Flex direction="column" align="flex-end">
+                  <IconButton
+                    aria-label="Delete Gif"
+                    as={TiDeleteOutline}
+                    onClick={() => setIsDeleting(true)}
+                    size={"xxs"}
+                  >
                     Delete GIF
-                  </Button>
-                  <DeleteMessage
-                    chatId={activeChatId}
-                    messageId={message.uid}
-                    teamId={teamId}
-                    isDeleting={isDeleting}
-                    setIsDeleting={setIsDeleting}
-                    message={message}
-                  />
-                </div>
+                  </IconButton>
+                  <Box>
+                    <Image src={message.content} alt="GIF" />
+
+                    <DeleteMessage
+                      chatId={activeChatId}
+                      messageId={message.uid}
+                      teamId={teamId}
+                      isDeleting={isDeleting}
+                      setIsDeleting={setIsDeleting}
+                      message={message}
+                    />
+                  </Box>
+                </Flex>
               ) : message.type === "image" ? (
-                <div>
-                  <Image
-                    src={message.content}
-                    alt="Uploaded content"
-                    maxW="300px"
-                    cursor="pointer"
-                    onClick={() => handleImageClick(message.content)}
-                  />
-                  <Button onClick={() => setIsDeleting(true)}>
+                <Flex direction="column" align="flex-end">
+                  <IconButton
+                    aria-label="Delete Image"
+                    as={TiDeleteOutline}
+                    onClick={() => setIsDeleting(true)}
+                    size={"xxs"}
+                  >
                     Delete Image
-                  </Button>
-                  <DeleteMessage
-                    chatId={activeChatId}
-                    messageId={message.uid}
-                    teamId={teamId}
-                    isDeleting={isDeleting}
-                    setIsDeleting={setIsDeleting}
-                    message={message}
-                  />
-                </div>
+                  </IconButton>
+                  <Box>
+                    <Image
+                      src={message.content}
+                      alt="Uploaded content"
+                      maxW="300px"
+                      cursor="pointer"
+                      onClick={() => handleImageClick(message.content)}
+                    />
+                    <DeleteMessage
+                      chatId={activeChatId}
+                      messageId={message.uid}
+                      teamId={teamId}
+                      isDeleting={isDeleting}
+                      setIsDeleting={setIsDeleting}
+                      message={message}
+                    />
+                  </Box>
+                </Flex>
               ) : (
-                  <SingleMessage
+                <SingleMessage
                   key={message.uid}
                   message={message}
                   messageId={message.uid}

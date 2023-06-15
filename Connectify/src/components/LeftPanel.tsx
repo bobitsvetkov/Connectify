@@ -10,7 +10,7 @@ import { useColorModeValue } from "@chakra-ui/react";
 import { Team, User } from "../types/interfaces";
 
 export const LeftPanel: React.FC = () => {
-  const [view, setView] = useState("default");
+  const [view, setView] = useState("chat");
   const [isUserListOpen, setUserListOpen] = useState(true);
   const [searchResults, setSearchResults] = useState<User[] | null>(null);
   const [isSearching, setIsSearching] = useState(false);

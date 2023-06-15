@@ -1,7 +1,19 @@
-import { Menu, MenuButton, MenuList, MenuItem, MenuDivider, IconButton, Box, Tooltip, useColorModeValue, Text, Center } from "@chakra-ui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  IconButton,
+  Box,
+  Tooltip,
+  useColorModeValue,
+  Text,
+  Center,
+} from "@chakra-ui/react";
 import { AiOutlineBell } from "react-icons/ai";
 import { getAuth } from "firebase/auth";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import NotificationSingle from "../NotificationSingle/NotificationSingle";
 import { database } from "../../config/firebaseConfig";
 import { ref, onValue, DataSnapshot } from "firebase/database";
@@ -14,17 +26,25 @@ const NotificationList = () => {
   const [deleteNotifications] = useDeleteUserNotificationsMutation();
 
   useEffect(() => {
-    if(currUserUid){
-      const notificationsRef = ref(database, `users/${currUserUid}/notifications`);
-  
+    if (currUserUid) {
+      const notificationsRef = ref(
+        database,
+        `users/${currUserUid}/notifications`
+      );
+
       const handleValueChange = (snapshot: DataSnapshot) => {
-        const notificationsArray: Notification[] = Object.values(snapshot.val() || {}).map(notification => notification as Notification);
-        notificationsArray.sort((a: Notification, b: Notification) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        const notificationsArray: Notification[] = Object.values(
+          snapshot.val() || {}
+        ).map((notification) => notification as Notification);
+        notificationsArray.sort(
+          (a: Notification, b: Notification) =>
+            new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
         setNotifications(notificationsArray);
       };
-    
+
       const unsubscribe = onValue(notificationsRef, handleValueChange);
-    
+
       return () => {
         unsubscribe();
       };
@@ -38,22 +58,34 @@ const NotificationList = () => {
           aria-label="Notifications"
           icon={
             <Center>
-              <Box color={useColorModeValue("black", "white")} as={AiOutlineBell} />
+              <Box
+                color={useColorModeValue("black", "white")}
+                as={AiOutlineBell}
+              />
             </Center>
           }
           as={MenuButton}
         />
       </Tooltip>
-      <MenuList>
+
+      <MenuList maxH="400px" overflowY="auto" zIndex={2}>
         {notifications.length > 0 ? (
           notifications.map((notification: Notification, index: number) => (
             <NotificationSingle key={index} notification={notification} />
           ))
         ) : (
-          <Text px={4} py={2}>No notifications</Text>
+          <Text px={4} py={2}>
+            No notifications
+          </Text>
         )}
         <MenuDivider />
-        {currUserUid && <MenuItem onClick={() => deleteNotifications({ userUid: currUserUid })}>Delete all notifications</MenuItem>}
+        {currUserUid && (
+          <MenuItem
+            onClick={() => deleteNotifications({ userUid: currUserUid })}
+          >
+            Delete all notifications
+          </MenuItem>
+        )}
       </MenuList>
     </Menu>
   );

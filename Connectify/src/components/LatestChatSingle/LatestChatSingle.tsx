@@ -1,4 +1,4 @@
-import { HStack, VStack, Text, Box, Spacer } from "@chakra-ui/layout";
+import { HStack, VStack, Text, Box, Spacer, Divider } from "@chakra-ui/layout";
 import {
   useLazyGetUserByIdQuery,
   useLazyGetChannelByIdQuery,
@@ -16,7 +16,7 @@ interface LatestChatSingleProps {
   handleChannelClick: (teamId: string, channelId: string) => void;
 }
 
-const LatestChatSingle = ({
+const LatestChatSingle = ({ 
   chat,
   handleChatClick,
   handleChannelClick,
@@ -134,6 +134,7 @@ const LatestChatSingle = ({
           </HStack>
         </VStack>
       </HStack>
+      <Divider mb={2}/>
     </Box>
   ) : (
     <Box
@@ -158,6 +159,7 @@ const LatestChatSingle = ({
           </HStack>
         </VStack>
       </HStack>
+      <Divider mb={2}/>
     </Box>
   );
 };

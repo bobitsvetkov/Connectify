@@ -33,14 +33,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
   };
 
   return (
-    <HStack
-      spacing={2}
-      px="4"
-      py="2"
-      borderBottom="1px"
-      borderColor="#e2e8f0"
-      {...props}
-    >
+    <HStack spacing={2} px="4" py="2" borderColor="#e2e8f0" {...props}>
       <InputGroup>
         <InputLeftElement
           pointerEvents="none"

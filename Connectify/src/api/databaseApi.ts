@@ -216,6 +216,20 @@ export const teamsApi = baseApi.injectEndpoints({
         body: callStatus,
       }),
     }),
+    deleteTeam: builder.mutation<void, string>({
+      query: (teamId) => ({
+        url: `teams/${teamId}`,
+        method: "set",
+        body: null,
+      }),
+    }),
+    deleteChannel: builder.mutation<void, { teamId: string, channelId: string }>({
+      query: ({ teamId, channelId }) => ({
+        url: `teams/${teamId}/channels/${channelId}`,
+        method: "set",
+        body: null,
+      }),
+    }),
 
   }),
 });
@@ -300,7 +314,7 @@ export const {
 } = chatsApi;
 
 export const {
-  useGetTeamsQuery, useLazyGetTeamByIdQuery, useLazyGetChannelByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation
+  useGetTeamsQuery, useLazyGetTeamByIdQuery, useLazyGetChannelByIdQuery, useCreateTeamMutation, useAddMessageToChannelMutation, useGetChannelMessagesQuery, useCreateChannelMutation, useGetTeamByIdQuery, useAddUserToTeamMutation, useGetChannelByIdQuery, useAddReactionToTeamMessageMutation, useAddCallStatusToTeamMutation, useGetTeamCallStatusQuery,useLazyGetTeamCallStatusQuery ,useDeleteTeamMemberMutation, useDeleteChannelMutation, useDeleteTeamMutation
 } = teamsApi;
 
 export const {
