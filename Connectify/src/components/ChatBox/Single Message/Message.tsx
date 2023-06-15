@@ -14,6 +14,8 @@ import {
   MenuItem,
   IconButton,
   useColorModeValue,
+  Spacer,
+  HStack
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
 import DeleteMessage from "../Delete/DeleteMessage";
@@ -24,6 +26,7 @@ import { getAuth } from "@firebase/auth";
 import { AvatarBadge } from "@chakra-ui/react";
 import { useAddReactionToTeamMessageMutation } from "../../../api/databaseApi";
 import { Message } from "../../../api/databaseApi";
+
 function SingleMessage({
   message,
   messageId,
@@ -104,8 +107,8 @@ function SingleMessage({
   };
 
   return (
-    <VStack align="flex-start" spacing={4}>
-      <Flex align="center">
+    <VStack align="flex-start" spacing={2}>
+      <Flex align="center" direction={message.user === currUserUid ? "row-reverse" : "row"}>
         {message.user !== currUserUid && (
           <Avatar
             size="sm"
@@ -122,96 +125,119 @@ function SingleMessage({
           </Avatar>
         )}
 
-        <Box
-          maxW={"lg"}
-          w={"full"}
-          boxShadow={"2xl"}
-          rounded={"lg"}
-          p={6}
-          textAlign="left"
-          bg={message.user === (currUser?.uid || "") ? "#4960d9" : "gray.200"}
-          color="black"
-          position="relative"
-          wordBreak="break-word"
-        >
+        <Flex direction="column" w="100%">
           <Flex
-            direction="row"
-            justify="flex-end"
-            position="absolute"
-            top={2}
-            right={2}
-            zIndex={2}
+            direction={message.user === currUserUid ? "row-reverse" : "row"}
+            align="flex-start"
+            width="100%"
           >
-            {currUserUid === message.user && (
-              <Menu>
-                <MenuButton
-                  as={IconButton}
-                  icon={<HamburgerIcon />}
-                  variant="unstyled"
-                  size="xs"
-                />
-                <MenuList>
-                  <MenuItem onClick={() => setIsDeleting(true)}>
-                    Delete Message
-                  </MenuItem>
-                  <MenuItem onClick={() => setIsEditing(true)}>
-                    Edit Message
-                  </MenuItem>
-                </MenuList>
-              </Menu>
-            )}
+            <HStack>
+              {currUserUid === message.user && (
+                <Menu>
+                  <MenuButton
+                    as={IconButton}
+                    icon={<HamburgerIcon />}
+                    variant="unstyled"
+                    size="xs"
+                    ml={2}
+                  />
+                  <MenuList>
+                    <MenuItem onClick={() => setIsDeleting(true)}>Delete Message</MenuItem>
+                    <MenuItem onClick={() => setIsEditing(true)}>Edit Message</MenuItem>
+                  </MenuList>
+                </Menu>
+              )}
+
+              <EmojiReactions messageId={messageId} addReaction={addReaction} />
+            </HStack>
           </Flex>
-          <Flex
-            direction="row"
-            justify="flex-end"
-            position="absolute"
-            bottom={2}
-            right={2}
-          >
-            <EmojiReactions messageId={messageId} addReaction={addReaction} />
-          </Flex>
-          <DeleteMessage
-            chatId={chatId}
-            messageId={messageId}
-            isDeleting={isDeleting}
-            setIsDeleting={setIsDeleting}
-            message={message}
-          />
-          <EditMessage
-            chatId={chatId}
-            messageId={messageId}
-            initialMessageContent={message.content}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-          />
-          <Text>{message.content}</Text>
-          <Text fontSize="sm" mt={2}>
-            {message.date &&
-              new Date(message.date).toLocaleTimeString(undefined, {
-                hour: "numeric",
-                minute: "numeric",
-              })}
-          </Text>
-        </Box>
+          {currUserUid !== message.user ? (
+            <HStack spacing={4} alignItems="center">
+            <Box
+              maxWidth={"lg"}
+              minWidth={"20%"}
+              w={"fit-content"}
+              boxShadow={"2xl"}
+              rounded={"3xl"}
+              p={3}
+              textAlign="left"
+              bg={message.user === (currUser?.uid || "") ? "#4960d9" : "gray.200"}
+              color="black"
+              wordBreak="break-word"
+            >
+              <Text>{message.content}</Text>
+            </Box>
+            <Text fontSize="sm">
+              {message.date &&
+                new Date(message.date).toLocaleTimeString(undefined, {
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+            </Text>
+          </HStack>
+          ) : (
+            <HStack spacing={4} alignItems="center">
+            <Text fontSize="sm">
+              {message.date &&
+                new Date(message.date).toLocaleTimeString(undefined, {
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
+            </Text>
+            <Box
+              maxWidth={"lg"}
+              minWidth={"20%"}
+              w={"fit-content"}
+              boxShadow={"2xl"}
+              rounded={"3xl"}
+              p={3}
+              textAlign="left"
+              bg={message.user === (currUser?.uid || "") ? "#4960d9" : "gray.200"}
+              color="black"
+              wordBreak="break-word"
+            >
+              <Text>{message.content}</Text>
+            </Box>
+          </HStack>
+          ) }
+        </Flex>
       </Flex>
+
       {message.reactions && (
-        <Box
-          alignContent={"center"}
-          position="relative"
-          alignSelf="flex-start"
-          mt="-1.5rem"
-          zIndex={1}
-        >
-          <Flex border={"1px"} borderRadius={"20px"} bg={bgColor} p={0.5}>
-            {Object.values(message.reactions).map((reaction) => (
-              <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
-                {reaction.emoji}
-              </span>
-            ))}
-            <Text fontSize={"13"}>{`${reactionCount}`}</Text>
-          </Flex>
-        </Box>
+        <>
+          <Box
+            alignContent={"center"}
+            position="relative"
+            alignSelf={message.user === currUserUid ? "flex-end" : "flex-start"}
+            // zIndex={1}
+          >
+            <Flex border={"1px"} borderRadius={"20px"} bg={bgColor} p={0.5}>
+              {Object.values(message.reactions).map((reaction) => (
+                <span key={reaction.uid} style={{ marginRight: "0.5rem" }}>
+                  {reaction.emoji}
+                </span>
+              ))}
+              <Text fontSize={"13"}>{`${reactionCount}`}</Text>
+            </Flex>
+          </Box>
+        </>
       )}
+
+      <DeleteMessage
+        chatId={chatId}
+        messageId={messageId}
+        isDeleting={isDeleting}
+        setIsDeleting={setIsDeleting}
+        message={message}
+      />
+
+      <EditMessage
+        chatId={chatId}
+        messageId={messageId}
+        initialMessageContent={message.content}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+      />
     </VStack>
   );
 }
