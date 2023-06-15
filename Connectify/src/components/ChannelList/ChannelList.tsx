@@ -3,7 +3,7 @@ import { useCreateChannelMutation } from '../../api/databaseApi';
 import { v4 as uuidv4 } from "uuid";
 import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
-import { Box, Flex, Input, IconButton, HStack } from "@chakra-ui/react";
+import { Box, Flex, Input, IconButton, HStack, Text } from "@chakra-ui/react";
 import { AddIcon, CheckIcon } from "@chakra-ui/icons";
 import { useNavigate } from 'react-router-dom';
 import { Team, Channel } from '../../types/interfaces';
@@ -63,6 +63,7 @@ function ChannelList({ team }: { team: Team }) {
 
     return (
         <Box>
+            <Text fontSize="xl" p="1rem">Channels</Text>
             <Flex justify="space-between" align="center" p="1rem" borderBottom="1px solid #EEE">
                 <HStack>
                     <IconButton
@@ -95,24 +96,28 @@ function ChannelList({ team }: { team: Team }) {
                 </HStack>
             </Flex>
             <Box>
-                {Object.values(channelsData || {}).map((channel: Channel, index: number) => (
-                    <Box
-                        key={index}
-                        onClick={() => handleChannelClick(channel)}
-                        cursor="pointer"
-                        p="0.5rem 1rem"
-                        fontWeight={channel.uid === currentChannelId ? "bold" : "normal"}
-                        _hover={{
-                            backgroundColor: "#f5f6f6",
-                            fontWeight: "bold"
-                        }}
-                    >
-                        #{channel.name}
-                    </Box>
-                ))}
+                {
+                    Object.values(channelsData || {}).length > 0 ?
+                        Object.values(channelsData || {}).map((channel: Channel, index: number) => (
+                            <Box
+                                key={index}
+                                onClick={() => handleChannelClick(channel)}
+                                cursor="pointer"
+                                p="0.5rem 1rem"
+                                fontWeight={channel.uid === currentChannelId ? "bold" : "normal"}
+                                _hover={{
+                                    backgroundColor: "#f5f6f6",
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                #{channel.name}
+                            </Box>
+                        ))
+                        :
+                        <Text ml={7}>No channels found in {team.name}</Text>
+                }
             </Box>
         </Box>
     );
 }
-
 export default ChannelList;
