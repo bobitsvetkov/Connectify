@@ -83,6 +83,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                     .filter((team) => team.owner === currUser?.uid)
                     .map((team) => (
                       <MenuItem
+                        key={team.uid}
                         onClick={() => handleAddToTeam(user.uid, team.uid)}
                       >
                         {team.name}
