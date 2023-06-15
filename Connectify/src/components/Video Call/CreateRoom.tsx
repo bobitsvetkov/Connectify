@@ -10,7 +10,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ onClose }) => {
   const rtcProps = {
     appId: '1d9b4d5e8c224e6895d2904de8db2e39',
     channel: 'test',
-    token: '007eJxTYLCXFF2W9E3N9Vv8iV97SjOdxavetCs/fcsnXeL0QLom2l6BISUxOdE4Jc3MNDUtzSTJ3DgxMdXIzMww0dAyOTXVyDx1lklXSkMgI4O3TzQzIwMEgvgsDCWpxSUMDAAt0B7v',
+    token: '007eJxTYBBt+yu8bp53l9DZc3PEz523fnz32xets3O47kfKTlwrMllcgSElMTnROCXNzDQ1Lc0kydw4MTHVyMzMMNHQMjk11cg89W9nd0pDICPDvOIgVkYGCATxWRhKUotLGBgA7/giBA==',
   };
 
   const callbacks = {
