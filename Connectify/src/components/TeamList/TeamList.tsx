@@ -95,7 +95,7 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
         w="100%"
         variant="outline"
         _hover={{
-          bg: "#f57c73",
+          bg: "#4960d9",
           color: "white"
         }}
       >
