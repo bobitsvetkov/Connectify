@@ -8,7 +8,7 @@ const useToastHandler = () => {
             title: title,
             description: description,
             status: status,
-            duration: 9000,
+            duration: 3000,
             isClosable: true,
             position: "top",
         });
