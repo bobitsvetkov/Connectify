@@ -23,7 +23,7 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   } = useGetUserByIdQuery(currUser?.uid || "");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [teamsData, setTeamsData] = useState<Team[]>([]);
-  // Color Mode Values
+
   const bgColor = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
@@ -77,6 +77,7 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
                   team={team}
                   onTeamClick={handleTeamClick}
                   isSelected={selectedTeam === team}
+                  userId={user.uid}
                 />
               )
             );

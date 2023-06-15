@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCreateChannelMutation } from '../../api/databaseApi';
+import { useCreateChannelMutation, useDeleteChannelMutation } from '../../api/databaseApi';
 import { v4 as uuidv4 } from "uuid";
 import { ref, onValue, DataSnapshot } from "firebase/database";
 import { database } from '../../config/firebaseConfig';
