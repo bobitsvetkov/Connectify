@@ -148,7 +148,7 @@ function ChannelList({ team }: { team: Team }) {
                             </HStack>
                         ))
                         :
-                        <Text ml={7} color={colorMode === 'light' ? 'black' : 'white'}>No channels found in {team.name}</Text>
+                        <Text ml={3} color={colorMode === 'light' ? 'black' : 'white'}>No channels found</Text>
                 }
             </Box>
 

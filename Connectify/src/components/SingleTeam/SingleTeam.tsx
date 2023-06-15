@@ -4,6 +4,7 @@ import { Menu, MenuButton, MenuItem, MenuList, IconButton, AlertDialog, AlertDia
 import { HamburgerIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useDeleteTeamMutation } from "../../api/databaseApi";
 import { useRef } from 'react';
+import { Tooltip } from "@chakra-ui/react";
 
 interface SingleTeamProps {
   team: Team;
@@ -30,6 +31,11 @@ const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected, 
     onClose();
   };
 
+  let displayName = team.name;
+  if (displayName.length > 15) {
+    displayName = `${displayName.slice(0, 16)}...`;
+  }
+
   return (
     <HStack
       key={team.uid}
@@ -46,7 +52,9 @@ const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected, 
         onClick={() => onTeamClick(team)}
       >
         <Avatar name={team.name} src={team.photoUrl} borderRadius="6" />
-        <Text fontWeight={isSelected ? "bold" : "normal"}>{team.name}</Text>
+        <Tooltip label={team.name} isDisabled={team.name.length <= 15}>
+          <Text fontWeight={isSelected ? "bold" : "normal"}>{displayName}</Text>
+        </Tooltip>
       </HStack>
 
       {team.owner === userId && (
