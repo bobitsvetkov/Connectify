@@ -36,7 +36,7 @@ const EventModal: React.FC<EventModalProps> = ({
   };
 
   const handleEventSubmit = () => {
-    if (eventTitle && selectedUsers.length > 0) {
+    if (eventTitle && (selectedUsers.length > 0 || user)) {
       const eventsRef = ref(database, `users/${user.uid}/events`);
       const newEventRef = push(eventsRef);
       const newEvent: Event = {
