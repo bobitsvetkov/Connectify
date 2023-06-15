@@ -14,7 +14,6 @@ import {
   MenuItem,
   IconButton,
   useColorModeValue,
-  Spacer,
   HStack
 } from "@chakra-ui/react";
 import EmojiReactions from "../Reactions/EmojiReaction";
@@ -161,7 +160,7 @@ function SingleMessage({
               rounded={"3xl"}
               p={3}
               textAlign="left"
-              bg={message.user === (currUser?.uid || "") ? "#4960d9" : "gray.200"}
+              bg={message.user === (currUser?.uid || "") ? "#A7C7E7" : "gray.200"}
               color="black"
               wordBreak="break-word"
             >

@@ -25,6 +25,7 @@ import {
   useGetUserByIdQuery,
   useAddCallStatusToTeamMutation,
   useLazyGetTeamCallStatusQuery,
+  useGetChannelByIdQuery
 } from "../../api/databaseApi";
 import { useSubscription } from "../../Hooks/useSubscribtion";
 import ChatMessages from "../ChatMessages/ChatMessages";
@@ -59,7 +60,8 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
     isError: isUserError,
   } = useGetUserByIdQuery(currUser && currUser.uid);
   let activeChatUser = useSelector((state: RootState) => state.activeUser.user);
-  const { teamId, channelId, chatUserId } = useParams();
+  const { teamId = "", channelId = "", chatUserId } = useParams();
+  const { data: channel = {} as any } = useGetChannelByIdQuery({teamId: teamId, channelId: channelId});
   const [executeGetTeamCallStatusQuery, { data: isMeetingActive }] =
     useLazyGetTeamCallStatusQuery();
   const bg = useColorModeValue("gray.200", "gray.700");
@@ -132,7 +134,6 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
   const handleVideoChatClick = () => {
     onOpen();
     if (isMeetingActive) {
-      // If a meeting is already active, don't start a new one
       return;
     }
 
@@ -187,6 +188,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
           )}
           {isChat || (
             <>
+            <Text fontSize="2xl">#{channel?.name || 'Unknown Channel'}</Text>
               <Spacer />
               <Flex direction="row" alignItems="center">
                 <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
