@@ -5,7 +5,7 @@ import { LayoutProps } from "../types/interfaces";
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <Flex h="100vh">
+    <Flex h="100vh" overflowY={"auto"}>
       <LeftPanel />
       <RightPanel>{children}</RightPanel>
     </Flex>
