@@ -51,27 +51,37 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
   };
 
   return (
-    <Box>
-      {user &&
-        teamsData &&
-        Object.values(teamsData).length &&
-        Object.values(teamsData).map((team: Team) => {
-          const isInTeam = user.uid in team.participants;
-          return (
-            isInTeam &&
-            user && (
-              <SingleTeam
-                key={team.uid}
-                team={team}
-                onTeamClick={handleTeamClick}
-                isSelected={selectedTeam === team}
-              />
-            )
-          );
-        })}
-      <Button onClick={onOpen}>Add Team</Button>
+    <Box
+      bg="white"
+      h="82.5vh"
+      p={4}
+      shadow="md"
+      borderRight="1px"
+      borderColor="gray.200"
+    >
+      <Box overflowY="auto">
+        {user &&
+          teamsData &&
+          Object.values(teamsData).length &&
+          Object.values(teamsData).map((team: Team) => {
+            const isInTeam = user.uid in team.participants;
+            return (
+              isInTeam &&
+              user && (
+                <SingleTeam
+                  key={team.uid}
+                  team={team}
+                  onTeamClick={handleTeamClick}
+                  isSelected={selectedTeam === team}
+                />
+              )
+            );
+          })}
+      </Box>
+      <Button size="lg" colorScheme="teal" onClick={onOpen} mt={3}>+</Button>
       <CreateTeamModal isOpen={isOpen} onClose={onClose} />
     </Box>
+
   );
 };
 

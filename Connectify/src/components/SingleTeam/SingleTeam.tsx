@@ -12,10 +12,10 @@ const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected }
   const hoverBgColor = useColorModeValue('gray.100', 'gray.800');
   const selectedBgColor = useColorModeValue('gray.100', 'gray.800');
   return (
-    <Box
+    <HStack
       key={team.uid}
-      p={1}
-      mb={1}
+      paddingY={1}
+      spacing={3}
       backgroundColor={isSelected ? selectedBgColor : "transparent"}
       _hover={{
         backgroundColor: hoverBgColor,
@@ -23,13 +23,9 @@ const SingleTeam: React.FC<SingleTeamProps> = ({ team, onTeamClick, isSelected }
       }}
       onClick={() => onTeamClick(team)}
     >
-      <HStack spacing={2} align="start">
-        <Avatar name={team.name} src={team.photoUrl} borderRadius="6" />
-        <Text>
-          {team.name}
-        </Text>
-      </HStack>
-    </Box>
+      <Avatar name={team.name} src={team.photoUrl} borderRadius="6" />
+      <Text fontWeight={isSelected ? "bold" : "normal"}>{team.name}</Text>
+    </HStack>
   );
 };
 

@@ -17,6 +17,7 @@ function ChannelList({ team }: { team: Team }) {
     const teamId = team.uid;
     const channels = team.channels ? team.channels : {};
     const [channelsData, setChannelsData] = useState(channels);
+    const [currentChannelId, setCurrentChannelId] = useState("");
 
     useEffect(() => {
         const channelsRef = ref(database, `teams/${teamId}/channels`);
@@ -56,6 +57,7 @@ function ChannelList({ team }: { team: Team }) {
     };
 
     const handleChannelClick = (channel: Channel) => {
+        setCurrentChannelId(channel.uid);
         navigate(`/${teamId}/${channel.uid}`);
     };
 
@@ -96,9 +98,10 @@ function ChannelList({ team }: { team: Team }) {
                         onClick={() => handleChannelClick(channel)}
                         cursor="pointer"
                         p="0.5rem 1rem"
-                        fontSize="lg"
+                        fontWeight={channel.uid === currentChannelId ? "bold" : "normal"}
                         _hover={{
-                            backgroundColor: "#f5f6f6"
+                            backgroundColor: "#f5f6f6",
+                            fontWeight: "bold"
                         }}
                     >
                         #{channel.name}
