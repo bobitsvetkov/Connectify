@@ -73,20 +73,23 @@ function ChannelList({ team }: { team: Team }) {
                         onClick={() => setIsAddingChannel(!isAddingChannel)}
                     />
                     {isAddingChannel && (
-                        <><Input
-                            size="sm"
-                            placeholder="New Channel"
-                            value={newChannelName}
-                            onChange={(e) => setNewChannelName(e.target.value)}
-                        />
+                        <Flex wrap="wrap">
+                            <Input
+                                size="sm"
+                                placeholder="New Channel"
+                                width="70%"
+                                value={newChannelName}
+                                onChange={(e) => setNewChannelName(e.target.value)}
+                            />
                             <IconButton
                                 aria-label="Create channel"
                                 icon={<CheckIcon />}
                                 variant="outline"
                                 size="sm"
                                 onClick={handleCreateChannel}
+                                ml="1rem"
                             />
-                        </>
+                        </Flex>
                     )}
 
                 </HStack>

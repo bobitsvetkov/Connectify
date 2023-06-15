@@ -53,7 +53,6 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
     setSelectedTeam(team);
   };
 
-
   return (
     <Box
       bg={bgColor}
@@ -63,6 +62,7 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
       borderRight="1px"
       borderColor={borderColor}
       overflowY="auto"
+
     >
       {user &&
         teamsData &&
@@ -81,7 +81,20 @@ const TeamsList = ({ setSelectedTeam, selectedTeam }: Props) => {
             )
           );
         })}
-      <Button size="lg" colorScheme="teal" onClick={onOpen} mt={3}>+</Button>
+      <Button 
+        size="lg" 
+        colorScheme="teal" 
+        onClick={onOpen} 
+        mt={3} 
+        w="100%" 
+        variant="outline" 
+        _hover={{ 
+          bg: "#f57c73",
+          color: "white"
+        }}
+      >
+        +
+      </Button>
       <CreateTeamModal isOpen={isOpen} onClose={onClose} />
     </Box>
 
