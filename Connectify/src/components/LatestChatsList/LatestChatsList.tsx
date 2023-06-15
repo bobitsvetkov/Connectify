@@ -8,12 +8,13 @@ import { selectUser } from "../../features/ActiveUserSlice";
 import { useDispatch } from "react-redux";
 import { User } from "../../api/databaseApi";
 import { latestChat } from "../../types/interfaces";
+import { Heading } from "@chakra-ui/react";
 
 const LatestChatsList = () => {
   const [latestChats, setLatestChats] = useState<latestChat[]>([]);
   const dispatch = useDispatch();
   const currUserUid = getAuth().currentUser?.uid;
-
+ 
   useEffect(() => {
     if (currUserUid) {
       const chatsRef = ref(database, `users/${currUserUid}/latestChats`);
@@ -44,14 +45,14 @@ const LatestChatsList = () => {
   }
 
   return (
-    <div >
+    <div>
+      <Heading size="lg" ml={2} mb={5}>Recents</Heading>
       {
         latestChats.map((chat: latestChat) => {
           return <LatestChatSingle key={chat.uid} chat={chat} handleChatClick={handleChatClick} handleChannelClick={handleChannelClick} />
         })
       }
-    </div >
+    </div>
   );
 }
-
 export default LatestChatsList;
