@@ -64,27 +64,43 @@ function SingleMessage({
   }
 
   const addReaction = async (messageId: string, emoji: string) => {
-    if (!currUser || !chatId || !teamId || !channelId) {
-      console.log("Required parameters are not defined");
+    if (!currUser?.uid) {
+      console.log("Current user or user's ID is not defined");
       return;
     }
-
-    console.log(`Add reaction ${emoji} to message ${messageId}`);
-
     const reaction = {
-      uid: currUser.uid,
+      uid: currUser?.uid,
       emoji: emoji,
-      user: currUser.uid,
+      user: currUser?.uid,
     };
 
-    isChat
-      ? await addReactionToMessage({ chatId, messageId, reaction })
-      : await addReactionToTeamMessage({
-          teamId,
-          channelId,
-          messageId,
-          reaction,
-        });
+    if (isChat) {
+      if (!currUser) {
+        console.log("Current user is not defined");
+        return;
+      }
+      if (!chatId) {
+        console.log("Chat ID is not defined");
+        return;
+      }
+      console.log(`Add reaction ${emoji} to message ${messageId}`);
+      await addReactionToMessage({ chatId, messageId, reaction });
+    } else {
+      if (!teamId) {
+        console.log("Team ID is not defined");
+        return;
+      }
+      if (!channelId) {
+        console.log("Channel ID is not defined");
+        return;
+      }
+      await addReactionToTeamMessage({
+        teamId,
+        channelId,
+        messageId,
+        reaction,
+      });
+    }
   };
 
   return (
