@@ -172,7 +172,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ chatType }) => {
               )}
             </Box>
           </Box>
-          {isBot || (
+          {isChat && !isBot && (
             <Flex direction="row" justify="flex-end">
               <Button leftIcon={<FaVideo />} onClick={handleVideoChatClick} />
               <Modal isOpen={isOpen} onClose={onClose} size="5xl">
