@@ -5,7 +5,7 @@ export const openaiApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: 'https://api.openai.com/v1',
         prepareHeaders: (headers) => {
-            headers.set('Authorization', "Bearer " + "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");
+            headers.set('Authorization', "Bearer " + "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");
             headers.set('Content-Type', 'application/json');
             return headers;
         },
