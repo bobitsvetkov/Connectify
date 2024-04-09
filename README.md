@@ -27,11 +27,11 @@ Connectify is a collaboration messenger application designed to make team commun
 
 ## Link to application
 
-https://collab-messenger-team-4.vercel.app/
+[Website Preview](https://connectify-telerikproject.vercel.app/)
 
 ## Project setup
 
-1. Clone the repo - git clone https://gitlab.com/vlomliev/collab-messenger-team-4.git
+1. Clone the repo - git clone https://github.com/bobitsvetkov/Connectify.git
 2. Navigate to cd Connectify
 3. Open terminal and:
    - run **npm install** to install the project dependencies
