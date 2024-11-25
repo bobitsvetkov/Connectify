@@ -40,7 +40,7 @@ const AppRoutes = () => {
   const { loading, currentUser } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>; // Or your preferred loading indicator
+    return <div>Loading...</div>;
   }
 
   return (

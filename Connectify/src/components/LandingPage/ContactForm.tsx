@@ -16,7 +16,7 @@ import {
 import { useRef } from "react";
 import { BsPerson } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
-import emailjs from "emailjs-com";
+import emailjs from "@emailjs/browser";
 
 const ContactForm: React.FC = () => {
   const form = useRef<HTMLFormElement>(null);
